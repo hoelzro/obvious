@@ -1,10 +1,10 @@
 Clock Widget
 
 To use this widget, first add a
-    require("widgets.clock")
+    require("obvious.clock")
 to your rc.lua after the line which initialises beautiful. That line looks like this:
     beautiful.init(theme_path)
-then add widgets.clock() to your wiboxes widget list.
+then add obvious.clock() to your wiboxes widget list.
 
 This widget has an alarmfile, which contains stuff to remember like this:
     14:30 get pizza from oven

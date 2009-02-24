@@ -3,4 +3,4 @@
 -- Copyright 2009 Gregor Best            --
 -------------------------------------------
 
-module("widgets")
+module("obvious")

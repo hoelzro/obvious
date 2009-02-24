@@ -24,7 +24,7 @@ local capi = {
 local awful = require("awful")
 local beautiful = require("beautiful")
 
-module("widgets.clock")
+module("obvious.clock")
 
 local editor = "xmessage 'Set your editor with widgets.clock.set_editor(\"editor\")'; echo"
 
