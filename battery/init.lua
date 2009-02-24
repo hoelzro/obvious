@@ -11,6 +11,7 @@ local io = {
 local capi = {
     widget = widget,
     button = button,
+    mouse = mouse
 }
 
 local naughty = require("naughty")
@@ -64,7 +65,7 @@ local function detail ()
     fd:close()
     naughty.notify({
         text = d,
-        screen = mouse.screen
+        screen = capi.mouse.screen
     })
 end
 

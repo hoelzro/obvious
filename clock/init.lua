@@ -19,6 +19,7 @@ local string = {
 local capi = {
     widget = widget,
     button = button,
+    mouse = mouse
 }
 
 local awful = require("awful")
@@ -58,7 +59,7 @@ widget:buttons({
         if #alarms > 0 then
             for k, v in pairs(alarms) do
                 naughty.notify({ text = v,
-                                 screen = mouse.screen
+                                 screen = capi.mouse.screen
                 })
             end
             alarms = { }
@@ -90,7 +91,7 @@ local function update (trigger_alarms)
         for line in io.lines(alarmfile) do
             if string.match(line, "^"..os.date("%H:%M")) then
                 naughty.notify({ text = line,
-                                 screen = mouse.screen
+                                 screen = capi.mouse.screen
                                })
                 local add = true
                 for _, v in pairs(clock.alarms) do
