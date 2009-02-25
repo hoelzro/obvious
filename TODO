@@ -1,0 +1,23 @@
+Todo list / informal bug tracker
+
+Clock: alarms file should be created if doesn't exist
+================================================================================
+
+Clock: needs more beautiful theming?
+================================================================================
+
+Clock: raises error on menu
+================================================================================
+W: awesome: luaA_dofunction:317: error running function: /usr/local/share/awesome/lib/awful/menu.lua:48: bad argument #3 to '?' (string expected, got nil)
+
+This causes the menu to stick open.
+
+General: I think we should make a specification for configuring widgets
+================================================================================
+Like, wouldn't it be cool if every widget had a similar interface used for
+configuring it? Something along the lines of:
+
+clock.settings.format.base = "%d %Y %m"
+clock.settings.format.expanded = "%d %Y %m %s"
+battery.settings.mainbattery = 1
+simplempd.settings.host = "localhost"
