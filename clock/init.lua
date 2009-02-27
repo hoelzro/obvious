@@ -16,6 +16,9 @@ local io = {
 local string = {
     match = string.match
 }
+local table = {
+    insert = table.insert
+}
 local capi = {
     widget = widget,
     button = button,
@@ -24,6 +27,7 @@ local capi = {
 
 local awful = require("awful")
 local beautiful = require("beautiful")
+local naughty = require("naughty")
 
 module("obvious.clock")
 
@@ -94,7 +98,7 @@ local function update (trigger_alarms)
                                  screen = capi.mouse.screen
                                })
                 local add = true
-                for _, v in pairs(clock.alarms) do
+                for _, v in pairs(alarms) do
                     if v == line then
                         add = false
                         break
