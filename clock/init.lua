@@ -31,6 +31,7 @@ local naughty = require("naughty")
 
 module("obvious.clock")
 
+local menu
 local editor = "xmessage 'Set your editor with widgets.clock.set_editor(\"editor\")'; echo"
 
 local function edit(file)
@@ -39,21 +40,15 @@ local function edit(file)
 end
 
 local alarmfile = awful.util.getdir("config").."/alarms"
-widget = capi.widget({
-    type = "textbox",
-    name = "clock",
-    align = "right"
-})
-local menu = awful.menu.new({
-    id = "clock",
-    items = {
-        { "edit todo", function () edit("~/todo") end },
-        { "edit alarms", function () edit(alarmfile) end }
-    }
-})
 
 local fulldate = false
 local alarms = { }
+
+local widget = capi.widget({
+        type = "textbox",
+        name = "clock",
+        align = "right"
+    })
 
 widget:buttons({
     capi.button({ }, 3, function ()
@@ -111,6 +106,10 @@ local function update (trigger_alarms)
     end
 end
 
+function set_editor(e)
+    editor = e
+end
+
 widget.mouse_enter = function ()
     fulldate = true
     update(false)
@@ -121,11 +120,17 @@ widget.mouse_leave = function ()
     update(false)
 end
 
-update(true)
-awful.hooks.timer.register(60, function() update(true) end)
+setmetatable(_M, { __call = function () 
+    update(true)
+    awful.hooks.timer.register(60, function() update(true) end)
 
-function set_editor(e)
-    editor = e
-end
+    menu = awful.menu.new({
+        id = "clock",
+        items = {
+            { "edit todo", function () edit("~/todo") end },
+            { "edit alarms", function () edit(alarmfile) end }
+        }
+    })
 
-setmetatable(_M, { __call = function () return widget end })
+    return widget
+end })

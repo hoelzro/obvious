@@ -2,9 +2,7 @@ Clock Widget
 
 To use this widget, first add a
     require("obvious.clock")
-to your rc.lua after the line which initialises beautiful. That line looks like this:
-    beautiful.init(theme_path)
-then add obvious.clock() to your wiboxes widget list.
+to the beginning of your rc.lua, then add obvious.clock() to your wiboxes widget list.
 
 This widget has an alarmfile, which contains stuff to remember like this:
     14:30 get pizza from oven
@@ -14,4 +12,4 @@ it, all alarms since the last click are shown.
 The alarm file is contained in ${XDG_CONFIG_DIR}/awesome/alarms. In most cases this
 would be ~/.config/awesome/alarms.
 
-To choose your editor, execute widgets.clock.set_editor("foo").
+To choose your editor, execute obvious.clock.set_editor("foo").
