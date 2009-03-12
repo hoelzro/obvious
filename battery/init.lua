@@ -40,6 +40,10 @@ local function update()
 
     local data = fd:read("*all"):match("Battery #1 *: ([^\n]*)")
     fd:close()
+    if not data then
+        widget.text = "no data"
+        return
+    end
     local state = data:match("([%a]*),.*")
     local charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.[%d]?[%d]?)"))
     local time = data:match(".*, ([%d][%d]:[%d][%d])")
