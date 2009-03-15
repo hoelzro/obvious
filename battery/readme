@@ -8,6 +8,5 @@ widget.
 
 To use it, include it into your rc.lua by inserting this line:
     require("obvious.battery")
-right after the initialisation of beautiful. Then add the widget to your wibox. It's
-called
+into the top of your rc.lua. Then add the widget to your wibox. It's called
     obvious.battery()
