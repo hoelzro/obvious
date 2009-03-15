@@ -27,11 +27,23 @@ widget = capi.widget({
 device = "wlan0"
 
 function update()
-    local fd = io.open('/sys/class/net/'..device..'/wireless/link')
+    local fd = io.open("/proc/net/wireless")
     if not fd then return end
-    local link = fd:read()
+
+    local link
+    while true do
+        local line = fd:read("*l")
+        if not line then break end
+
+        if line:match("^ "..device) then
+            link = line:match("   (%d?%d?%d)")
+            break
+        end
+    end
     fd:close()
+    if not link then return end
     link = tonumber(link)
+
     local color = "#00FF00"
     if link < 50 and link > 10 then
         color = "#FFFF00"
