@@ -63,6 +63,14 @@ function mute()
     update()
 end
 
+function setcardid(id)
+    cardid = id
+end
+
+function setchannel(c)
+    channel = c
+end
+
 widget:buttons({
     capi.button({ }, 4, function () raise() end),
     capi.button({ }, 5, function () lower() end),
