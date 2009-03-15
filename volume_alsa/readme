@@ -1,0 +1,22 @@
+ALSA volume widget
+
+This widget uses amixer to get and set the current volume level and it also exports functions you can use
+in keybindings to change the volume and mute / unmute your soundcard.
+
+To set the card to use, use
+    obvious.volume_alsa.setcardid(id)
+in most cases the default (0) suffices
+
+To set the channel to control, use
+    obvious.volume_alsa.setchannel(c)
+the default is "Master", you might need to set it to "PCM"
+
+Use
+    obvious.volume_alsa.raise()
+    obvious.volume_alsa.lower()
+    obvious.volume_alsa.mute()
+to control the volume with keybindings.
+
+To add this widget to your configuration, insert
+    require("obvious.volume_alsa")
+into the top of your rc.lua and add obvious.volume_alsa() to your wibox.
