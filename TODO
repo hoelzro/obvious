@@ -21,3 +21,6 @@ clock.settings.format.base = "%d %Y %m"
 clock.settings.format.expanded = "%d %Y %m %s"
 battery.settings.mainbattery = 1
 simplempd.settings.host = "localhost"
+
+-- I kind of added something like this, widget that need this now have a bunch of set_* functions, for example the wlan widget, though this could be expanded
+---- Gregor
