@@ -21,7 +21,6 @@ local table = {
 }
 local capi = {
     widget = widget,
-    button = button,
     mouse = mouse
 }
 
@@ -50,11 +49,11 @@ local widget = capi.widget({
         align = "right"
     })
 
-widget:buttons({
-    capi.button({ }, 3, function ()
+widget:buttons(awful.util.table.join(
+    awful.button({ }, 3, function ()
         menu:toggle()
     end), 
-    capi.button({ }, 1, function ()
+    awful.button({ }, 1, function ()
         if #alarms > 0 then
             for k, v in pairs(alarms) do
                 naughty.notify({ text = v,
@@ -67,7 +66,7 @@ widget:buttons({
             naughty.notify({ text = awful.util.pread("ddate"), width = 360 })
         end
     end)
-})
+))
 
 local function update (trigger_alarms)
     local date
