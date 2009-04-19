@@ -10,7 +10,6 @@ local io = {
 }
 local capi = {
     widget = widget,
-    button = button,
     mouse = mouse
 }
 
@@ -73,9 +72,9 @@ local function detail ()
     })
 end
 
-widget:buttons({ 
-    capi.button({ }, 1, detail)
-}) 
+widget:buttons(awful.util.table.join(
+    awful.button({ }, 1, detail)
+))
 update()
 awful.hooks.timer.register(60, update)
 
