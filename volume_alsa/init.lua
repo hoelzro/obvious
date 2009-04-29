@@ -38,9 +38,9 @@ local function update()
 
     status = string.match(status, "%[(o[^%]]*)%]")
 
-    local color = "#FF0000"
+    local color = "#900000"
     if string.find(status, "on", 1, true) then
-        color = "#00FF00"
+        color = "#009000"
     end
     widget.text = "<span color=\"" .. color .. "\">☊</span> " .. string.format("%03d%%", vol)
 end

@@ -83,7 +83,7 @@ local function update (trigger_alarms)
         widget.bg = beautiful.bg_normal
     end
     
-    widget.text = "<span color=\"#00FF00\">⚙</span> " .. date
+    widget.text = "<span color=\"#009000\">⚙</span> " .. date
     
     if trigger_alarms then
         for line in io.lines(alarmfile) do

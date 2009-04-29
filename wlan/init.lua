@@ -44,11 +44,11 @@ function update()
     if not link then return end
     link = tonumber(link)
 
-    local color = "#00FF00"
+    local color = "#009000"
     if link < 50 and link > 10 then
-        color = "#FFFF00"
+        color = "#909000"
     elseif link <= 10 then
-        color = "#FF0000"
+        color = "#900000"
     end
     widget.text = "<span color=\"" .. color .. "\">☢</span> " .. string.format("%03d%%", link)
 end
