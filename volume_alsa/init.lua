@@ -46,19 +46,19 @@ local function update()
 end
 
 function raise(v)
-    v = v or 0.5
-    awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "%+ 2>/dev/null >/dev/null")
+    v = v or 1
+    awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "+", false)
     update()
 end
 
 function lower(v)
-    v = v or 0.5
-    awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "%- 2>/dev/null >/dev/null")
+    v = v or 1
+    awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "-", false)
     update()
 end
 
 function mute()
-    awful.util.spawn("amixer -c " .. cardid .. " sset " .. channel .. " toggle 2>/dev/null >/dev/null")
+    awful.util.spawn("amixer -c " .. cardid .. " sset " .. channel .. " toggle > /dev/null", false)
     update()
 end
 
