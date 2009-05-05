@@ -4,6 +4,7 @@
 --------------------------------
 
 local tonumber = tonumber
+local tostring = tostring
 local setmetatable = setmetatable
 local io = {
     popen = io.popen
@@ -54,10 +55,10 @@ local function update()
     elseif charge >= 40 then
         color = "#009000"
     end
-    battery_status = "<span color=\"" .. color .. "\">"..status[state:lower()].."</span> " .. charge .. "%"
+    battery_status = "<span color=\"" .. color .. "\">"..status[state:lower()].."</span> " .. awful.util.escape(tostring(charge)) .. "%"
 
     if time then
-        battery_status = battery_status .. " " .. time
+        battery_status = battery_status .. " " .. awful.util.escape(time)
     end
 
     widget.text = battery_status
