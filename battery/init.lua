@@ -71,6 +71,7 @@ local function detail ()
         text = d,
         screen = capi.mouse.screen
     })
+    update()
 end
 
 widget:buttons(awful.util.table.join(
