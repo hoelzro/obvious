@@ -37,7 +37,7 @@ local function update()
         return
     end
 
-    local data = fd:read("*all"):match("Battery 1 *: ([^\n]*)")
+    local data = fd:read("*all"):match("Battery [0-9] *: ([^\n]*)")
     fd:close()
     if not data then
         widget.text = "no data"
@@ -45,7 +45,7 @@ local function update()
     end
     local state = data:match("([%a]*),.*")
     local charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
-    local time = data:match(".*, ([%d][%d]:[%d][%d])")
+    local time = data:match(".*, "..charge.."%%,. *(.*)$")
     
     local color = "#900000"
     if charge > 35 and charge < 60 then
@@ -53,7 +53,7 @@ local function update()
     elseif charge >= 40 then
         color = "#009000"
     end
-    battery_status = "<span color=\"" .. color .. "\">"..status[state].."</span> " .. charge .. "%"
+    battery_status = "<span color=\"" .. color .. "\">"..status[state:lower()].."</span> " .. charge .. "%"
 
     if time then
         battery_status = battery_status .. " " .. time
