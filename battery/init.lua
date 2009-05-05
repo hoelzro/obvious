@@ -31,20 +31,20 @@ status = {
 
 local function update()
     local battery_status = ""
-    local fd = io.popen("acpitool")
+    local fd = io.popen("acpi -V")
     if not fd then 
         widget.text = "acpitool failed"
         return
     end
 
-    local data = fd:read("*all"):match("Battery #1 *: ([^\n]*)")
+    local data = fd:read("*all"):match("Battery 1 *: ([^\n]*)")
     fd:close()
     if not data then
         widget.text = "no data"
         return
     end
     local state = data:match("([%a]*),.*")
-    local charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.[%d]?[%d]?)"))
+    local charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
     local time = data:match(".*, ([%d][%d]:[%d][%d])")
     
     local color = "#900000"
@@ -63,7 +63,7 @@ local function update()
 end
 
 local function detail ()
-    local fd = io.popen("acpitool")
+    local fd = io.popen("acpi -V")
     local d = fd:read("*all")
     fd:close()
     naughty.notify({

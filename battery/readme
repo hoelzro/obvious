@@ -1,10 +1,10 @@
 Battery widget
 
-This widget is a battery monitor. It gets its information from acpitool, to be
-as uniquely usable as possible. If you click on the widget, additional information
-is displayed. Currently, only the first battery is monitored on the widget box, but
-information about all other attached batteries is still visible if you click on the
-widget.
+This widget is a battery monitor. It gets its information from acpi, to be as
+uniquely usable as possible. If you click on the widget, additional information
+is displayed. Currently, only the first battery is monitored on the widget box,
+but information about all other attached batteries is still visible if you click
+the widget.
 
 To use it, include it into your rc.lua by inserting this line:
     require("obvious.battery")
