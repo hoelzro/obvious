@@ -46,7 +46,7 @@ local function update()
     end
     local state = data:match("([%a]*),.*")
     local charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
-    local time = data:match(".*, "..charge.."%%,. *(.*)$")
+    local time = data:match(".*, ([%d]?[%d]?:?[%d][%d]:[%d][%d])")
     
     local color = "#900000"
     if charge > 35 and charge < 60 then
