@@ -28,7 +28,8 @@ status = {
     ["charged"] = "↯",
     ["full"] = "↯",
     ["discharging"] = "▼",
-    ["charging"] = "▲"
+    ["charging"] = "▲",
+    ["unknown"] = "⌁"
 }
 
 local function update()
@@ -55,7 +56,14 @@ local function update()
     elseif charge >= 40 then
         color = "#009000"
     end
-    battery_status = "<span color=\"" .. color .. "\">"..status[state:lower()].."</span> " .. awful.util.escape(tostring(charge)) .. "%"
+
+    state = state:lower()
+    if not status[state] then
+        state = "unknown"
+    end
+    state = status[state]
+
+    battery_status = "<span color=\"" .. color .. "\">"..state.."</span> " .. awful.util.escape(tostring(charge)) .. "%"
 
     if time then
         battery_status = battery_status .. " " .. awful.util.escape(time)
