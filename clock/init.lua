@@ -21,7 +21,8 @@ local table = {
 }
 local capi = {
     widget = widget,
-    mouse = mouse
+    mouse = mouse,
+    screen = screen
 }
 
 local awful = require("awful")
@@ -55,8 +56,9 @@ widget:buttons(awful.util.table.join(
     end), 
     awful.button({ }, 1, function ()
         if #alarms > 0 then
-            for k, v in pairs(alarms) do
-                naughty.notify({ text = v,
+            for _, v in pairs(alarms) do
+                naughty.notify({ text = v[2],
+                                 title = v[1],
                                  screen = capi.mouse.screen
                 })
             end
@@ -67,6 +69,21 @@ widget:buttons(awful.util.table.join(
         end
     end)
 ))
+
+local function read_alarms(file)
+    local rv = { }
+    local date = nil
+    for line in io.lines(file) do
+        line = line:gsub("\\n", "\n")
+        if not date then
+            date = line
+        else
+            rv[date] = line
+            date = nil
+        end
+    end
+    return rv
+end
 
 local function update (trigger_alarms)
     local date
@@ -86,19 +103,24 @@ local function update (trigger_alarms)
     widget.text = "<span color=\"#009000\">⚙</span> " .. date
     
     if trigger_alarms then
-        for line in io.lines(alarmfile) do
-            if string.match(line, "^"..os.date("%H:%M")) then
-                naughty.notify({ text = line,
-                                 screen = capi.mouse.screen
-                               })
+        local data = read_alarms(alarmfile)
+        local currentdate = os.date("%a-%d-%m-%Y:%H:%M")
+        for date, message in pairs(data) do
+            if currentdate:match(date) then
+                print("notifying")
+                print(date, message)
+                naughty.notify({ text = message,
+                                 title = date,
+                                 screen = capi.screen.count()
+                              })
                 local add = true
                 for _, v in pairs(alarms) do
-                    if v == line then
+                    if v[1] == date and v[2] == message then
                         add = false
                         break
                     end
                 end
-                if add then table.insert(alarms, line) end
+                if add then table.insert(alarms, { date, message }) end
             end
         end
         update(false)
