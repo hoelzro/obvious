@@ -34,7 +34,18 @@ local function update()
     local status = fd:read("*all")
     fd:close()
         
-    local vol = tonumber(string.match(status, "(%d?%d?%d)%%"))
+    if not status then
+        widget.text = "no data"
+        return
+    end
+
+    local vol = string.match(status, "(%d?%d?%d)%%")
+    if not vol then
+        widget.text = "no data"
+        return
+    end
+
+    vol = tonumber(vol)
 
     status = string.match(status, "%[(o[^%]]*)%]")
 
