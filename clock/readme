@@ -5,10 +5,16 @@ To use this widget, first add a
 to the beginning of your rc.lua, then add obvious.clock() to your wiboxes widget list.
 
 This widget has an alarmfile, which contains stuff to remember like this:
-    14:30 get pizza from oven
-these alarms (one per line) are shown with naughty. If one alarm is shown,
-the clock will change its colors to indicate that. If you then click on
+    14:30
+    get pizza from oven
+these alarms (each consisting of two lines) are shown with naughty. The first line of each entry
+is a Lua regular expression to match against the time in strftime format %a-%d-%m-%Y:%H:%M, which looks like this:
+    Tue-26-05-2009:22:01
+The second line contains the message to show. You can use \n inside the message body if you want a newline.
+
+If one alarm is shown, the clock will change its colors to indicate that. If you then click on
 it, all alarms since the last click are shown.
+
 The alarm file is contained in ${XDG_CONFIG_DIR}/awesome/alarms. In most cases this
 would be ~/.config/awesome/alarms.
 
