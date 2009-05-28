@@ -8,7 +8,8 @@ local print = print
 local setmetatable = setmetatable
 local tonumber = tonumber
 local os = {
-    date = os.date
+    date = os.date,,
+    getenv = os.getenv
 }
 local io = {
     lines = io.lines
@@ -148,7 +149,7 @@ setmetatable(_M, { __call = function ()
     menu = awful.menu.new({
         id = "clock",
         items = {
-            { "edit todo", function () edit("~/todo") end },
+            { "edit todo", function () edit(os.getenv("HOME") .. "/todo") end },
             { "edit alarms", function () edit(alarmfile) end }
         }
     })
