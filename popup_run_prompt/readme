@@ -1,0 +1,7 @@
+Pop-Up Run Prompt
+
+This widget's purpose is to give you a pop-up run prompt.
+TODO describe it, add code to make it slide.
+
+To use it, include it into your rc.lua by inserting this line:
+TODO this
