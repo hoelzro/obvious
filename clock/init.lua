@@ -8,7 +8,7 @@ local print = print
 local setmetatable = setmetatable
 local tonumber = tonumber
 local os = {
-    date = os.date,,
+    date = os.date,
     getenv = os.getenv
 }
 local io = {
