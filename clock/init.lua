@@ -181,8 +181,8 @@ setmetatable(_M, { __call = function ()
     menu = awful.menu.new({
         id = "clock",
         items = {
-            { "edit todo", function () edit(os.getenv("HOME") .. "/todo") end },
-            { "edit alarms", function () edit(alarmfile) end }
+            { "Edit Todo", function () edit(os.getenv("HOME") .. "/todo") end },
+            { "Edit Alarms", function () edit(alarmfile) end }
         }
     })
 
