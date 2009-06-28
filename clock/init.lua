@@ -82,6 +82,11 @@ widget:buttons(awful.util.table.join(
 local function read_alarms(file)
     local rv = { }
     local date = nil
+
+    if not awful.util.file_readable(file) then
+        return { }
+    end
+
     for line in io.lines(file) do
         line = line:gsub("\\n", "\n")
         if not date then
