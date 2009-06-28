@@ -7,6 +7,7 @@ local pairs = pairs
 local print = print
 local setmetatable = setmetatable
 local tonumber = tonumber
+local type = type
 local os = {
     date = os.date,
     getenv = os.getenv
@@ -25,19 +26,26 @@ local capi = {
     mouse = mouse,
     screen = screen
 }
-
 local awful = require("awful")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
 
 module("obvious.clock")
 
+local defaults = { }
+defaults.shorttimeformat = "%T"
+defaults.longtimeformat = "%T %D"
+defaults.editor = "xmessage 'Set your editor with widgets.clock.set_editor(\"editor\")'; echo"
+local settings = { }
+for key, value in pairs(defaults) do
+    settings[key] = value
+end
+
 local menu
-local editor = "xmessage 'Set your editor with widgets.clock.set_editor(\"editor\")'; echo"
 
 local function edit(file)
-    print("running "..editor.." to edit "..file)
-    awful.util.spawn(editor .. " " .. file)
+    print("running " .. settings.editor .. " to edit " .. file)
+    awful.util.spawn(settings.editor .. " " .. file)
 end
 
 local alarmfile = awful.util.getdir("config").."/alarms"
@@ -88,21 +96,35 @@ end
 
 local function update (trigger_alarms)
     local date
-    if not fulldate then
-        date = os.date("%H:%M (") .. (tonumber(os.date("%W")) + 1)..") "
+    if fulldate then
+        if type(settings.longtimeformat) == "string" then
+            date = os.date(settings.longtimeformat)
+        elseif type(settings.longtimeformat) == "function" then
+            date = os.date(settings.longtimeformat())
+        end
+        if not date then
+            date = os.date(defaults.longtimeformat)
+        end
     else
-        date = os.date() .. " "
+        if type(settings.shorttimeformat) == "string" then
+            date = os.date(settings.shorttimeformat)
+        elseif type(settings.shorttimeformat) == "function" then
+            date = os.date(settings.shorttimeformat())
+        end
+        if not date then
+            date = os.date(defaults.shorttimeformat)
+        end
     end
-    
+
     if #alarms > 0 then
         date = "<span color='" .. beautiful.fg_focus .. "'>"..date.."</span>"
         widget.bg = beautiful.bg_focus
     else
         widget.bg = beautiful.bg_normal
     end
-    
+
     widget.text = "<span color=\"#009000\">⚙</span> " .. date
-    
+
     if trigger_alarms then
         local data = read_alarms(alarmfile)
         local currentdate = os.date("%a-%d-%m-%Y:%H:%M")
@@ -128,10 +150,6 @@ local function update (trigger_alarms)
     end
 end
 
-function set_editor(e)
-    editor = e
-end
-
 widget.mouse_enter = function ()
     fulldate = true
     update(false)
@@ -139,6 +157,20 @@ end
 
 widget.mouse_leave = function ()
     fulldate = false
+    update(false)
+end
+
+function set_editor(e)
+    settings.editor = e or defaults.editor
+end
+
+function set_longformat(strOrFn)
+    settings.longtimeformat = strOrFn or defaults.longtimeformat
+    update(false)
+end
+
+function set_shortformat(strOrFn)
+    settings.shorttimeformat = strOrFn or defaults.shorttimeformat
     update(false)
 end
 
