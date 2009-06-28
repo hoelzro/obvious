@@ -35,7 +35,7 @@ module("obvious.clock")
 local defaults = { }
 defaults.shorttimeformat = "%T"
 defaults.longtimeformat = "%T %D"
-defaults.editor = "xmessage 'Set your editor with widgets.clock.set_editor(\"editor\")'; echo"
+defaults.editor = nil
 local settings = { }
 for key, value in pairs(defaults) do
     settings[key] = value
@@ -44,8 +44,13 @@ end
 local menu
 
 local function edit(file)
-    print("running " .. settings.editor .. " to edit " .. file)
-    awful.util.spawn(settings.editor .. " " .. file)
+    if not settings.editor then
+        naughty.notify({ text="Obvious Clock: You need to configure your" ..
+                             " editor. See readme.",
+                        timeout=0 })
+    else
+        awful.util.spawn(settings.editor .. " " .. file)
+    end
 end
 
 local alarmfile = awful.util.getdir("config").."/alarms"
