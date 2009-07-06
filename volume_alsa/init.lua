@@ -29,7 +29,7 @@ widget = capi.widget({
     align = "right"
 })
 
-function get_state()
+function get_data()
     local rv = { }
     local fd = io.popen("amixer -c " .. cardid .. " -- sget " .. channel)
     if not fd then return end
@@ -50,7 +50,7 @@ function get_state()
 end
 
 local function update()
-    local status = get_state()
+    local status = get_data()
 
     local color = "#900000"
     if not status.mute then
