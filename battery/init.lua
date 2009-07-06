@@ -32,41 +32,46 @@ status = {
     ["unknown"] = "⌁"
 }
 
-local function update()
-    local battery_status = ""
+function get_state()
+    local rv = { }
     local fd = io.popen("acpi -b")
-    if not fd then 
-        widget.text = "acpitool failed"
-        return
-    end
+    if not fd then return end
 
     local data = fd:read("*all"):match("Battery [0-9] *: ([^\n]*)")
-    fd:close()
-    if not data then
+    if not data then return end
+
+    rv.state = data:match("([%a]*),.*"):lower()
+    rv.charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
+    rv.time = data:match(".*, ([%d]?[%d]?:?[%d][%d]:[%d][%d])")
+
+    return rv
+end
+
+local function update()
+    local battery_status = ""
+
+    local bat = get_state()
+    if not bat then
         widget.text = "no data"
         return
     end
-    local state = data:match("([%a]*),.*")
-    local charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
-    local time = data:match(".*, ([%d]?[%d]?:?[%d][%d]:[%d][%d])")
-    
     local color = "#900000"
-    if charge > 35 and charge < 60 then
+    if bat.charge > 35 and bat.charge < 60 then
         color = "#909000"
-    elseif charge >= 40 then
+    elseif bat.charge >= 40 then
         color = "#009000"
     end
 
-    state = state:lower()
+    local state = bat.state
     if not status[state] then
         state = "unknown"
     end
     state = status[state]
 
-    battery_status = "<span color=\"" .. color .. "\">"..state.."</span> " .. awful.util.escape(tostring(charge)) .. "%"
+    battery_status = "<span color=\"" .. color .. "\">"..state.."</span> " .. awful.util.escape(tostring(bat.charge)) .. "%"
 
-    if time then
-        battery_status = battery_status .. " " .. awful.util.escape(time)
+    if bat.time then
+        battery_status = battery_status .. " " .. awful.util.escape(bat.time)
     end
 
     widget.text = battery_status

@@ -26,31 +26,37 @@ widget = capi.widget({
 })
 device = "wlan0"
 
-function update()
+function get_data()
+    local rv = { }
+
     local fd = io.open("/proc/net/wireless")
     if not fd then return end
 
-    local link
     while true do
         local line = fd:read("*l")
         if not line then break end
 
         if line:match("^ "..device) then
-            link = line:match("   (%d?%d?%d)")
+            rv.link = tonumber(line:match("   (%d?%d?%d)"))
             break
         end
     end
     fd:close()
-    if not link then return end
-    link = tonumber(link)
+    if not rv.link then return end
+
+    return rv
+end
+
+local function update()
+    local status = get_data()
 
     local color = "#009000"
-    if link < 50 and link > 10 then
+    if status.link < 50 and status.link > 10 then
         color = "#909000"
-    elseif link <= 10 then
+    elseif status.link <= 10 then
         color = "#900000"
     end
-    widget.text = "<span color=\"" .. color .. "\">☢</span> " .. string.format("%03d%%", link)
+    widget.text = "<span color=\"" .. color .. "\">☢</span> " .. string.format("%03d%%", status.link)
 end
 update()
 awful.hooks.timer.register(10, update)

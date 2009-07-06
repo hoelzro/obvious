@@ -20,3 +20,9 @@ to control the volume with keybindings.
 To add this widget to your configuration, insert
     require("obvious.volume_alsa")
 into the top of your rc.lua and add obvious.volume_alsa() to your wibox.
+
+If you want to use the data gathered by this widget, you can use the function obvous.volume_alsa.get_data().
+It returns nil on failure, otherwise it returns a table with the following fields:
+
+    volume  a number representing the current volume from 0 to 100
+    mute    a boolean value describing whether the channel is muted or not

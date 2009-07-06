@@ -29,31 +29,34 @@ widget = capi.widget({
     align = "right"
 })
 
-local function update()
+function get_state()
+    local rv = { }
     local fd = io.popen("amixer -c " .. cardid .. " -- sget " .. channel)
+    if not fd then return end
     local status = fd:read("*all")
     fd:close()
-        
-    if not status then
-        widget.text = "no data"
-        return
-    end
 
-    local vol = string.match(status, "(%d?%d?%d)%%")
-    if not vol then
-        widget.text = "no data"
-        return
-    end
-
-    vol = tonumber(vol)
+    rv.volume = tonumber(string.match(status, "(%d?%d?%d)%%"))
+    if not rv.volume then return end
 
     status = string.match(status, "%[(o[^%]]*)%]")
+    if string.find(status, "on", 1, true) then
+        rv.mute = false
+    else
+        rv.mute = true
+    end
+
+    return rv
+end
+
+local function update()
+    local status = get_state()
 
     local color = "#900000"
-    if string.find(status, "on", 1, true) then
+    if not status.mute then
         color = "#009000"
     end
-    widget.text = "<span color=\"" .. color .. "\">☊</span> " .. string.format("%03d%%", vol)
+    widget.text = "<span color=\"" .. color .. "\">☊</span> " .. string.format("%03d%%", status.volume)
 end
 
 function raise(v)
