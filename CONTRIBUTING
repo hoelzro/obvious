@@ -86,7 +86,7 @@ Your "readme" is the explanation for the user. As such, it has a rough layout:
 
 -> Your data
 
-If the widget gathers nontrivial data (i.e. wlan signal strength, batter charge,
+If the widget gathers nontrivial data (i.e. wlan signal strength, battery charge,
 but _not_ the current time, as that's just one function call away), you should
 supply a function called get_data() which returns nil on failure and a hashtable
 with the collected data otherwise. This is so other people can build on your work
