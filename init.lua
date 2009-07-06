@@ -3,6 +3,7 @@
 -- Copyright 2009 Gregor Best            --
 -------------------------------------------
 
+require("obvious.lib")
 require("obvious.clock")
 require("obvious.battery")
 require("obvious.volume_alsa")
