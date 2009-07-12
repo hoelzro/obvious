@@ -32,6 +32,7 @@ local naughty = require("naughty")
 
 module("obvious.clock")
 
+local initialized = false
 local defaults = { }
 defaults.shorttimeformat = "%T"
 defaults.longtimeformat = "%T %D"
@@ -186,15 +187,19 @@ end
 
 setmetatable(_M, { __call = function () 
     update(true)
-    awful.hooks.timer.register(60, function() update(true) end)
+    if not initialized then
+        awful.hooks.timer.register(60, function() update(true) end)
 
-    menu = awful.menu.new({
-        id = "clock",
-        items = {
-            { "Edit Todo", function () edit(os.getenv("HOME") .. "/todo") end },
-            { "Edit Alarms", function () edit(alarmfile) end }
-        }
-    })
+        menu = awful.menu.new({
+            id = "clock",
+            items = {
+                { "Edit Todo", function () edit(os.getenv("HOME") .. "/todo") end },
+                { "Edit Alarms", function () edit(alarmfile) end }
+            }
+        })
+
+        initialized = true
+    end
 
     return widget
 end })
