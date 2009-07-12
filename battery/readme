@@ -12,7 +12,7 @@ into the top of your rc.lua. Then add the widget to your wibox. It's called
     obvious.battery()
 
 If you want to use the data gathered by this widget to create your own, use the
-function obvious.battery.get_state(). It returns nil on failure and it returns
+function obvious.battery.get_data(). It returns nil on failure and it returns
 a table on success. The table has the following fields:
 
     state   a string which describes the batteries' state as one element of the

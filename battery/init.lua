@@ -32,7 +32,7 @@ status = {
     ["unknown"] = "⌁"
 }
 
-function get_state()
+function get_data()
     local rv = { }
     local fd = io.popen("acpi -b")
     if not fd then return end
@@ -50,7 +50,7 @@ end
 local function update()
     local battery_status = ""
 
-    local bat = get_state()
+    local bat = get_data()
     if not bat then
         widget.text = "no data"
         return
