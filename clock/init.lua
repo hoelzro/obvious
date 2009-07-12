@@ -141,8 +141,6 @@ local function update (trigger_alarms)
         local currentdate = os.date("%a-%d-%m-%Y:%H:%M")
         for date, message in pairs(data) do
             if currentdate:match(date) then
-                print("notifying")
-                print(date, message)
                 naughty.notify({ text = message,
                                  title = date,
                                  screen = capi.screen.count()
