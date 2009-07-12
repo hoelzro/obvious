@@ -80,7 +80,7 @@ widget:buttons(awful.util.table.join(
             alarms = { }
             widget.bg = beautiful.bg_normal
         else
-            naughty.notify({ text = awful.util.pread("ddate"), width = 360 })
+            naughty.notify({ text = awful.util.pread("ddate") })
         end
     end)
 ))
