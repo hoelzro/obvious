@@ -11,6 +11,9 @@ local ipairs = ipairs
 local pairs = pairs
 local io = io
 local beautiful = require("beautiful")
+local lib = {
+        hooks = require("obvious.lib.hooks")
+}
 
 module("obvious.popup_run_prompt")
 
@@ -87,6 +90,19 @@ function set_default(s)
     })
 end
 
+function do_slide_up()
+    s = mouse.screen
+    startgeom = runwibox[s]:geometry()
+    runwibox[s]:geometry({
+        y = startgeom.y - settings.move_amount,
+    })
+    if runwibox[s]:geometry().y <= screen[s].geometry.y +
+            screen[s].geometry.height - startgeom.height then
+        set_default(mouse.screen)
+        lib.hooks.timer.stop(do_slide_up)
+    end
+end
+
 function show_wibox(s)
     local s = s or mouse.screen
 
@@ -97,22 +113,30 @@ function show_wibox(s)
         })
         runwibox[s].visible = true
 
-        f = function ()
-            startgeom = runwibox[s]:geometry()
-            runwibox[s]:geometry({
-                y = startgeom.y - settings.move_amount,
-            })
-            if runwibox[s]:geometry().y <= screen[s].geometry.y +
-                    screen[s].geometry.height - startgeom.height then
-                set_default(mouse.screen)
-                awful.hooks.timer.unregister(f)
-            end
+        if lib.hooks.timer.has(do_slide_up) then
+                lib.hooks.timer.start(do_slide_up)
+        else
+                lib.hooks.timer.register(settings.move_speed,
+                                         settings.move_speed*3,
+                                         do_slide_up,
+                                         "popup_run_prompt slide up")
         end
-
-        awful.hooks.timer.register(settings.move_speed, f)
     else
         set_default(s)
         runwibox[s].visible = true
+    end
+end
+
+function do_slide_down()
+    s = mouse.screen
+    startgeom = runwibox[s]:geometry()
+    runwibox[s]:geometry({
+        y = startgeom.y + settings.move_amount,
+    })
+    if runwibox[s]:geometry().y >= screen[s].geometry.y +
+            screen[s].geometry.height then
+        runwibox[s].visible = false
+        lib.hooks.timer.stop(do_slide_down)
     end
 end
 
@@ -123,19 +147,14 @@ function hide_wibox(s)
         runwibox[s].visible = true
         set_default(s)
 
-        f = function ()
-            startgeom = runwibox[s]:geometry()
-            runwibox[s]:geometry({
-                y = startgeom.y + settings.move_amount,
-            })
-            if runwibox[s]:geometry().y >= screen[s].geometry.y +
-                    screen[s].geometry.height then
-                runwibox[s].visible = false
-                awful.hooks.timer.unregister(f)
-            end
+        if lib.hooks.timer.has(do_slide_down) then
+                lib.hooks.timer.start(do_slide_down)
+        else
+                lib.hooks.timer.register(settings.move_speed,
+                                         settings.move_speed*3,
+                                         do_slide_down,
+                                         "popup_run_prompt slide down")
         end
-
-        awful.hooks.timer.register(settings.move_speed, f)
     else
         set_default(s)
         runwibox[s].visible = false
