@@ -79,7 +79,7 @@ end
 
 local function detail ()
     local fd = io.popen("acpi -bta")
-    local d = fd:read("*all")
+    local d = fd:read("*all"):gsub("(\n$", "")
     fd:close()
     naughty.notify({
         text = d,
