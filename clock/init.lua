@@ -65,7 +65,7 @@ local widget = capi.widget({
         align = "right"
     })
 
-widget:buttons(awful.util.table.join(
+widget.buttons = awful.util.table.join(
     awful.button({ }, 3, function ()
         menu:toggle()
     end), 
@@ -83,7 +83,7 @@ widget:buttons(awful.util.table.join(
             naughty.notify({ text = awful.util.pread("ddate"):gsub("\n$", "") })
         end
     end)
-))
+)
 
 local function read_alarms(file)
     local rv = { }

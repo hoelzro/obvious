@@ -84,11 +84,11 @@ function setchannel(c)
     channel = c
 end
 
-widget:buttons(awful.util.table.join(
+widget.buttons = awful.util.table.join(
     awful.button({ }, 4, function () raise() end),
     awful.button({ }, 5, function () lower() end),
     awful.button({ }, 1, function () mute() end)
-))
+)
 
 update()
 awful.hooks.timer.register(10, update)
