@@ -13,12 +13,12 @@ local registry = {}
 timer = {}
 
 -- Register a timer just as you would with awful.hooks.timer.register, but
--- with one slight twist: you set your regular speed, (optionally) your slow
+-- with one slight twist: you set your regular speed, your slow
 -- speed, and then your function.
 -- @param reg_time Regular speed for the widget
--- @param slow_time Slow time for the widget
+-- @param slow_time (Optional) Slow time for the widget
 -- @param fn The function that the timer should call
--- @param descr The description of this function
+-- @param descr (Optional) The description of this function
 function timer.register(reg_time, slow_time, fn, descr)
     if not slow_time then slow_time = reg_time * 4 end
     registry[fn] = {
@@ -32,18 +32,18 @@ function timer.register(reg_time, slow_time, fn, descr)
 end
 
 -- Unregister the timer altogether
--- Maybe you should just turn it to zero with timer.stop()?
+-- Note: It's possible to pause the timer with timer.stop() instead.
 -- @param fn The function you want to unregister.
 function timer.unregister(fn)
     registry[fn] = nil
     awful.hooks.timer.unregister(fn)
 end
 
--- Generic "let timer run at foo speed" function
+-- Switch timers between "slow" and "regular" speeds.
 -- @param speed The speed at which you want the function(s) to run: one of
 -- "regular" or "slow"
--- @param fn (Optional) Function that you want to set to foo speed. If you
--- do not supply this argument, the system sets all timers to foo speed.
+-- @param fn (Optional) Function that you want to set to some speed. If not
+-- not specified, set all timers to the given speed.
 function timer.set_speed(speed, fn)
     if fn then
         registry[fn].speed = speed
@@ -58,15 +58,7 @@ function timer.set_speed(speed, fn)
         end
     else
         for key, value in pairs(registry) do
-            registry[key].speed = speed
-            if registry[key].running then
-                awful.hooks.timer.unregister(key)
-                if speed == "regular" then
-                    awful.hooks.timer.register(registry[key].regular, key)
-                elseif speed == "slow" then
-                    awful.hooks.timer.register(registry[key].slow, key)
-                end
-            end
+            timer.set_speed(speed, key)
         end
     end
 end
@@ -85,6 +77,7 @@ function timer.set_speeds(reg_time, slow_time, fn)
     timer.set_speed(registry[fn].speed, fn)
 end
 
+-- Returns the speeds for the timer(s).
 -- @param fn (Optional) Function that you want to know the data for. If not
 -- specified, this returns a table of all registered timers with their data.
 -- @return A table with the regular speed, the slow speed, the currently used
