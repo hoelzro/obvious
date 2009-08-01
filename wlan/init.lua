@@ -32,10 +32,7 @@ function get_data()
     local fd = io.open("/proc/net/wireless")
     if not fd then return end
 
-    while true do
-        local line = fd:read("*l")
-        if not line then break end
-
+    for line in fd:lines() do
         if line:match("^ "..device) then
             rv.link = tonumber(line:match("   (%d?%d?%d)"))
             break
