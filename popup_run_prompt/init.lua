@@ -79,7 +79,6 @@ function ensure_init()
 end
 
 function set_default(s)
-    local s = s or mouse.screen
     runwibox[s]:geometry({
             width = screen[s].geometry.width * settings.width,
             height = settings.height,
@@ -92,6 +91,7 @@ end
 
 function do_slide_up()
     s = mouse.screen
+    runwibox.screen = s
     startgeom = runwibox[s]:geometry()
     runwibox[s]:geometry({
         y = startgeom.y - settings.move_amount,
@@ -104,8 +104,6 @@ function do_slide_up()
 end
 
 function show_wibox(s)
-    local s = s or mouse.screen
-
     if settings.slide == true then
         startgeom = runwibox[s]:geometry()
         runwibox[s]:geometry({
@@ -128,7 +126,7 @@ function show_wibox(s)
 end
 
 function do_slide_down()
-    s = mouse.screen
+    local s = runwibox.screen
     startgeom = runwibox[s]:geometry()
     runwibox[s]:geometry({
         y = startgeom.y + settings.move_amount,
@@ -140,8 +138,8 @@ function do_slide_down()
     end
 end
 
-function hide_wibox(s)
-    local s = s or mouse.screen
+function hide_wibox()
+    local s = runwibox.screen
 
     if settings.slide == true then
         runwibox[s].visible = true
@@ -162,7 +160,7 @@ function hide_wibox(s)
 end
 
 function run_prompt_callback()
-    hide_wibox(mouse.screen)
+    hide_wibox()
 end
 
 function run_prompt()
