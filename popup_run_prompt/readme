@@ -25,6 +25,10 @@ Settings available:
    when the wibox is sliding up/down.
  - set_move_amount: number (in pixels): how many pixels the wibox moves per
    step (set by move_speed)
+ - run_function: function: this function gets the input data as its argument,
+   default is awful.util.spawn
+ - completion_function: function: this function is used for completion,
+   default is awful.completion.shell
 
 To set one of these settings, simply do something like:
     obvious.popup_run_prompt.set_opacity(0.7)

@@ -32,6 +32,10 @@ defaults.border_width = 1
 defaults.move_speed = 0.02
 -- When sliding, it'll move this many pixels per move
 defaults.move_amount = 3
+-- Default run function
+defaults.run_function = awful.util.spawn
+-- Default completion function
+defaults.completion_function = awful.completion.shell,
 
 -- Clone the defaults for the used settings
 settings = {}
@@ -169,8 +173,8 @@ function run_prompt()
 
     awful.prompt.run({ prompt = settings.prompt_string },
             mypromptbox[mouse.screen],
-            awful.util.spawn,
-            awful.completion.shell,
+            settings.run_function,
+            settings.completion_function,
             awful.util.getdir("cache") .. "/history",
             100,
             run_prompt_callback
@@ -212,6 +216,14 @@ end
 
 function set_move_amount(amount)
     settings.move_amount = amount or defaults.move_amount
+end
+
+function set_run_function(fn)
+    settings.run_function = fn or defaults.run_function
+end
+
+function set_completion_function(fn)
+    settings.completion_function = fn or defaults.completion_function
 end
 
 function update_settings()
