@@ -29,6 +29,7 @@ local capi = {
 local awful = require("awful")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
+local lib = require("obvious.lib")
 
 module("obvious.clock")
 
@@ -106,6 +107,9 @@ local function read_alarms(file)
 end
 
 local function update (trigger_alarms)
+    if trigger_alarms == nil then
+        trigger_alarms = true
+    end
     local date
     if fulldate then
         if type(settings.longtimeformat) == "string" then
@@ -128,13 +132,13 @@ local function update (trigger_alarms)
     end
 
     if #alarms > 0 then
-        date = "<span color='" .. beautiful.fg_focus .. "'>"..date.."</span>"
+        date = lib.util.colour(beautiful.fg_focus, date)
         widget.bg = beautiful.bg_focus
     else
         widget.bg = beautiful.bg_normal
     end
 
-    widget.text = "<span color=\"#009000\">⚙</span> " .. date
+    widget.text = lib.util.colour("#009000", "⚙ ") .. date
 
     if trigger_alarms then
         local data = read_alarms(alarmfile)
@@ -184,9 +188,10 @@ function set_shortformat(strOrFn)
 end
 
 setmetatable(_M, { __call = function () 
-    update(true)
+    update()
     if not initialized then
-        awful.hooks.timer.register(60, function() update(true) end)
+        lib.hooks.timer.register(60, 120, update)
+        lib.hooks.timer.start(update)
 
         menu = awful.menu.new({
             id = "clock",
