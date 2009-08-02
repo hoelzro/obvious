@@ -17,6 +17,8 @@ local capi = {
 }
 
 local awful = require("awful")
+local lib = require("obvious.lib")
+
 module("obvious.wlan")
 
 widget = capi.widget({
@@ -53,10 +55,11 @@ local function update()
     elseif status.link <= 10 then
         color = "#900000"
     end
-    widget.text = "<span color=\"" .. color .. "\">☢</span> " .. string.format("%03d%%", status.link)
+    widget.text = lib.util.colour(color,"☢") .. string.format(" %03d%%", status.link)
 end
 update()
-awful.hooks.timer.register(10, update)
+lib.hooks.timer.register(10, 60, update)
+lib.hooks.timer.start(update)
 
 function set_device(dev)
     device = dev
