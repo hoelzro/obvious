@@ -16,6 +16,7 @@ local capi = {
 
 local naughty = require("naughty")
 local awful = require("awful")
+local lib = require("obvious.lib")
 
 module("obvious.battery")
 
@@ -68,7 +69,7 @@ local function update()
     end
     state = status[state]
 
-    battery_status = "<span color=\"" .. color .. "\">"..state.."</span> " .. awful.util.escape(tostring(bat.charge)) .. "%"
+    battery_status = lib.util.colour(color, state) .. " " .. awful.util.escape(tostring(bat.charge)) .. "%"
 
     if bat.time then
         battery_status = battery_status .. " " .. awful.util.escape(bat.time)
@@ -92,6 +93,7 @@ widget.buttons = awful.util.table.join(
     awful.button({ }, 1, detail)
 )
 update()
-awful.hooks.timer.register(60, update)
+lib.hooks.timer.register(60, 300, update)
+lib.hooks.timer.start(update)
 
 setmetatable(_M, { __call = function () return widget end })
