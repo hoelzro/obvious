@@ -35,7 +35,7 @@ defaults.move_amount = 3
 -- Default run function
 defaults.run_function = awful.util.spawn
 -- Default completion function
-defaults.completion_function = awful.completion.shell,
+defaults.completion_function = awful.completion.shell
 
 -- Clone the defaults for the used settings
 settings = {}
@@ -94,7 +94,7 @@ function set_default(s)
 end
 
 function do_slide_up()
-    s = mouse.screen
+    local s = mouse.screen
     runwibox.screen = s
     startgeom = runwibox[s]:geometry()
     runwibox[s]:geometry({
@@ -102,7 +102,7 @@ function do_slide_up()
     })
     if runwibox[s]:geometry().y <= screen[s].geometry.y +
             screen[s].geometry.height - startgeom.height then
-        set_default(mouse.screen)
+        set_default(s)
         lib.hooks.timer.stop(do_slide_up)
     end
 end
@@ -143,7 +143,7 @@ function do_slide_down()
 end
 
 function hide_wibox()
-    local s = runwibox.screen
+    local s = runwibox.screen or mouse.screen
 
     if settings.slide == true then
         runwibox[s].visible = true
