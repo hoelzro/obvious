@@ -17,6 +17,7 @@ local capi = {
     widget = widget,
 }
 local awful = require("awful")
+local lib = require("obvious.lib")
 
 module("obvious.volume_alsa")
 
@@ -56,7 +57,7 @@ local function update()
     if not status.mute then
         color = "#009000"
     end
-    widget.text = "<span color=\"" .. color .. "\">☊</span> " .. string.format("%03d%%", status.volume)
+    widget.text = lib.util.colour(color, "☊") .. string.format(" %03d%%", status.volume)
 end
 
 function raise(v)
@@ -91,6 +92,7 @@ widget.buttons = awful.util.table.join(
 )
 
 update()
-awful.hooks.timer.register(10, update)
+lib.hooks.timer.register(10, 30, update, "Update for the volume widget")
+lib.hooks.timer.start(update)
 
 setmetatable(_M, { __call = function () return widget end })
