@@ -45,9 +45,11 @@ local function format_metadata(songinfo)
         end
 
         used_keys = {}
+        local start, stop
         start = 1
         stop = 1
         while start do
+                local key
                 start, stop = string.find(format, "%$%w+", stop)
                 key = string.match(format, "%$(%w+)", stop)
                 if key then
