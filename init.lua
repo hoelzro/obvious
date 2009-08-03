@@ -8,6 +8,7 @@ require("obvious.clock")
 require("obvious.battery")
 require("obvious.volume_alsa")
 require("obvious.wlan")
+require("obvious.wlan.bar")
 require("obvious.popup_run_prompt")
 require("obvious.basic_mpd")
 
