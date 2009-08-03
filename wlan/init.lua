@@ -4,11 +4,7 @@
 --------------------------------
 
 local setmetatable = setmetatable
-local tonumber = tonumber
 
-local io = {
-    open = io.open
-}
 local string = {
     format = string.format
 }
@@ -28,34 +24,16 @@ widget = capi.widget({
 })
 device = "wlan0"
 
-function get_data()
-    local rv = { }
-
-    local fd = io.open("/proc/net/wireless")
-    if not fd then return end
-
-    for line in fd:lines() do
-        if line:match("^ "..device) then
-            rv.link = tonumber(line:match("   (%d?%d?%d)"))
-            break
-        end
-    end
-    fd:close()
-    if not rv.link then return end
-
-    return rv
-end
-
 local function update()
-    local status = get_data()
+    local link = lib.wlan(device)
 
     local color = "#009000"
-    if status.link < 50 and status.link > 10 then
+    if link < 50 and link > 10 then
         color = "#909000"
-    elseif status.link <= 10 then
+    elseif link <= 10 then
         color = "#900000"
     end
-    widget.text = lib.util.colour(color,"☢") .. string.format(" %03d%%", status.link)
+    widget.text = lib.util.colour(color,"☢") .. string.format(" %03d%%", link)
 end
 update()
 lib.hooks.timer.register(10, 60, update)
