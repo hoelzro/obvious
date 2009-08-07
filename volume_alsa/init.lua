@@ -51,7 +51,7 @@ function get_data()
 end
 
 local function update()
-    local status = get_data()
+    local status = get_data() or { mute = true, volume = 0 }
 
     local color = "#900000"
     if not status.mute then
