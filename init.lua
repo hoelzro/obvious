@@ -5,6 +5,7 @@
 
 require("obvious.lib")
 require("obvious.clock")
+require("obvious.cpu")
 require("obvious.battery")
 require("obvious.volume_alsa")
 require("obvious.wlan")
