@@ -3,6 +3,7 @@
 -- Copyright 2009 Uli Schlachter --
 -----------------------------------
 
+require("obvious.lib.widget.graph")
 require("obvious.lib.widget.progressbar")
 
 module("obvious.lib.widget")
