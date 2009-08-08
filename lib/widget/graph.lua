@@ -29,6 +29,24 @@ function graph(layout, scale)
     return widget
 end
 
+function create(data, layout)
+    local scale = true
+    if data.max then
+        scale = false
+    end
+
+    local widget = graph(layout, scale)
+
+    widget.update = function(widget)
+        local max = widget.data.max or 1
+        local val = widget.data:get() or max
+        widget:add_value(val / max)
+    end
+
+    widget.data = data
+
+    return widget
+end
 
 setmetatable(_M, { __call = function (_, ...) return graph(...) end })
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:encoding=utf-8:textwidth=80
