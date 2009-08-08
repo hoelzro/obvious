@@ -5,6 +5,7 @@
 
 require("obvious.lib.widget.graph")
 require("obvious.lib.widget.progressbar")
+require("obvious.lib.widget.textbox")
 
 local setmetatable = setmetatable
 local getmetatable = getmetatable
