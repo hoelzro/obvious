@@ -3,45 +3,46 @@
 -- Copyright 2009 Gregor Best --
 --------------------------------
 
-local setmetatable = setmetatable
-
 local string = {
     format = string.format
 }
-local capi = {
-    widget = widget
+local setmetatable = setmetatable
+local lib = {
+    widget = require("obvious.lib.widget"),
+    util   = require("obvious.lib.util"),
+    wlan   = require("obvious.lib.wlan")
 }
-
-local awful = require("awful")
-local lib = require("obvious.lib")
 
 module("obvious.wlan")
 
-widget = capi.widget({
-    type = "textbox",
-    name = "tb_wlan",
-    align = "right"
-})
-device = "wlan0"
-
-local function update()
-    local link = lib.wlan(device)
-
+local function format(link)
     local color = "#009000"
     if link < 50 and link > 10 then
         color = "#909000"
     elseif link <= 10 then
         color = "#900000"
     end
-    widget.text = lib.util.colour(color,"☢") .. string.format(" %03d%%", link)
-end
-update()
-lib.hooks.timer.register(10, 60, update)
-lib.hooks.timer.start(update)
-
-function set_device(dev)
-    device = dev
-    update()
+    return lib.util.colour(color,"☢") .. string.format(" %03d%%", link)
 end
 
-setmetatable(_M, { __call = function () return widget end })
+local function get_data_source(device)
+    local device = device or "wlan0"
+    local data = {}
+
+    data.device = device
+    data.max = 100
+    data.get = function (obj)
+        return lib.wlan(obj.device)
+    end
+
+    local ret = lib.widget.from_data_source(data)
+    -- Due to historic reasons, this widget defaults to a textbox with
+    -- a "special" format.
+    ret:set_type("textbox")
+    ret:set_format(format)
+
+    return ret
+end
+
+setmetatable(_M, { __call = function (_, ...) return get_data_source(...) end })
+-- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:encoding=utf-8:textwidth=80

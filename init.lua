@@ -15,6 +15,5 @@ require("obvious.net")
 require("obvious.popup_run_prompt")
 require("obvious.volume_alsa")
 require("obvious.wlan")
-require("obvious.wlan.bar")
 
 module("obvious")
