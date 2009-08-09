@@ -4,9 +4,9 @@
 ------------------------------------------
 
 require("obvious.lib.hooks")
-require("obvious.lib.util")
-require("obvious.lib.widget")
+require("obvious.lib.markup")
 require("obvious.lib.mpd")
+require("obvious.lib.widget")
 require("obvious.lib.wlan")
 
 module("obvious.lib")

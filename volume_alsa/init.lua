@@ -57,7 +57,7 @@ local function update()
     if not status.mute then
         color = "#009000"
     end
-    widget.text = lib.util.colour(color, "☊") .. string.format(" %03d%%", status.volume)
+    widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
 end
 
 function raise(v)
