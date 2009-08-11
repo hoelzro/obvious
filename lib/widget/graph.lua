@@ -13,9 +13,9 @@ module("obvious.lib.widget.graph")
 
 function graph(layout, scale)
     local theme = beautiful.get()
-    local color = theme.progressbar_fg_color or theme.widget_fg_color or theme.fg_normal
-    local back  = theme.progressbar_bg_color or theme.widget_bg_color or theme.bg_normal
-    local border= theme.progressbar_border or theme.widget_border or theme.border_normal
+    local color = theme.graph_fg_color or theme.widget_fg_color or theme.fg_normal
+    local back  = theme.graph_bg_color or theme.widget_bg_color or theme.bg_normal
+    local border= theme.graph_border or theme.widget_border or theme.border_normal
 
     local widget = awful.widget.graph({ layout = layout })
     widget:set_color(color)
