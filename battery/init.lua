@@ -89,9 +89,9 @@ local function detail ()
     update()
 end
 
-widget.buttons = awful.util.table.join(
+widget:buttons(awful.util.table.join(
     awful.button({ }, 1, detail)
-)
+))
 update()
 lib.hooks.timer.register(60, 300, update)
 lib.hooks.timer.start(update)
