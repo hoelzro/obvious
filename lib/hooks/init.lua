@@ -4,8 +4,8 @@
 ------------------------------------------
 -- Awful Timer Wrapper With Speed Controls
 
-local awful = require("awful")
 local pairs = pairs
+local capi = { timer = timer }
 
 module("obvious.lib.hooks")
 
@@ -25,9 +25,12 @@ function timer.register(reg_time, slow_time, fn, descr)
         regular=reg_time,
         slow=slow_time,
         speed="regular",
-        running=true,
-        description=descr or "Undescribed timer"
+        description=descr or "Undescribed timer",
+        timer=capi.timer({ timeout = 600 })
     }
+    registry[fn].timer:add_signal("timeout", fn)
+    -- set_speed() will :stop() again and start with the real timeout
+    registry[fn].timer:start()
     timer.set_speed(registry[fn].speed, fn)
 end
 
@@ -35,8 +38,10 @@ end
 -- Note: It's possible to pause the timer with timer.stop() instead.
 -- @param fn The function you want to unregister.
 function timer.unregister(fn)
+    if registry[fn].timer.started then
+        registry[fn].timer:stop()
+    end
     registry[fn] = nil
-    awful.hooks.timer.unregister(fn)
 end
 
 -- Switch timers between "slow" and "regular" speeds.
@@ -46,15 +51,21 @@ end
 -- not specified, set all timers to the given speed.
 function timer.set_speed(speed, fn)
     if fn then
-        registry[fn].speed = speed
-        if not registry[fn].running then
+        local obj = registry[fn]
+        obj.speed = speed
+        if not registry[fn].timer.started then
             return
         end
-        awful.hooks.timer.unregister(fn)
+        obj.timer:stop()
+        local timeout = nil
         if speed == "regular" then
-            awful.hooks.timer.register(registry[fn].regular, fn)
+            timeout = obj.regular
         elseif speed == "slow" then
-            awful.hooks.timer.register(registry[fn].slow, fn)
+            timeout = obj.slow
+        end
+        if timeout then
+            obj.timer.timeout = timeout
+            obj.timer:start()
         end
     else
         for key, value in pairs(registry) do
@@ -72,7 +83,7 @@ function timer.set_speeds(reg_time, slow_time, fn)
         regular=reg_time,
         slow=slow_time,
         speed=registry[fn].speed,
-        running=registry[fn].running,
+        timer=registry[fn].timer,
     }
     timer.set_speed(registry[fn].speed, fn)
 end
@@ -107,12 +118,10 @@ end
 -- this pauses all registered timers.
 function timer.stop(fn)
     if fn then
-        registry[fn].running = false
-        awful.hooks.timer.unregister(fn)
+        registry[fn].timer:stop()
     else
         for key, value in pairs(registry) do
-            registry[key].running = false
-            awful.hooks.timer.unregister(key)
+            registry[fn].timer:stop()
         end
     end
 end
@@ -122,11 +131,15 @@ end
 -- this starts all registered timers.
 function timer.start(fn)
     if fn then
-        registry[fn].running = true
+        if not registry[fn].timer.started then
+            registry[fn].timer:start()
+        end
         timer.set_speed(registry[fn].speed, fn)
     else
         for key, value in pairs(registry) do
-            registry[key].running = true
+            if not registry[fn].timer.started then
+                registry[fn].timer:start()
+            end
             timer.set_speed(registry[key].speed, fn)
         end
     end
