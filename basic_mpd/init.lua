@@ -12,7 +12,7 @@ local awful = require("awful")
 local naughty = require("naughty")
 local lib = {
         mpd = require("obvious.lib.mpd"),
-        util = require("obvious.lib.util"),
+        markup = require("obvious.lib.markup"),
         hooks = require("obvious.lib.hooks"),
 }
 
@@ -104,7 +104,7 @@ function update()
 
         if not status.state then
                 now_playing = "Music Off"
-                now_playing = lib.util.colour("yellow", now_playing)
+                now_playing = lib.markup.fg.color("yellow", now_playing)
         elseif status.state == "stop" then
                 now_playing = "Music Stopped"
         else

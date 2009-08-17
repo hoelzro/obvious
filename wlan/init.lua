@@ -9,7 +9,7 @@ local string = {
 local setmetatable = setmetatable
 local lib = {
     widget = require("obvious.lib.widget"),
-    util   = require("obvious.lib.util"),
+    markup = require("obvious.lib.markup"),
     wlan   = require("obvious.lib.wlan")
 }
 
@@ -22,7 +22,7 @@ local function format(link)
     elseif link <= 10 then
         color = "#900000"
     end
-    return lib.util.colour(color,"☢") .. string.format(" %03d%%", link)
+    return lib.markup.fg.color(color,"☢") .. string.format(" %03d%%", link)
 end
 
 local function get_data_source(device)

@@ -69,7 +69,7 @@ local function update()
     end
     state = status[state]
 
-    battery_status = lib.util.colour(color, state) .. " " .. awful.util.escape(tostring(bat.charge)) .. "%"
+    battery_status = lib.markup.fg.color(color, state) .. " " .. awful.util.escape(tostring(bat.charge)) .. "%"
 
     if bat.time then
         battery_status = battery_status .. " " .. awful.util.escape(bat.time)

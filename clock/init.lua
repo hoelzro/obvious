@@ -132,13 +132,13 @@ local function update (trigger_alarms)
     end
 
     if #alarms > 0 then
-        date = lib.util.colour(beautiful.fg_focus, date)
+        date = lib.markup.fg.color(beautiful.fg_focus, date)
         widget.bg = beautiful.bg_focus
     else
         widget.bg = beautiful.bg_normal
     end
 
-    widget.text = lib.util.colour("#009000", "⚙ ") .. date
+    widget.text = lib.markup.fg.color("#009000", "⚙ ") .. date
 
     if trigger_alarms then
         local data = read_alarms(alarmfile)
