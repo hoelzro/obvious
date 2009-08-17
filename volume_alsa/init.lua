@@ -21,16 +21,7 @@ local lib = require("obvious.lib")
 
 module("obvious.volume_alsa")
 
-local cardid  = 0
-local channel = "Master"
-
-widget = capi.widget({
-    type  = "textbox",
-    name  = "tb_volume",
-    align = "right"
-})
-
-function get_data()
+function get_data(cardid, channel)
     local rv = { }
     local fd = io.popen("amixer -c " .. cardid .. " -- sget " .. channel)
     if not fd then return end
@@ -50,49 +41,64 @@ function get_data()
     return rv
 end
 
-local function update()
-    local status = get_data() or { mute = true, volume = 0 }
+local function update(obj)
+    local status = get_data(obj.cardid, obj.channel) or { mute = true, volume = 0 }
 
     local color = "#900000"
     if not status.mute then
         color = "#009000"
     end
-    widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
+    obj.widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
 end
 
-function raise(v)
+function raise(cardid, channel, v)
     v = v or 1
     awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "+", false)
-    update()
 end
 
-function lower(v)
+function lower(cardid, channel, v)
     v = v or 1
     awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "-", false)
-    update()
 end
 
-function mute()
+function mute(cardid, channel)
     awful.util.spawn("amixer -c " .. cardid .. " sset " .. channel .. " toggle > /dev/null", false)
-    update()
 end
 
-function setcardid(id)
-    cardid = id
+local function create(_, cardid, channel)
+    local cardid = cardid or 0
+    local channel = channel or "Master"
+
+    local obj = { cardid = cardid, channel = channel }
+
+    local widget = capi.widget({
+        type  = "textbox",
+        name  = "tb_volume",
+        align = "right"
+    })
+
+    obj.widget = widget
+    obj.update = function() update(obj) end
+
+    widget:buttons(awful.util.table.join(
+        awful.button({ }, 4, function () raise(obj.cardid, obj.channel, 1) obj.update() end),
+        awful.button({ }, 5, function () lower(obj.cardid, obj.channel, 1) obj.update() end),
+        awful.button({ }, 1, function () mute(obj.cardid, obj.channel)     obj.update() end)
+    ))
+
+    obj.set_layout  = function(obj, layout) obj.layout = layout                       return obj end
+    obj.set_cardid  = function(obj, id)     obj.cardid = id              obj.update() return obj end
+    obj.set_channel = function(obj, id)     obj.channel = id             obj.update() return obj end
+    obj.raise       = function(obj, v) raise(obj.cardid, obj.channel, v) obj.update() return obj end
+    obj.lower       = function(obj, v) lower(obj.cardid, obj.channel, v) obj.update() return obj end
+    obj.mute        = function(obj, v) mute(obj.cardid, obj.channel, v)  obj.update() return obj end
+
+    obj.update()
+    lib.hooks.timer.register(10, 30, obj.update, "Update for the volume widget")
+    lib.hooks.timer.start(obj.update)
+
+    return obj
 end
 
-function setchannel(c)
-    channel = c
-end
-
-widget:buttons(awful.util.table.join(
-    awful.button({ }, 4, function () raise() end),
-    awful.button({ }, 5, function () lower() end),
-    awful.button({ }, 1, function () mute() end)
-))
-
-update()
-lib.hooks.timer.register(10, 30, update, "Update for the volume widget")
-lib.hooks.timer.start(update)
-
-setmetatable(_M, { __call = function () return widget end })
+setmetatable(_M, { __call = create })
+-- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:encoding=utf-8:textwidth=80
