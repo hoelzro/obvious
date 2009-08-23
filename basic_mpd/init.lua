@@ -32,6 +32,8 @@ local widget = widget({ type = "textbox",
                         name = "mpd-playing",
                         align = "left" })
 
+local connection = lib.mpd.new()
+
 -- Utility function to handle the text for MPD
 -- @param songinfo: a table with fields "artist", "album", "title" in text
 -- @return formatted (settings.format) string to display on the widget. This
@@ -99,7 +101,7 @@ end
 
 -- Updates the widget's display
 function update()
-        local status = lib.mpd.send("status")
+        local status = connection:send("status")
         local now_playing, songstats
 
         if not status.state then
@@ -108,7 +110,7 @@ function update()
         elseif status.state == "stop" then
                 now_playing = "Music Stopped"
         else
-                songstats = lib.mpd.send("playlistid " .. status.songid)
+                songstats = connection:send("playlistid " .. status.songid)
                 format = settings.format or defaults.format
                 if type(format) == "string" then
                         now_playing = format_metadata(songstats)
