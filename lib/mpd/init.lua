@@ -104,7 +104,8 @@ function MPD:send(action)
 
     -- connect to MPD server if not already done.
     if not self.connected then
-        if not self.last_try or (os.time() - self.last_try) > self.retry then
+        local now = os.time();
+        if not self.last_try or (now - self.last_try) > self.retry then
             self.socket = socket.tcp()
             self.socket:settimeout(self.timeout, 't')
             self.last_try = os.time()
@@ -127,6 +128,9 @@ function MPD:send(action)
                     return rsp
                 end
             end
+        else
+            local retry_sec = self.retry - (now - self.last_try)
+            return { errormsg = string.format("retrying connection in %d sec", retry_sec) }
         end
     end
 
