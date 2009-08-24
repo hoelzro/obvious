@@ -163,15 +163,15 @@ local function update (trigger_alarms)
     end
 end
 
-widget.mouse_enter = function ()
+widget:add_signal("mouse::enter", function ()
     fulldate = true
     update(false)
-end
+end)
 
-widget.mouse_leave = function ()
+widget:add_signal("mouse::leave", function ()
     fulldate = false
     update(false)
-end
+end)
 
 function set_editor(e)
     settings.editor = e or defaults.editor
