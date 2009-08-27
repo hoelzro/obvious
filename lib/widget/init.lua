@@ -14,16 +14,19 @@ local type = type
 local lib = {
     hooks = require("obvious.lib.hooks")
 }
-local layout = {
-    horizontal = require("awful.widget.layout.horizontal")
-}
+local layout = require("awful.widget.layout.horizontal")
 
 module("obvious.lib.widget")
 
-defaults = {
-    margin = { left = 5 }
-    -- layout
-}
+
+local defaults = { }
+set_default_layout = function(lay)
+    defaults.layout = lay or layouts.leftright
+end
+
+set_default_margin = function(marg)
+    defaults.margin = marg or { left = 5 }
+end
 
 -- The functions each object from from_data_source will get
 local funcs = { }
@@ -36,7 +39,7 @@ funcs.set_type = function (obj, widget_type)
 
     local meta = getmetatable(obj)
 
-    local widget = widget_type.create(meta.data, obj.widget.layout)
+    local widget = widget_type.create(meta.data, defaults.layout)
     obj.widget = widget
     obj.update()
     obj:set_margin(defaults.margin)
@@ -100,7 +103,7 @@ function from_data_source(data)
     end
 
     -- Default layout is leftright, users can override this if they want to
-    ret:set_layout(layout.horizontal.leftright)
+    ret:set_layout(defaults.layout)
 
     setmetatable(ret, meta)
     return ret

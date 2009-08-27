@@ -4,9 +4,6 @@
 -----------------------------------
 
 local type = type
-local layout = {
-    horizontal = require("awful.widget.layout.horizontal")
-}
 local margins = awful.widget.layout.margins
 local capi = {
     widget = widget
@@ -23,7 +20,7 @@ function create(data, layout)
     obj.data = data
     obj.widget = capi.widget({ type = "textbox" })
     obj.format = "%3d%%"
-    obj.layout = layout or layout.horizontal.leftright
+    obj.layout = layout
 
     obj.update = function(obj)
         local max = obj.data.max or 1
