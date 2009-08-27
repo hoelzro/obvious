@@ -95,7 +95,6 @@ end
 
 function do_slide_up()
     local s = mouse.screen
-    runwibox.screen = s
     startgeom = runwibox[s]:geometry()
     runwibox[s]:geometry({
         y = startgeom.y - settings.move_amount,
@@ -108,6 +107,7 @@ function do_slide_up()
 end
 
 function show_wibox(s)
+    runwibox.screen = s
     if settings.slide == true then
         startgeom = runwibox[s]:geometry()
         runwibox[s]:geometry({
