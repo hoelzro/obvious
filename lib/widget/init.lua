@@ -20,6 +20,11 @@ local layout = {
 
 module("obvious.lib.widget")
 
+defaults = {
+    margin = { left = 5 }
+    -- layout
+}
+
 -- The functions each object from from_data_source will get
 local funcs = { }
 
@@ -34,6 +39,7 @@ funcs.set_type = function (obj, widget_type)
     local widget = widget_type.create(meta.data, obj.widget.layout)
     obj.widget = widget
     obj.update()
+    obj:set_margin(defaults.margin)
 
     return obj
 end
@@ -41,6 +47,12 @@ end
 funcs.set_layout = function (obj, layout)
     obj.widget.layout = layout
     obj.layout = layout
+    obj:set_margin(defaults.margin)
+    return obj
+end
+
+funcs.set_margin = function (obj, margin)
+    obj.widget:set_margin(margin)
     return obj
 end
 

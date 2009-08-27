@@ -7,6 +7,7 @@ local type = type
 local layout = {
     horizontal = require("awful.widget.layout.horizontal")
 }
+local margins = awful.widget.layout.margins
 local capi = {
     widget = widget
 }
@@ -38,6 +39,11 @@ function create(data, layout)
     obj.set_format = function(obj, format)
         obj.format = format
         obj:update()
+        return obj
+    end
+
+    obj.set_margin = function(obj, margin)
+        margins[obj.widget] = margin
         return obj
     end
 
