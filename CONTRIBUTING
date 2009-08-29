@@ -80,10 +80,6 @@ obvious.module.set_something(foo)
 
 And that should be all it takes for the user.
 
--> Your readme
-
-Your "readme" is the explanation for the user. As such, it has a rough layout:
-
 -> Your data
 
 If the widget gathers nontrivial data (i.e. wlan signal strength, battery charge,
@@ -93,6 +89,10 @@ with the collected data otherwise. This is so other people can build on your wor
 (the true spirit of open source, right? :P) and create different ways of visualizing
 the data gathered by your widget without duplicating code (which is why your widget
 should also use the get_data() function).
+
+-> Your readme
+
+Your "readme" is the explanation for the user. As such, it has a rough layout:
 
 -------------------------------------------------------------------------------
 Widget Name
