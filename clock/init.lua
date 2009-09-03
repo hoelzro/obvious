@@ -38,6 +38,8 @@ local defaults = { }
 defaults.shorttimeformat = "%T"
 defaults.longtimeformat = "%T %D"
 defaults.editor = nil
+defaults.shorttimer =  60
+defaults.longtimer =  120
 local settings = { }
 for key, value in pairs(defaults) do
     settings[key] = value
@@ -187,10 +189,18 @@ function set_shortformat(strOrFn)
     update(false)
 end
 
+function set_shorttimer(delay)
+    settings.shorttimer = delay or defaults.shorttimer
+end
+
+function set_longtimer(delay)
+    settings.longtimer = delay or defaults.longtimer
+end
+
 setmetatable(_M, { __call = function () 
     update()
     if not initialized then
-        lib.hooks.timer.register(60, 120, update)
+        lib.hooks.timer.register(settings.shorttimer, settings.longtimer, update)
         lib.hooks.timer.start(update)
 
         menu = awful.menu.new({
