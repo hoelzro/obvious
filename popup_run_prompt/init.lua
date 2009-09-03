@@ -36,6 +36,9 @@ defaults.move_amount = 3
 defaults.run_function = awful.util.spawn
 -- Default completion function
 defaults.completion_function = awful.completion.shell
+-- Default cache
+defaults.cache = "/history"
+
 
 -- Clone the defaults for the used settings
 settings = {}
@@ -175,7 +178,7 @@ function run_prompt()
             mypromptbox[mouse.screen],
             settings.run_function,
             settings.completion_function,
-            awful.util.getdir("cache") .. "/history",
+            awful.util.getdir("cache") .. settings.cache,
             100,
             run_prompt_callback
     )
@@ -233,3 +236,8 @@ function update_settings()
         runwibox[s].opacity = settings.opacity
     end
 end
+
+function set_cache(c)
+    settings.cache = c or defaults.cache
+end
+
