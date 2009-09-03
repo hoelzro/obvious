@@ -5,6 +5,7 @@
 
 local setmetatable = setmetatable
 local tonumber = tonumber
+local pairs = pairs
 local io = {
     popen = io.popen
 }
@@ -20,6 +21,18 @@ local awful = require("awful")
 local lib = require("obvious.lib")
 
 module("obvious.volume_alsa")
+
+local defaults = {}
+defaults.term = "x-terminal-emulator -T Mixer"
+
+local settings = {}
+for key, value in pairs(defaults) do
+    settings[key] = value
+end
+
+function set_term(t)
+    settings.term = e or defaults.term
+end
 
 function get_data(cardid, channel)
     local rv = { }
@@ -65,6 +78,10 @@ function mute(cardid, channel)
     awful.util.spawn("amixer -c " .. cardid .. " sset " .. channel .. " toggle > /dev/null", false)
 end
 
+function mixer(cardid)
+    awful.util.spawn(settings.term .. " -e 'alsamixer -c " .. cardid .. "'")
+end
+
 local function create(_, cardid, channel)
     local cardid = cardid or 0
     local channel = channel or "Master"
@@ -83,7 +100,8 @@ local function create(_, cardid, channel)
     widget:buttons(awful.util.table.join(
         awful.button({ }, 4, function () raise(obj.cardid, obj.channel, 1) obj.update() end),
         awful.button({ }, 5, function () lower(obj.cardid, obj.channel, 1) obj.update() end),
-        awful.button({ }, 1, function () mute(obj.cardid, obj.channel)     obj.update() end)
+        awful.button({ }, 1, function () mute(obj.cardid, obj.channel)     obj.update() end),
+        awful.button({ }, 3, function () mixer(obj.cardid)     obj.update() end)
     ))
 
     obj.set_layout  = function(obj, layout) obj.layout = layout                       return obj end
