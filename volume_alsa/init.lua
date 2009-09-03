@@ -22,18 +22,6 @@ local lib = require("obvious.lib")
 
 module("obvious.volume_alsa")
 
-local defaults = {}
-defaults.term = "x-terminal-emulator -T Mixer"
-
-local settings = {}
-for key, value in pairs(defaults) do
-    settings[key] = value
-end
-
-function set_term(t)
-    settings.term = e or defaults.term
-end
-
 function get_data(cardid, channel)
     local rv = { }
     local fd = io.popen("amixer -c " .. cardid .. " -- sget " .. channel)
@@ -78,15 +66,19 @@ function mute(cardid, channel)
     awful.util.spawn("amixer -c " .. cardid .. " sset " .. channel .. " toggle > /dev/null", false)
 end
 
-function mixer(cardid)
-    awful.util.spawn(settings.term .. " -e 'alsamixer -c " .. cardid .. "'")
+function mixer(term, cardid)
+    awful.util.spawn(term .. " -e 'alsamixer -c " .. cardid .. "'")
 end
 
 local function create(_, cardid, channel)
     local cardid = cardid or 0
     local channel = channel or "Master"
 
-    local obj = { cardid = cardid, channel = channel }
+    local obj = {
+        cardid = cardid,
+        channel = channel,
+        term = "x-terminal-emulator -T Mixer"
+    }
 
     local widget = capi.widget({
         type  = "textbox",
@@ -105,12 +97,13 @@ local function create(_, cardid, channel)
         awful.button({ "Control" }, 4, function () raise(obj.cardid, obj.channel, 5) obj.update() end),
         awful.button({ "Control" }, 5, function () lower(obj.cardid, obj.channel, 5) obj.update() end),
         awful.button({ }, 1, function () mute(obj.cardid, obj.channel)     obj.update() end),
-        awful.button({ }, 3, function () mixer(obj.cardid)     obj.update() end)
+        awful.button({ }, 3, function () mixer(obj.term, obj.cardid)       obj.update() end)
     ))
 
     obj.set_layout  = function(obj, layout) obj.layout = layout                       return obj end
     obj.set_cardid  = function(obj, id)     obj.cardid = id              obj.update() return obj end
     obj.set_channel = function(obj, id)     obj.channel = id             obj.update() return obj end
+    obj.set_term    = function(obj, term)   obj.term = term                           return obj end
     obj.raise       = function(obj, v) raise(obj.cardid, obj.channel, v) obj.update() return obj end
     obj.lower       = function(obj, v) lower(obj.cardid, obj.channel, v) obj.update() return obj end
     obj.mute        = function(obj, v) mute(obj.cardid, obj.channel, v)  obj.update() return obj end
