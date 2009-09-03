@@ -100,6 +100,10 @@ local function create(_, cardid, channel)
     widget:buttons(awful.util.table.join(
         awful.button({ }, 4, function () raise(obj.cardid, obj.channel, 1) obj.update() end),
         awful.button({ }, 5, function () lower(obj.cardid, obj.channel, 1) obj.update() end),
+        awful.button({ "Shift" }, 4, function () raise(obj.cardid, obj.channel, 10) obj.update() end),
+        awful.button({ "Shift" }, 5, function () lower(obj.cardid, obj.channel, 10) obj.update() end),
+        awful.button({ "Control" }, 4, function () raise(obj.cardid, obj.channel, 5) obj.update() end),
+        awful.button({ "Control" }, 5, function () lower(obj.cardid, obj.channel, 5) obj.update() end),
         awful.button({ }, 1, function () mute(obj.cardid, obj.channel)     obj.update() end),
         awful.button({ }, 3, function () mixer(obj.cardid)     obj.update() end)
     ))
