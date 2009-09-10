@@ -38,7 +38,8 @@ defaults.run_function = awful.util.spawn
 defaults.completion_function = awful.completion.shell
 -- Default cache
 defaults.cache = "/history"
-
+-- Default position
+defaults.position = "top"
 
 -- Clone the defaults for the used settings
 settings = {}
@@ -66,7 +67,7 @@ function ensure_init()
         })
 
         runwibox[s] = awful.wibox({
-                position = "float",
+                position = settings.position,
                 fg = beautiful.fg_normal,
                 bg = beautiful.bg_normal,
                 border_width = settings.border_width,
@@ -113,11 +114,15 @@ function show_wibox(s)
     runwibox.screen = s
     if settings.slide == true then
         startgeom = runwibox[s]:geometry()
+       -- changing visible property would reset wibox geometry to its defaults
+       -- Might be 0 if position is set to "top"
+       -- Thus the wibox has to be shown before setting its original slide up
+       -- position. As a side effect, the top bar might blink if position is set
+       -- to "top".
+        runwibox[s].visible = true
         runwibox[s]:geometry({
             y = screen[s].geometry.y + screen[s].geometry.height,
         })
-        runwibox[s].visible = true
-
         if lib.hooks.timer.has(do_slide_up) then
                 lib.hooks.timer.start(do_slide_up)
         else
@@ -227,6 +232,10 @@ end
 
 function set_completion_function(fn)
     settings.completion_function = fn or defaults.completion_function
+end
+
+function set_position(p)
+    settings.position = p
 end
 
 function update_settings()
