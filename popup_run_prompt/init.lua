@@ -14,6 +14,9 @@ local beautiful = require("beautiful")
 local lib = {
         hooks = require("obvious.lib.hooks")
 }
+local capi = {
+    wibox = wibox
+}
 
 module("obvious.popup_run_prompt")
 
@@ -66,17 +69,17 @@ function ensure_init()
                 align = "left"
         })
 
-        runwibox[s] = awful.wibox({
+        runwibox[s] = capi.wibox({
                 position = settings.position,
                 fg = beautiful.fg_normal,
                 bg = beautiful.bg_normal,
                 border_width = settings.border_width,
                 border_color = beautiful.bg_focus,
-                screen = s
         })
         set_default(s)
         runwibox[s].opacity = settings.opacity
         runwibox[s].visible = false
+        runwibox[s].screen = s
         runwibox[s].ontop = true
 
         -- Widgets for prompt wibox
