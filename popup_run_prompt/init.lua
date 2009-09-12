@@ -12,7 +12,7 @@ local pairs = pairs
 local io = io
 local beautiful = require("beautiful")
 local lib = {
-        hooks = require("obvious.lib.hooks")
+    hooks = require("obvious.lib.hooks")
 }
 local capi = {
     wibox = wibox
@@ -47,7 +47,7 @@ defaults.position = "top"
 -- Clone the defaults for the used settings
 settings = {}
 for key, value in pairs(defaults) do
-        settings[key] = value
+    settings[key] = value
 end
 
 runwibox = {}
@@ -58,23 +58,23 @@ inited = false
 -- this is still likely to work.
 function ensure_init()
     if inited then
-        return
+    return
     end
 
     inited = true
     for s = 1, screen.count() do
         mypromptbox[s] = widget({
-                type = "textbox",
-                name = "mypromptbox" .. s,
-                align = "left"
+            type = "textbox",
+            name = "mypromptbox" .. s,
+            align = "left"
         })
 
         runwibox[s] = capi.wibox({
-                position = settings.position,
-                fg = beautiful.fg_normal,
-                bg = beautiful.bg_normal,
-                border_width = settings.border_width,
-                border_color = beautiful.bg_focus,
+            position = settings.position,
+            fg = beautiful.fg_normal,
+            bg = beautiful.bg_normal,
+            border_width = settings.border_width,
+            border_color = beautiful.bg_focus,
         })
         set_default(s)
         runwibox[s].opacity = settings.opacity
@@ -84,19 +84,19 @@ function ensure_init()
 
         -- Widgets for prompt wibox
         runwibox[s].widgets = {
-                mypromptbox[s],
+            mypromptbox[s],
         }
     end
 end
 
 function set_default(s)
     runwibox[s]:geometry({
-            width = screen[s].geometry.width * settings.width,
-            height = settings.height,
-            x = screen[s].geometry.x + screen[s].geometry.width *
-                ((1 - settings.width) / 2),
-            y = screen[s].geometry.y + screen[s].geometry.height -
-                settings.height,
+        width = screen[s].geometry.width * settings.width,
+        height = settings.height,
+        x = screen[s].geometry.x + screen[s].geometry.width *
+            ((1 - settings.width) / 2),
+        y = screen[s].geometry.y + screen[s].geometry.height -
+            settings.height,
     })
 end
 
@@ -104,8 +104,9 @@ function do_slide_up()
     local s = mouse.screen
     startgeom = runwibox[s]:geometry()
     runwibox[s]:geometry({
-        y = startgeom.y - settings.move_amount,
+        y = startgeom.y - settings.move_amount
     })
+
     if runwibox[s]:geometry().y <= screen[s].geometry.y +
             screen[s].geometry.height - startgeom.height then
         set_default(s)
@@ -117,22 +118,22 @@ function show_wibox(s)
     runwibox.screen = s
     if settings.slide == true then
         startgeom = runwibox[s]:geometry()
-       -- changing visible property would reset wibox geometry to its defaults
-       -- Might be 0 if position is set to "top"
-       -- Thus the wibox has to be shown before setting its original slide up
-       -- position. As a side effect, the top bar might blink if position is set
-       -- to "top".
+        -- changing visible property would reset wibox geometry to its defaults
+        -- Might be 0 if position is set to "top"
+        -- Thus the wibox has to be shown before setting its original slide up
+        -- position. As a side effect, the top bar might blink if position is set
+        -- to "top".
         runwibox[s].visible = true
         runwibox[s]:geometry({
             y = screen[s].geometry.y + screen[s].geometry.height,
         })
         if lib.hooks.timer.has(do_slide_up) then
-                lib.hooks.timer.start(do_slide_up)
+            lib.hooks.timer.start(do_slide_up)
         else
-                lib.hooks.timer.register(settings.move_speed,
-                                         settings.move_speed*3,
-                                         do_slide_up,
-                                         "popup_run_prompt slide up")
+            lib.hooks.timer.register(settings.move_speed,
+                                     settings.move_speed*3,
+                                     do_slide_up,
+                                     "popup_run_prompt slide up")
         end
     else
         set_default(s)
@@ -146,6 +147,7 @@ function do_slide_down()
     runwibox[s]:geometry({
         y = startgeom.y + settings.move_amount,
     })
+
     if runwibox[s]:geometry().y >= screen[s].geometry.y +
             screen[s].geometry.height then
         runwibox[s].visible = false
@@ -161,12 +163,12 @@ function hide_wibox()
         set_default(s)
 
         if lib.hooks.timer.has(do_slide_down) then
-                lib.hooks.timer.start(do_slide_down)
+            lib.hooks.timer.start(do_slide_down)
         else
-                lib.hooks.timer.register(settings.move_speed,
-                                         settings.move_speed*3,
-                                         do_slide_down,
-                                         "popup_run_prompt slide down")
+            lib.hooks.timer.register(settings.move_speed,
+                                     settings.move_speed*3,
+                                     do_slide_down,
+                                     "popup_run_prompt slide down")
         end
     else
         set_default(s)
@@ -183,12 +185,12 @@ function run_prompt()
     show_wibox(mouse.screen)
 
     awful.prompt.run({ prompt = settings.prompt_string },
-            mypromptbox[mouse.screen],
-            settings.run_function,
-            settings.completion_function,
-            awful.util.getdir("cache") .. settings.cache,
-            100,
-            run_prompt_callback
+        mypromptbox[mouse.screen],
+        settings.run_function,
+        settings.completion_function,
+        awful.util.getdir("cache") .. settings.cache,
+        100,
+        run_prompt_callback
     )
 end
 
