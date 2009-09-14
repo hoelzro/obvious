@@ -39,6 +39,7 @@ function get_data()
     if not fd then return end
 
     local data = fd:read("*all"):match("Battery [0-9] *: ([^\n]*)")
+    fd:close()
     if not data then return end
 
     rv.state = data:match("([%a]*),.*"):lower()
