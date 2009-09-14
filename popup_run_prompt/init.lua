@@ -70,7 +70,6 @@ function ensure_init()
         })
 
         runwibox[s] = capi.wibox({
-            position = settings.position,
             fg = beautiful.fg_normal,
             bg = beautiful.bg_normal,
             border_width = settings.border_width,
