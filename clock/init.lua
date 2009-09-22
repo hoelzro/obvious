@@ -29,7 +29,10 @@ local capi = {
 local awful = require("awful")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
-local lib = require("obvious.lib")
+local lib = {
+    hooks = require("obvious.lib.hooks"),
+    markup = require("obvious.lib.markup")
+}
 
 module("obvious.clock")
 
