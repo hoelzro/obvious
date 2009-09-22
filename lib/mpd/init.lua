@@ -42,10 +42,8 @@
 -- SUCH DAMAGE.
 
 
-require("socket")
-
 -- Grab env
-local socket = socket
+local have_socket, socket = pcall(function() return require("socket") end)
 local string = string
 local tonumber = tonumber
 local setmetatable = setmetatable
@@ -101,6 +99,10 @@ end
 function MPD:send(action)
     local command = string.format("%s\n", action)
     local values = {}
+
+    if not have_socket then
+        return { errormsg = "could not require(\"socket\")" }
+    end
 
     -- connect to MPD server if not already done.
     if not self.connected then
