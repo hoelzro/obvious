@@ -33,6 +33,7 @@ function get_data(cardid, channel)
     if not rv.volume then return end
 
     status = string.match(status, "%[(o[^%]]*)%]")
+    if not status then status = "on" end
     if string.find(status, "on", 1, true) then
         rv.mute = false
     else
