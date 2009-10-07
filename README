@@ -1,0 +1,98 @@
+Readme for Obvious
+
+-- Widget data sources
+   -- cpu()
+      -- Widgets
+         -- textbox
+         -- graph
+         -- progressbar
+   -- fs_usage(path)
+      -- Widgets
+         -- textbox
+         -- graph
+         -- progressbar
+      -- Parameters
+         -- path
+            the mountpoint to watch, / by default
+   -- io(device)
+      -- Widgets
+         -- textbox
+         -- graph
+         -- progressbar
+      -- Parameters
+         -- device
+            the harddisk to monitor, sda by default
+   -- mem()
+      -- Widgets
+         -- textbox
+         -- graph
+         -- progressbar
+   -- net.send(device) / net.recv(device)
+      -- Widgets
+         -- textbox
+         -- graph
+         -- progressbar
+      -- Parameters
+         -- device
+            the network device to monitor
+   -- wlan(device)
+      -- Widgets
+         -- textbox
+         -- graph
+         -- progressbar
+      -- Parameters
+         -- device
+            the wlan device to monitor
+   -- basic_mpd()
+      -- Widgets
+         -- textbox
+      -- Functions
+         -- set_unknown(str)
+            sets the string to use for unknown metadata to str
+         -- set_length(length)
+            specifies the maximum width in characters the widget should have
+         -- set_format(format)
+            sets the format for the text display
+            if format is a string then the special values $title $album and
+            $artist are interpreted as expected. if format is a function, it
+            gets one parameter passed which is a table with the keys ["title"],
+            ["artist"] and ["album"] and it has to return a string which is
+            displayed
+   -- battery()
+      -- Widgets
+         -- textbox
+   -- clock()
+      -- Widgets
+         -- textbox
+
+-- Widget types
+   -- "textbox"
+      -- Functions
+         -- set_format()
+   -- "graph"
+      -- Functions
+         -- set_height()
+         -- set_width()
+         -- set_border_color()
+         -- set_gradient_colors()
+         -- set_gradient_angle()
+         -- set_color()
+         -- set_background_color()
+   -- "progressbar"
+      -- Functions
+         -- set_height()
+         -- set_width()
+         -- set_border_color()
+         -- set_gradient_colors()
+         -- set_color()
+         -- set_background_color()
+         -- set_vertical()
+   -- all
+      -- Functions
+         -- set_type()
+         -- set_layout()
+         -- set_margin()
+
+-- Global functions
+   -- set_default_margin()
+   -- set_default_layout()
