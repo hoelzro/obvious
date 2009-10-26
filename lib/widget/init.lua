@@ -44,6 +44,7 @@ funcs.set_type = function (obj, widget_type)
     obj.update()
     obj:set_margin(defaults.margin)
 
+    obj[1] = widget
     return obj
 end
 
@@ -69,6 +70,7 @@ function from_data_source(data)
     -- We default to graph since progressbars can't handle sources without an
     -- upper bound on their value
     ret.widget = _M.graph.create(data)
+    ret[1] = ret.widget
     ret.layout = nil
 
     ret.update = function()

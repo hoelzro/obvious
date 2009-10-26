@@ -91,6 +91,7 @@ local function create(_, cardid, channel)
     })
 
     obj.widget = widget
+    obj[1] = widget
     obj.update = function() update(obj) end
 
     widget:buttons(awful.util.table.join(
