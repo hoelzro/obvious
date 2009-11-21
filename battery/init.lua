@@ -36,20 +36,43 @@ status = {
     ["unknown"] = "⌁"
 }
 
-function get_data()
-    local rv = { }
-    local fd = io.popen("acpi -b")
-    if not fd then return end
+get_data = nil
 
-    local data = fd:read("*all"):match("Battery [0-9] *: ([^\n]*)")
-    fd:close()
-    if not data then return end
+local function init()
+    local fh = io.popen("acpi")
+    if fh then
+        get_data = function ()
+            local rv = { }
+            local fd = io.popen("acpi -b")
+            if not fd then return end
 
-    rv.state = data:match("([%a]*),.*"):lower()
-    rv.charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
-    rv.time = data:match(".*, ([%d]?[%d]?:?[%d][%d]:[%d][%d])")
+            local data = fd:read("*all"):match("Battery [0-9] *: ([^\n]*)")
+            fd:close()
+            if not data then return end
 
-    return rv
+            rv.state = data:match("([%a]*),.*"):lower()
+            rv.charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
+            rv.time = data:match(".*, ([%d]?[%d]?:?[%d][%d]:[%d][%d])")
+
+            return rv
+        end
+        fh:close()
+    else
+        get_data = function ()
+            local rv = { }
+            local fd = io.popen("apm")
+            if not fd then return end
+
+            local data = fd:read("*all")
+            if not data then return end
+
+            rv.state  = data:match("([%a%d-]),.*")
+            rv.charge = tonumber(data:match(".*, .*: (%d?%d?%d)%%"))
+            rv.time = data.match("%((.*)%)$")
+
+            return rv
+        end
+    end
 end
 
 local function update()
@@ -96,6 +119,7 @@ end
 widget:buttons(awful.util.table.join(
     awful.button({ }, 1, detail)
 ))
+init()
 update()
 lib.hooks.timer.register(60, 300, update)
 lib.hooks.timer.start(update)
