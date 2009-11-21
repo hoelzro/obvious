@@ -40,7 +40,8 @@ get_data = nil
 
 local function init()
     local fh = io.popen("acpi")
-    if fh then
+    local d = fh:read("*all")
+    if d then
         get_data = function ()
             local rv = { }
             local fd = io.popen("acpi -b")
