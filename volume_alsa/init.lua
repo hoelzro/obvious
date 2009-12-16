@@ -67,7 +67,7 @@ function lower(cardid, channel, v)
 end
 
 function mute(cardid, channel)
-    awful.util.spawn("amixer -c " .. cardid .. " sset " .. channel .. " toggle > /dev/null", false)
+    awful.util.spawn("amixer -c " .. cardid .. " sset " .. channel .. " toggle", false)
 end
 
 function mixer(term, cardid)
@@ -84,11 +84,7 @@ local function create(_, cardid, channel)
         term = "x-terminal-emulator -T Mixer"
     }
 
-    local widget = capi.widget({
-        type  = "textbox",
-        name  = "tb_volume",
-        align = "right"
-    })
+    local widget = capi.widget({ type  = "textbox" })
 
     obj.widget = widget
     obj[1] = widget
