@@ -25,6 +25,8 @@ local lib = {
 
 module("obvious.volume_alsa")
 
+local widget
+
 function get_data(cardid, channel)
     local rv = { }
     local fd = io.popen("amixer -c " .. cardid .. " -- sget " .. channel)
@@ -53,7 +55,7 @@ local function update(obj)
     if not status.mute then
         color = "#009000"
     end
-    obj.widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
+    widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
 end
 
 function raise(cardid, channel, v)
@@ -84,7 +86,9 @@ local function create(_, cardid, channel)
         term = "x-terminal-emulator -T Mixer"
     }
 
-    local widget = capi.widget({ type  = "textbox" })
+    if not widget then
+        widget = capi.widget({ type  = "textbox" })
+    end
 
     obj.widget = widget
     obj[1] = widget
