@@ -40,23 +40,22 @@ funcs.set_type = function (obj, widget_type)
     local meta = getmetatable(obj)
 
     local widget = widget_type.create(meta.data, defaults.layout)
-    obj.widget = widget
+    obj[1] = widget
     obj.update()
     obj:set_margin(defaults.margin)
 
-    obj[1] = widget
     return obj
 end
 
 funcs.set_layout = function (obj, layout)
-    obj.widget.layout = layout
+    obj[1].layout = layout
     obj.layout = layout
     obj:set_margin(defaults.margin)
     return obj
 end
 
 funcs.set_margin = function (obj, margin)
-    obj.widget:set_margin(margin)
+    obj[1]:set_margin(margin)
     return obj
 end
 
@@ -69,14 +68,13 @@ function from_data_source(data)
 
     -- We default to graph since progressbars can't handle sources without an
     -- upper bound on their value
-    ret.widget = _M.graph.create(data)
-    ret[1] = ret.widget
+    ret[1] = _M.graph.create(data)
     ret.layout = nil
 
     ret.update = function()
-        -- because this uses ret, if ret.widget is changed this automatically
+        -- because this uses ret, if ret[1] is changed this automatically
         -- picks up the new widget
-        ret.widget:update()
+        ret[1]:update()
     end
 
     -- Fire up the timer which keeps this widget up-to-date
@@ -90,12 +88,12 @@ function from_data_source(data)
 
     -- This is called when an unexesting key is accessed
     meta.__index = function (obj, key)
-        local ret = obj.widget[key]
+        local ret = obj[1][key]
         if key ~= "layout" and type(ret) == "function" then
             -- Ugly hack: this function wants to be called on the right object
             return function(_, ...)
                 -- Ugly hack: this function wants to be called on the right object
-                ret(obj.widget, ...)
+                ret(obj[1], ...)
                 -- Ugly hack 2: We force obj to be returned again and discard
                 -- the function's return value
                 return obj
