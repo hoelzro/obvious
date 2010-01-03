@@ -1,14 +1,7 @@
-<<<<<<< HEAD
------------------------------------
--- Author: Marco Candrian        --
--- Copyright 2010 Marco Candrian --
------------------------------------
-=======
 ------------------------------------
 -- Author: Marco Candrian        --
 -- Copyright 2009 Marco Candrian --
 ------------------------------------
->>>>>>> 566d98949a7021f0e09e3937049edb7a0f5bd573
 
 local io = io
 local pairs = pairs
@@ -37,11 +30,7 @@ module("obvious.loadavg")
 
 local initialized = false
 local defaults = { }
-<<<<<<< HEAD
-defaults.shorttimer =  5 -- loadavg won't change faster anyway (it seems)
-=======
 defaults.shorttimer =  5 -- loadavg won't change faster it seems anyway
->>>>>>> 566d98949a7021f0e09e3937049edb7a0f5bd573
 defaults.longtimer =  60
 defaults.prefix = ""
 defaults.suffix = ""
@@ -63,18 +52,11 @@ widget:buttons(awful.util.table.join(
     end)
 ))
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 566d98949a7021f0e09e3937049edb7a0f5bd573
 -- update interval
 function set_shorttimer(e)
     settings.shorttimer = e or defaults.shorttimer
 end
-<<<<<<< HEAD
-
-=======
->>>>>>> 566d98949a7021f0e09e3937049edb7a0f5bd573
 -- command to issue on Button1 click
 function set_command(e)
     settings.command = e or defaults.command

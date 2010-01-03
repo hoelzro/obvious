@@ -1,11 +1,7 @@
 Loadavg Widget
 ==============
 
-<<<<<<< HEAD
-This widget provides the loadavg data as a text box.
-=======
 This widget provides the loadavg date as a text box.
->>>>>>> 566d98949a7021f0e09e3937049edb7a0f5bd573
 
 For details on the numbers, may read: 
 http://www.teamquest.com/resources/gunther/display/5/index.htm
@@ -14,13 +10,8 @@ http://www.teamquest.com/resources/gunther/display/5/index.htm
 Settings Available (with default values):
 -----------------------------------------
 
-<<<<<<< HEAD
- - set_shorttimer(5): Sets the update interval of the widget. (Faster than each
-   5 seconds may makes no sense since the data itself does not update more
-=======
  - set_shorttimer(5): Sets the update interval of the widget. (Fast than each 5
    seconds may makes no sense since the data itself does not update more
->>>>>>> 566d98949a7021f0e09e3937049edb7a0f5bd573
    quickly in /prov/loadavg
 
  - set_command("xterm -e htop"): Set what command to issue on Button1 press.
