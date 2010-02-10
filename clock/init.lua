@@ -86,7 +86,7 @@ widget:buttons(awful.util.table.join(
             alarms = { }
             widget.bg = beautiful.bg_normal
         else
-            naughty.notify({ text = awful.util.pread("ddate"):gsub("\n$", "") })
+            naughty.notify({ text = awful.util.pread("ddate"):gsub("\n$", ""), screen = capi.mouse.screen })
         end
     end)
 ))
