@@ -72,7 +72,7 @@ function get_operator()
 end
 
 local function update()
-	fh = io.open("/dev/ttyACM1", "r+")
+	local fh = io.open("/dev/ttyACM1", "r+")
 	if not fh then
 	    cops = {}
 	    cind = {}
