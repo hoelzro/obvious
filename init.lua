@@ -14,6 +14,7 @@ require("obvious.loadavg")
 require("obvious.mem")
 require("obvious.net")
 require("obvious.popup_run_prompt")
+require("obvious.umts")
 require("obvious.volume_alsa")
 require("obvious.wlan")
 
