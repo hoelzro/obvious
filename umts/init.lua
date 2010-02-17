@@ -36,9 +36,9 @@ widget = capi.widget({
     align = "right"
 })
 
-fh = nil
-cops = {}
-cind = {}
+local fh = nil
+local cops = {}
+local cind = {}
 
 function wait_for_data(input)
 	fh:write(input)
@@ -72,7 +72,7 @@ function get_operator()
 end
 
 local function update()
-	local fh = io.open("/dev/ttyACM1", "r+")
+	fh = io.open("/dev/ttyACM1", "r+")
 	if not fh then
 	    cops = {}
 	    cind = {}
