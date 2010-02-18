@@ -47,13 +47,19 @@ local function init()
             local fd = io.popen("acpi -b")
             if not fd then return end
 
-            local data = fd:read("*all"):match("Battery [0-9] *: ([^\n]*)")
-            fd:close()
-            if not data then return end
+            local line = fd:read("*l")
+            while line do
+              local data = line:match("Battery [0-9] *: ([^\n]*)")
 
-            rv.state = data:match("([%a]*),.*"):lower()
-            rv.charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
-            rv.time = data:match(".*, ([%d]?[%d]?:?[%d][%d]:[%d][%d])")
+              rv.state = data:match("([%a]*),.*"):lower()
+              rv.charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
+              rv.time = data:match(".*, ([%d]?[%d]?:?[%d][%d]:[%d][%d])")
+
+              if not rv.state:match("unknown") then break end
+              line = fd:read("*l")
+            end
+
+            fd:close()
 
             return rv
         end
