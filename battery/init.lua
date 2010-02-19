@@ -91,7 +91,10 @@ local function update()
         return
     end
     local color = "#900000"
-    if bat.charge > 35 and bat.charge < 60 then
+    if not bat.charge then
+	widget.text = lib.markup.fg.color("#009000", status.charged) .. " A/C"
+	return
+    elseif bat.charge > 35 and bat.charge < 60 then
         color = "#909000"
     elseif bat.charge >= 40 then
         color = "#009000"
