@@ -9,6 +9,9 @@ local setmetatable = setmetatable
 local io = {
     popen = io.popen
 }
+local os = {
+    execute = os.execute
+}
 local capi = {
     widget = widget,
     mouse = mouse
@@ -40,17 +43,15 @@ local backend = "acpi"
 get_data = nil
 
 local function init()
-    local fh = io.popen("acpi")
-    if fh then
+    local rv = os.execute("acpi")
+    if rv == 0 then
         backend = "acpi"
-        fh:close()
         return
     end
 
-    fh = io.open("apm")
-    if fh then
+    rv = os.execute("apm")
+    if rv == 0 then
         backend = "apm"
-        fh:close()
         return
     end
 
@@ -86,9 +87,9 @@ function get_data()
         local data = fd:read("*all")
         if not data then return end
 
-        rv.state  = data:match("([%a%d-]),.*")
+        rv.state  = data:match("battery ([a-z]+):")
         rv.charge = tonumber(data:match(".*, .*: (%d?%d?%d)%%"))
-        rv.time = data.match("%((.*)%)$")
+        rv.time = data:match("%((.*)%)$")
 
         return rv
     end
