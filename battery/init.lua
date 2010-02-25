@@ -36,50 +36,67 @@ status = {
     ["unknown"] = "⌁"
 }
 
+local backend = "acpi"
 get_data = nil
 
 local function init()
     local fh = io.popen("acpi")
-    local d = fh:read("*all")
-    if d then
-        get_data = function ()
-            local rv = { }
-            local fd = io.popen("acpi -b")
-            if not fd then return end
-
-            local line = fd:read("*l")
-            while line do
-              local data = line:match("Battery [0-9] *: ([^\n]*)")
-
-              rv.state = data:match("([%a]*),.*"):lower()
-              rv.charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
-              rv.time = data:match(".*, ([%d]?[%d]?:?[%d][%d]:[%d][%d])")
-
-              if not rv.state:match("unknown") then break end
-              line = fd:read("*l")
-            end
-
-            fd:close()
-
-            return rv
-        end
+    if fh then
+        backend = "acpi"
         fh:close()
-    else
-        get_data = function ()
-            local rv = { }
-            local fd = io.popen("apm")
-            if not fd then return end
-
-            local data = fd:read("*all")
-            if not data then return end
-
-            rv.state  = data:match("([%a%d-]),.*")
-            rv.charge = tonumber(data:match(".*, .*: (%d?%d?%d)%%"))
-            rv.time = data.match("%((.*)%)$")
-
-            return rv
-        end
+        return
     end
+
+    fh = io.open("apm")
+    if fh then
+        backend = "apm"
+        fh:close()
+        return
+    end
+
+    backend = "none"
+end
+
+function get_data()
+    if backend == "acpi" then
+        local rv = { }
+        local fd = io.popen("acpi -b")
+        if not fd then return end
+
+        local line = fd:read("*l")
+        while line do
+            local data = line:match("Battery [0-9] *: ([^\n]*)")
+
+            rv.state = data:match("([%a]*),.*"):lower()
+            rv.charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
+            rv.time = data:match(".*, ([%d]?[%d]?:?[%d][%d]:[%d][%d])")
+
+            if not rv.state:match("unknown") then break end
+            line = fd:read("*l")
+        end
+
+        fd:close()
+
+        return rv
+    elseif backend == "apm" then
+        local rv = { }
+        local fd = io.popen("apm")
+        if not fd then return end
+
+        local data = fd:read("*all")
+        if not data then return end
+
+        rv.state  = data:match("([%a%d-]),.*")
+        rv.charge = tonumber(data:match(".*, .*: (%d?%d?%d)%%"))
+        rv.time = data.match("%((.*)%)$")
+
+        return rv
+    end
+    local rv = { }
+    rv.state = "unknown"
+    rv.charge = 0
+    rv.time = "00:00"
+    return rv
 end
 
 local function update()
@@ -116,7 +133,14 @@ local function update()
 end
 
 local function detail ()
-    local fd = io.popen("acpi -bta")
+    local fd = nil
+    if backend == "acpi" then
+        fd = io.popen("acpi -bta")
+    elseif backend == "apm" then
+        fd = io.popen("apm")
+    else
+        naughty.notify({ text = "unknown backend" })
+    end
     local d = fd:read("*all"):gsub("(\n$", "")
     fd:close()
     naughty.notify({
