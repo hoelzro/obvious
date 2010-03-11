@@ -24,6 +24,8 @@ features, it's pretty easy. Some things to watch out for:
    way that it will be clear, explain it with a comment.
  - Regressions. Please _test_ your changes before submitting to make sure that
    not only they work, but have not broken other parts of the widget!
+ - Options. If you add or remove options, make sure the top-level README file
+   reflects the changes. See "Adding A New Widget"'s section on this.
 
 Adding A New Widget
 -------------------
@@ -93,6 +95,21 @@ should also use the get_data() function).
 -> Your readme
 
 Your "readme" is the explanation for the user. As such, it has a rough layout:
+
+-> Top-level init file
+
+If someone does require("obvious"), the behaviour is to import all widgets.
+The way this is accomplished is by making an "obvious" module that requires
+all of the sub-modules. In short, if you've created a new sub-module, you
+should add your sub-module to the list of things that is required by the
+init.lua in the root folder.
+
+-> Top-level README
+
+The top-level README is an overview of what features each widget sub-module
+supports and provides. It is a listing of the options available and what
+views it supports (like text-only, progress bar, etc.). When creating a new
+widget, you should add your overview to the top-level README.
 
 -------------------------------------------------------------------------------
 Widget Name
