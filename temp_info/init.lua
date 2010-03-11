@@ -6,50 +6,46 @@
 local awful = require("awful")
 local setmetatable = setmetatable
 local tonumber = tonumber
-local tostring = tostring
-local type = type
-local ipairs = ipairs
-local print = print
+local table = {
+   insert = table.insert
+}
 local capi = {
-   widget = widget,
-   screen = screen
+   widget = widget
+}
+local lib = {
+   markup = require("obvious.lib.markup"),
+   hooks = require("obvious.lib.hooks")
 }
 
 module("obvious.temp_info")
 
-widget = capi.widget({
-   type = "textbox",
-   name = "temp_zone",
-   align = "right"
-})
+local widget = capi.widget({ type = "textbox" })
 
-colors = {
+local colors = {
    ["normal"] = "#009000",
    ["warm"] = "#909000",
    ["hot"] = "#900000"
 }
 
-function update()
-   local temp = awful.util.pread('acpi -t|awk \'{print $4}\'')
-   fields = {temp:match((temp:gsub("[^"..'\n'.."]*"..'\n', "([^"..'\n'.."]*)"..'\n')))}
-   temp=''
-   local color
-   for i in ipairs(fields) do
-      if tonumber(fields[i]) < 50 then
-         color = colors["normal"]
-      elseif tonumber(fields[i]) >= 50 and tonumber(fields[i]) < 60 then
-         color = colors["warm"]
-      else
-         color = colors["hot"]
-      end
-      temp = temp.." "..fields[i].." <span color=\""..color.."\">°C</span>"
+local function update()
+   local d = awful.util.pread("acpi -tB")
+   local temp = { }
+   for t in d:gmatch("Thermal %d+: %w+, (%d+.?%d*) degrees") do
+      table.insert(temp, t)
    end
-   temp = tostring(temp)
-   widget.text = temp --_zone.." :: <span color=\""..color.."\">"..temp.."</span>"
+
+   local color = colors["hot"]
+   if tonumber(temp[1]) < 50 then
+      color = colors["normal"]
+   elseif tonumber(temp[1]) >= 50 and tonumber(temp[i]) < 60 then
+      color = colors["warm"]
+   end
+   widget.text = temp[1] .. " " .. lib.markup.fg.color(color, "C")
 end
 update()
 
-awful.hooks.timer.register(5, function () update() end)
+lib.hooks.timer.register(5, 30, update)
+lib.hooks.timer.start(update)
 
 setmetatable(_M, { __call = function () return widget end })
 
