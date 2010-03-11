@@ -84,6 +84,7 @@ function ensure_init()
         -- Widgets for prompt wibox
         runwibox[s].widgets = {
             mypromptbox[s],
+            layout = awful.widget.layout.vertical.center
         }
     end
 end
