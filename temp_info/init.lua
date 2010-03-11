@@ -45,8 +45,10 @@ end
 update()
 
 lib.hooks.timer.register(5, 30, update)
-lib.hooks.timer.start(update)
 
-setmetatable(_M, { __call = function () return widget end })
+setmetatable(_M, { __call = function ()
+   lib.hooks.timer.start(update)
+   return widget
+end })
 
 -- vim: filetype=lua:expandtab:shiftwidth=3:tabstop=3:softtabstop=3:encoding=utf-8:textwidth=80
