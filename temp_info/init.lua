@@ -37,7 +37,7 @@ local function update()
    local color = colors["hot"]
    if tonumber(temp[1]) < 50 then
       color = colors["normal"]
-   elseif tonumber(temp[1]) >= 50 and tonumber(temp[i]) < 60 then
+   elseif tonumber(temp[1]) >= 50 and tonumber(temp[1]) < 60 then
       color = colors["warm"]
    end
    widget.text = temp[1] .. " " .. lib.markup.fg.color(color, "C")
