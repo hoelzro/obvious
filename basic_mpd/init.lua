@@ -32,7 +32,7 @@ local widget = widget({ type = "textbox",
                         name = "mpd-playing",
                         align = "left" })
 
-local connection = lib.mpd.new()
+connection = lib.mpd.new()
 
 -- Utility function to handle the text for MPD
 -- @param songinfo: a table with fields "artist", "album", "title" in text

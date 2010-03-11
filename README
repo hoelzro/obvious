@@ -64,6 +64,9 @@ Readme for Obvious
    -- clock()
       -- Widgets
          -- textbox
+   -- temp_info()
+      -- Widgets
+         -- textbox
 
 -- Widget types
    -- "textbox"

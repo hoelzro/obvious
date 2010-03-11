@@ -17,5 +17,6 @@ require("obvious.popup_run_prompt")
 require("obvious.umts")
 require("obvious.volume_alsa")
 require("obvious.wlan")
+require("obvious.temp_info")
 
 module("obvious")
