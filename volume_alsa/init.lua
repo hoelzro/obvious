@@ -14,6 +14,9 @@ local string = {
     find   = string.find,
     format = string.format
 }
+local table = {
+    insert = table.insert
+}
 local capi = {
     widget = widget,
 }
@@ -25,7 +28,7 @@ local lib = {
 
 module("obvious.volume_alsa")
 
-local widget
+local objects = { }
 
 function get_data(cardid, channel)
     local rv = { }
@@ -55,21 +58,32 @@ local function update(obj)
     if not status.mute then
         color = "#009000"
     end
-    widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
+    obj.widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
+end
+
+local function update_by_values(cardid, channel)
+    for i, v in pairs(objects) do
+        if v.channel == channel and v.cardid == cardid then
+            update(v)
+        end
+    end
 end
 
 function raise(cardid, channel, v)
     v = v or 1
     awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "+", false)
+    update_by_values(cardid, channel)
 end
 
 function lower(cardid, channel, v)
     v = v or 1
     awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "-", false)
+    update_by_values(cardid, channel)
 end
 
 function mute(cardid, channel)
     awful.util.spawn("amixer -c " .. cardid .. " sset " .. channel .. " toggle", false)
+    update_by_values(cardid, channel)
 end
 
 function mixer(term, cardid)
@@ -86,10 +100,7 @@ local function create(_, cardid, channel)
         term = "x-terminal-emulator -T Mixer"
     }
 
-    if not widget then
-        widget = capi.widget({ type  = "textbox" })
-    end
-
+    local widget = capi.widget({ type  = "textbox" })
     obj.widget = widget
     obj[1] = widget
     obj.update = function() update(obj) end
@@ -109,14 +120,15 @@ local function create(_, cardid, channel)
     obj.set_cardid  = function(obj, id)     obj.cardid = id              obj.update() return obj end
     obj.set_channel = function(obj, id)     obj.channel = id             obj.update() return obj end
     obj.set_term    = function(obj, term)   obj.term = term                           return obj end
-    obj.raise       = function(obj, v) raise(obj.cardid, obj.channel, v) obj.update() return obj end
-    obj.lower       = function(obj, v) lower(obj.cardid, obj.channel, v) obj.update() return obj end
-    obj.mute        = function(obj, v) mute(obj.cardid, obj.channel, v)  obj.update() return obj end
+    obj.raise       = function(obj, v) raise(obj.cardid, obj.channel, v) return obj end
+    obj.lower       = function(obj, v) lower(obj.cardid, obj.channel, v) return obj end
+    obj.mute        = function(obj, v) mute(obj.cardid, obj.channel, v)  return obj end
 
     obj.update()
     lib.hooks.timer.register(10, 30, obj.update, "Update for the volume widget")
     lib.hooks.timer.start(obj.update)
 
+    table.insert(objects, obj)
     return obj
 end
 
