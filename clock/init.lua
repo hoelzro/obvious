@@ -147,7 +147,7 @@ local function update (trigger_alarms)
         widget.bg = beautiful.bg_normal
     end
 
-    widget.text = lib.markup.fg.color("#009000", "⚙ ") .. date
+    widget.text = date
 
     if trigger_alarms then
         local data = read_alarms(alarmfile)
