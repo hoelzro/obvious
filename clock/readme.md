@@ -17,6 +17,9 @@ Settings Available:
   the long display. You may specify either a string which has a format that
   `os.date()` can understand (`man date` has the formats), or a function that
   returns the usable format.
+* `set_shorttimer(n)`: Set the delay between updates to `n`
+* `set_longtimer(n)`: Set the long delay between updates to `n`, this is used
+  when obvious is suspended.
 
 To set one of these settings, simply do something like:
 
