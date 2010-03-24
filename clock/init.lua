@@ -165,7 +165,7 @@ local function update (trigger_alarms)
                         break
                     end
                 end
-                if add then table.insert(alarms, { date, message }) end
+                if add then table.insert(alarms, { currentdate, message }) end
             end
         end
         update(false)
