@@ -47,7 +47,7 @@ local function get_current_keymap()
 end
 
 function update()
-    panelwidget.text = " | " .. get_current_keymap() .. " | "
+    panelwidget.text = get_current_keymap()
 end
 
 lib.hooks.timer.register(5, 60, update, "Update for the keymap widget")
