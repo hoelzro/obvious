@@ -67,6 +67,9 @@ Readme for Obvious
    -- temp_info()
       -- Widgets
          -- textbox
+   -- keymap_switch()
+      -- Widgets
+         -- textbox
 
 -- Widget types
    -- "textbox"

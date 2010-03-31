@@ -18,5 +18,6 @@ require("obvious.umts")
 require("obvious.volume_alsa")
 require("obvious.wlan")
 require("obvious.temp_info")
+require("obvious.keymap_switch")
 
 module("obvious")
