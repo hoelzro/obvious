@@ -35,6 +35,10 @@ local function update()
    end
 
    local color = colors["hot"]
+   if not temp[1] then
+      widget.text = "no data"
+      return
+   end
    if tonumber(temp[1]) < 50 then
       color = colors["normal"]
    elseif tonumber(temp[1]) >= 50 and tonumber(temp[1]) < 60 then
