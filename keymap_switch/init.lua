@@ -15,10 +15,6 @@ local widget = widget
 local io = {
     popen = io.popen
 }
-local string = {
-    match  = string.match,
-    sub    = string.sub
-}
 local awful = require("awful")
 local lib = {
     hooks = require("obvious.lib.hooks"),
@@ -28,21 +24,24 @@ local lib = {
 module("obvious.keymap_switch")
 
 panelwidget = widget({ type = "textbox" })
+panelwidget.text = "determining layout..."
 
 local function get_current_keymap()
     local fd = io.popen("setxkbmap -print")
     if not fd then return end
+
     for line in fd:lines() do
-        if string.match(line, "xkb_symbols") then
-            keymap = string.match(line, "\+.*\+")
+        if line:match("xkb_symbols") then
+            keymap = line:match("\+.*\+")
 
             if not keymap then
                 return "unknown layout"
             else
-                return string.sub(keymap, 2, -2)
+                return keymap:sub(2, -2)
             end
         end
     end
+
     return "unknown layout"
 end
 
