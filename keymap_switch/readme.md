@@ -1,8 +1,7 @@
 Keymap Widget
 =============
 
-This widget shows the current keyboard layout. (TODO: implement layout switch
-menu.)
+This widget shows the current keyboard layout.
 
 To add this widget to your configuration, insert
 
@@ -11,5 +10,8 @@ To add this widget to your configuration, insert
 into the top of your rc.lua and add `obvious.keymap_switch()` to your wibox.
 
 This widget provides some options:
+* `obvious.keymap_switch.set_layouts(layouts_table)` where `layouts_table` is
+  a simple table of input strings to setxkbmap. For example, to allow the
+  widget to switch between Qwerty and Dvorak, the call would look like:
 
-* TODO
+    obvious.keymap_switch.set_layouts({ "us", "us(dvorak)" })
