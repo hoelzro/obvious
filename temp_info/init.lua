@@ -28,7 +28,7 @@ local colors = {
 }
 
 local function update()
-   local d = awful.util.pread("acpi -tB")
+   local d = awful.util.pread("acpi -t")
    local temp = { }
    for t in d:gmatch("Thermal %d+: %w+, (%d+.?%d*) degrees") do
       table.insert(temp, t)
