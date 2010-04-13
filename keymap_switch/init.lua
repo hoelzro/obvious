@@ -62,7 +62,7 @@ local function get_current_keymap()
 
     for line in fd:lines() do
         if line:match("xkb_symbols") then
-            keymap = line:match("\+.*\+")
+            local keymap = line:match("\+.*\+")
 
             if not keymap then
                 return "unknown layout"
