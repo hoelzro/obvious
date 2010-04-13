@@ -36,17 +36,17 @@ makes them available for everyone. However, there are a few things that you
 need to know about the structure of Obvious. Note that a lot of the stuff from
 the section "Patching An Existing Widget" also apply here.
 
--> File Structure
+### File Structure
 
-obvious
-|
-|-- init.lua
-|
-|-- battery
-|   |
-|   |-- init.lua
-|   `-- readme
-.
+    obvious
+    |
+    |-- init.lua
+    |
+    |-- battery
+    |   |
+    |   |-- init.lua
+    |   `-- readme
+    .
 
 In general, Obvious widgets are laid as above. The main file, obvious/init.lua
 has the definition of the Obvious module in general. When adding a new widget,
@@ -59,67 +59,63 @@ init.lua file will be run first, the readme explains to the user what your
 module does and how to implement it, as well as any settings. Feel free to add
 more .lua files in the folder if you need them.
 
--> Your init.lua
+### Your init.lua
 
 This is your main file for your widget. Add other files if necessary for the
 sake of organization, but this is all you really need. Refer to other modules
 and documentation for how to write this kind of file. In general, the structure
 is:
- - Get variables and modules from the rc.lua and Awesome
- - Declare your module
- - Write your code using the variables defined
- - Write your public settings interface (see below)
 
--> Your settings
+* Get variables and modules from the rc.lua and Awesome
+* Declare your module
+* Write your code using the variables defined
+* Write your public settings interface (see below)
+
+### Your settings
 
 For settings, we have the standard that your module must have a collection of
-functions named set_<setting>. These are the access to the module's settings
+functions named `set_<setting>`. These are the access to the module's settings
 and can otherwise be whatever you want.
 
 These then are used from the rc.lua like:
 
-obvious.module.set_something(foo)
+    obvious.module.set_something(foo)
 
 And that should be all it takes for the user.
 
--> Your data
+### Your data
 
 If the widget gathers nontrivial data (i.e. wlan signal strength, battery charge,
 but _not_ the current time, as that's just one function call away), you should
-supply a function called get_data() which returns nil on failure and a hashtable
+supply a function called `get_data()` which returns nil on failure and a hashtable
 with the collected data otherwise. This is so other people can build on your work
 (the true spirit of open source, right? :P) and create different ways of visualizing
 the data gathered by your widget without duplicating code (which is why your widget
-should also use the get_data() function).
+should also use the `get_data()` function).
 
--> Your readme
+### Top-level init file
 
-Your "readme" is the explanation for the user. As such, it has a rough layout:
-
--> Top-level init file
-
-If someone does require("obvious"), the behaviour is to import all widgets.
+If someone does `require("obvious")`, the behaviour is to import all widgets.
 The way this is accomplished is by making an "obvious" module that requires
 all of the sub-modules. In short, if you've created a new sub-module, you
 should add your sub-module to the list of things that is required by the
 init.lua in the root folder.
 
--> Top-level README
+### Top-level README
 
 The top-level README is an overview of what features each widget sub-module
 supports and provides. It is a listing of the options available and what
 views it supports (like text-only, progress bar, etc.). When creating a new
 widget, you should add your overview to the top-level README.
 
--------------------------------------------------------------------------------
-Widget Name
+### Your readme
 
-Description of widget.
+Your "readme" is the explanation for the user. As such, it has a rough layout:
 
-Explanation of available settings.
-
-Explanation of how to integrate it into your rc.lua.
--------------------------------------------------------------------------------
+* Widget Name
+* Description of widget.
+* Explanation of available settings.
+* Explanation of how to integrate it into your rc.lua.
 
 The exact way you do this doesn't matter, but please try to stick to this kind
 of ordering/layout.
@@ -129,15 +125,15 @@ Submitting Your Changes
 
 Once you've written a tidy, well-fitting, clear patch with no bugs, you should
 submit it. We'd seriously love to have it. Some ways:
- - Commit it and use git-format-branch to create a patch-email. Then send this
-   e-mail to one of the developers of obvious if you can find their e-mails, or
-   to one of the awesome mailing lists which we tend to read. We then can take
-   it, read it, possibly reply to it with suggestions for improvement, or apply
-   it to the obvious project.
- - You can put your changes into your own personal git repo on the web and
-   request a pull. Use the command git request-pull for this. This makes a bit
-   of formatted text that tells us what changes you've made and where to get
-   it. Again, e-mail this text up to us somewhere.
- - Also, we're generally pretty laid back. If we know you, trust you to write
-   decent code, and know that you want to help regularly, we can probably just
-   agree to give you commit access to the main Obvious repo.
+* Commit it and use git-format-branch to create a patch-email. Then send this
+  e-mail to one of the developers of obvious if you can find their e-mails, or
+  to one of the awesome mailing lists which we tend to read. We then can take
+  it, read it, possibly reply to it with suggestions for improvement, or apply
+  it to the obvious project.
+* You can put your changes into your own personal git repo on the web and
+  request a pull. Use the command git request-pull for this. This makes a bit
+  of formatted text that tells us what changes you've made and where to get
+  it. Again, e-mail this text up to us somewhere.
+* Also, we're generally pretty laid back. If we know you, trust you to write
+  decent code, and know that you want to help regularly, we can probably just
+  agree to give you commit access to the main Obvious repo.
