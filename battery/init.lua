@@ -148,7 +148,7 @@ local function detail ()
     else
         naughty.notify({ text = "unknown backend" })
     end
-    local d = fd:read("*all"):gsub("(\n$", "")
+    local d = fd:read("*all"):gsub("\n+$", "")
     fd:close()
     naughty.notify({
         text = d,
