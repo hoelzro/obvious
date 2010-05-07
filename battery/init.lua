@@ -141,12 +141,14 @@ end
 
 local function detail ()
     local fd = nil
-    if backend == "acpi" or backend == "acpitool" then
-        fd = io.popen(backend .. " -bta")
+    if backend == "acpi" then
+        fd = io.popen("acpi -bta")
+    elseif backend == "acpitool" then
+        fd = io.popen("acpitool")
     elseif backend == "apm" then
         fd = io.popen("apm")
     else
-        naughty.notify({ text = "unknown backend" })
+        naughty.notify({ text = "unknown backend: " .. backend })
     end
     local d = fd:read("*all"):gsub("\n+$", "")
     fd:close()
