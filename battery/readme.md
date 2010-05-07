@@ -1,9 +1,9 @@
 Battery widget
 ==============
 
-This widget is a battery monitor. It gets its information from `acpi` or from
-`apm`, to be as uniquely usable as possible. With `apm` as the backend, some
-information might not be available, such as whether the battery is currently
+This widget is a battery monitor. It gets its information from `acpi`, `acpitool`
+or from `apm`, to be as uniquely usable as possible. With `apm` as the backend,
+some information might not be available, such as whether the battery is currently
 charged or whether it is discharging. Charge is displayed with either backends.
 If you click on the widget, additional information is displayed. Currently,
 only the first battery is monitored on the widget box, but information about

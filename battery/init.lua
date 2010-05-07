@@ -43,7 +43,13 @@ local backend = "acpi"
 get_data = nil
 
 local function init()
-    local rv = os.execute("acpi")
+    local rv = os.execute("acpitool")
+    if rv == 0 then
+        backend = "acpitool"
+        return
+    end
+
+    rv = os.execute("acpi")
     if rv == 0 then
         backend = "acpi"
         return
@@ -59,14 +65,14 @@ local function init()
 end
 
 function get_data()
-    if backend == "acpi" then
+    if backend == "acpi" or backend == "acpitool" then
         local rv = { }
-        local fd = io.popen("acpi -b")
+        local fd = io.popen(backend .. " -b")
         if not fd then return end
 
         local line = fd:read("*l")
         while line do
-            local data = line:match("Battery [0-9] *: ([^\n]*)")
+            local data = line:match("Battery #?[0-9] *: ([^\n]*)")
 
             rv.state = data:match("([%a]*),.*"):lower()
             rv.charge = tonumber(data:match(".*, ([%d]?[%d]?[%d]%.?[%d]?[%d]?)%%"))
@@ -135,14 +141,14 @@ end
 
 local function detail ()
     local fd = nil
-    if backend == "acpi" then
-        fd = io.popen("acpi -bta")
+    if backend == "acpi" or backend == "acpitool" then
+        fd = io.popen(backend .. " -bta")
     elseif backend == "apm" then
         fd = io.popen("apm")
     else
         naughty.notify({ text = "unknown backend" })
     end
-    local d = fd:read("*all"):gsub("(\n$", "")
+    local d = fd:read("*all"):gsub("\n+$", "")
     fd:close()
     naughty.notify({
         text = d,
