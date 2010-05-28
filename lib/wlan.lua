@@ -12,7 +12,7 @@ local io = {
 module("obvious.lib.wlan")
 
 local function get_data(device)
-    local link
+    local link = 0
     local fd = io.open("/proc/net/wireless")
     if not fd then return end
 
