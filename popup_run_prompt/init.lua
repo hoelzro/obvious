@@ -24,6 +24,7 @@ defaults = {}
 -- Default is 1 for people without compositing
 defaults.opacity = 1.0
 defaults.prompt_string = "  Run~  "
+defaults.prompt_font = nil
 -- Whether or not the bar should slide up or just pop up
 defaults.slide = false
 -- Bar will be percentage of screen width
@@ -184,7 +185,8 @@ function run_prompt()
     ensure_init()
     show_wibox(mouse.screen)
 
-    awful.prompt.run({ prompt = settings.prompt_string },
+    awful.prompt.run({ prompt = settings.prompt_string,
+                       font = settings.prompt_font },
         mypromptbox[mouse.screen],
         settings.run_function,
         settings.completion_function,
@@ -202,6 +204,10 @@ end
 
 function set_prompt_string(string)
     settings.prompt_string = string or defaults.prompt_string
+end
+
+function set_prompt_font(font_string)
+    settings.prompt_font = font_string or defaults.prompt_font
 end
 
 function set_slide(tf)
