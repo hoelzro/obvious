@@ -174,14 +174,14 @@ local function update (trigger_alarms)
 end
 
 widget:add_signal("mouse::enter", function ()
-    -- fulldate = true
+    fulldate = true
     update(false)
 end)
 
---[[ widget:add_signal("mouse::leave", function ()
+widget:add_signal("mouse::leave", function ()
     fulldate = false
     update(false)
-end) ]]
+end)
 
 function set_editor(e)
     settings.editor = e or defaults.editor
