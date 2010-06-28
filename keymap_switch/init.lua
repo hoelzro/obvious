@@ -64,6 +64,7 @@ local function get_current_keymap()
         if line:match("xkb_symbols") then
             local keymap = line:match("\+.*\+")
 
+            fd:close()
             if not keymap then
                 return "unknown layout"
             else
@@ -72,6 +73,7 @@ local function get_current_keymap()
         end
     end
 
+    fd:close()
     return "unknown layout"
 end
 
