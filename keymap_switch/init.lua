@@ -87,7 +87,7 @@ local function delayed_update_once(start)
 end
 
 local function switch_keymap(layout_string)
-    io.popen("setxkbmap \"" .. layout_string .. "\"")
+    awful.util.spawn("setxkbmap \"" .. layout_string .. "\"")
     delayed_update_once(true)
 end
 
