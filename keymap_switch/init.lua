@@ -38,7 +38,20 @@ end
 
 module("obvious.keymap_switch")
 
+setup_done = false
+local function init_once()
+    if setup_done then
+        return
+    end
+    lib.hooks.timer.register(5, 60, update, "Update for the keymap widget")
+    lib.hooks.timer.start(update)
+    delayed_update_once(true)
+    setup_done = true
+end
+
 local function init(widget)
+    init_once()
+
     -- Use the default widget if not specified
     if widget then
         settings.widget = widget
@@ -110,10 +123,6 @@ end
 function update()
     settings.widget.text = get_current_keymap()
 end
-
-lib.hooks.timer.register(5, 60, update, "Update for the keymap widget")
-lib.hooks.timer.start(update)
-delayed_update_once(true)
 
 setmetatable(_M, { __call = function() return init(settings.widget) end }) -- TODO let the user specify widget here
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:encoding=utf-8:textwidth=80
