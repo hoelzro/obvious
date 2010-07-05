@@ -38,6 +38,17 @@ end
 
 module("obvious.keymap_switch")
 
+-- Updates once after a short delay and then unregisters its timer
+local function delayed_update_once(start)
+    if start == true then
+        lib.hooks.timer.register(1, 1, delayed_update_once, "One-off update for keymap widget")
+        lib.hooks.timer.start(delayed_update_once)
+    else
+        update()
+        lib.hooks.timer.unregister(delayed_update_once)
+    end
+end
+
 setup_done = false
 local function init_once()
     if setup_done then
@@ -88,17 +99,6 @@ local function get_current_keymap()
 
     fd:close()
     return "unknown layout"
-end
-
--- Updates once after a short delay and then unregisters its timer
-local function delayed_update_once(start)
-    if start == true then
-        lib.hooks.timer.register(1, 1, delayed_update_once, "One-off update for keymap widget")
-        lib.hooks.timer.start(delayed_update_once)
-    else
-        update()
-        lib.hooks.timer.unregister(delayed_update_once)
-    end
 end
 
 local function switch_keymap(layout_string)
