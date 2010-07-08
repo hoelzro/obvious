@@ -49,6 +49,7 @@ end
 update()
 
 lib.hooks.timer.register(5, 30, update)
+lib.hooks.timer.stop(update)
 
 setmetatable(_M, { __call = function ()
    lib.hooks.timer.start(update)
