@@ -87,9 +87,9 @@ widget:buttons(awful.util.table.join(
             widget.bg = beautiful.bg_normal
         else
             naughty.notify({ text = lib.markup.font("monospace",
-                                    awful.util.pread("cal"):gsub("\n+$", ""):
+                                    awful.util.pread("cal"):
                                     gsub("([^0-9])(" .. tonumber(os.date("%d")) .. ")([^0-9])",
-                                    "%1<span foreground=\"#FF0000\">%2</span>%3")),
+                                    "%1<span foreground=\"#FF0000\">%2</span>%3"):gsub("\n+$", "")),
                              screen = capi.mouse.screen
                            })
         end
