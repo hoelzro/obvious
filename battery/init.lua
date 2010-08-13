@@ -34,6 +34,7 @@ widget = capi.widget({
 status = {
     ["charged"] = "↯",
     ["full"] = "↯",
+    ["high"] = "↯",
     ["discharging"] = "▼",
     ["charging"] = "▲",
     ["unknown"] = "⌁"
@@ -43,6 +44,12 @@ local backend = "acpi"
 get_data = nil
 
 local function init()
+    local rv = os.execute("acpiconf")
+    if rv == 0 then
+        backend = "acpiconf"
+        return
+    end
+
     local rv = os.execute("acpitool")
     if rv == 0 then
         backend = "acpitool"
@@ -65,8 +72,27 @@ local function init()
 end
 
 function get_data()
-    if backend == "acpi" or backend == "acpitool" then
-        local rv = { }
+    local rv = { }
+    rv.state = "unknown"
+    rv.charge = 0
+    rv.time = "00:00"
+
+    if backend == "acpiconf" then
+        local fd = io.popen("acpiconf -i0")
+        for l in fd:lines() do
+            if l:match("^Remaining capacity") then
+                rv.charge = tonumber(l:match("\t(%d?%d?%d)"))
+            elseif l:match("^Remaining time") then
+                rv.time = l:match("\t(%S+)")
+                if rv.time == "unknown" then
+                    rv.time = ""
+                end
+            elseif l:match("^State") then
+                rv.state = l:match("\t(%S+)")
+            end
+        end
+        fd:close()
+    elseif backend == "acpi" or backend == "acpitool" then
         local fd = io.popen(backend .. " -b")
         if not fd then return end
 
@@ -86,7 +112,6 @@ function get_data()
 
         return rv
     elseif backend == "apm" then
-        local rv = { }
         local fd = io.popen("apm")
         if not fd then return end
 
@@ -99,10 +124,6 @@ function get_data()
 
         return rv
     end
-    local rv = { }
-    rv.state = "unknown"
-    rv.charge = 0
-    rv.time = "00:00"
     return rv
 end
 
@@ -141,7 +162,18 @@ end
 
 local function detail ()
     local fd = nil
-    if backend == "acpi" then
+    if backend == "acpiconf" then
+        local str = ""
+        fd = io.popen("sysctl hw.acpi.thermal")
+        for l in fd:lines() do
+            if l:match("tz%d%.temperature") then
+                str = str .. "\n" .. l
+            end
+        end
+        fd:close()
+        naughty.notify({ text = str:gsub("^\n", ""), screen = capi.mouse.screen })
+        return
+    elseif backend == "acpi" then
         fd = io.popen("acpi -bta")
     elseif backend == "acpitool" then
         fd = io.popen("acpitool")
