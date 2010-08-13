@@ -38,13 +38,24 @@ function get_data(channel)
     fd:close()
 
     rv.volume = tonumber(status:match(" +(%d?%d?%d)"))
+    rv.mute = false
+
+    local fd = io.popen("sysctl dev.acpi_ibm.0.mute")
+    if fd then
+        if tonumber(fd:read("*all"):match(": (%d)")) == 1 then
+            rv.mute = true
+        end
+    end
     return rv
 end
 
 local function update(obj)
-    local status = get_data(obj.channel) or { volume = 0 }
+    local status = get_data(obj.channel) or { volume = 0, mute = true }
 
     local color = "#009000"
+    if status.mute then
+        color = "#900000"
+    end
     obj.widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
 end
 
