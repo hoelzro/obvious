@@ -44,7 +44,7 @@ end
 local function update(obj)
     local status = get_data(obj.channel) or { volume = 0 }
 
-    local color = "#900000"
+    local color = "#009000"
     obj.widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
 end
 
