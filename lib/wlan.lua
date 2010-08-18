@@ -6,7 +6,11 @@
 local tonumber = tonumber
 local setmetatable = setmetatable
 local io = {
-    open = io.open
+    open = io.open,
+    popen = io.popen
+}
+local math = {
+    floor = math.floor
 }
 
 module("obvious.lib.wlan")
@@ -24,6 +28,16 @@ local function get_data(device)
     end
     fd:close()
 
+    fd = io.popen("iwconfig " .. device)
+    if fd then
+        local scale = 100
+        for line in fd:lines() do
+            if line:match("Link Quality=") then
+                scale = tonumber(line:match("=%d+/(%d+)"))
+            end
+        end
+        link = math.floor((link / scale) * 100)
+    end
     return link
 end
 
