@@ -26,7 +26,7 @@ local lib = {
     markup = require("obvious.lib.markup")
 }
 
-module("obvious.volume_bsd")
+module("obvious.volume_freebsd")
 
 local objects = { }
 
