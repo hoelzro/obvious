@@ -28,7 +28,7 @@ function timer.register(reg_time, slow_time, fn, descr)
         description=descr or "Undescribed timer",
         timer=capi.timer({ timeout = 600 })
     }
-    registry[fn].timer:add_signal("timeout", fn)
+    registry[fn].timer:connect_signal("timeout", fn)
     -- set_speed() will :stop() again and start with the real timeout
     registry[fn].timer:start()
     timer.set_speed(registry[fn].speed, fn)

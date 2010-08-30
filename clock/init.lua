@@ -173,12 +173,12 @@ local function update (trigger_alarms)
     end
 end
 
-widget:add_signal("mouse::enter", function ()
+widget:connect_signal("mouse::enter", function ()
     fulldate = true
     update(false)
 end)
 
-widget:add_signal("mouse::leave", function ()
+widget:connect_signal("mouse::leave", function ()
     fulldate = false
     update(false)
 end)
