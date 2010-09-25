@@ -74,7 +74,7 @@ end
 function get_data()
     local rv = { }
     rv.state = "unknown"
-    rv.charge = 0
+    rv.charge = nil
     rv.time = "00:00"
 
     if backend == "acpiconf" then
