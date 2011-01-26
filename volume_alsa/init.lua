@@ -38,7 +38,9 @@ function get_data(cardid, channel)
     fd:close()
 
     rv.volume = tonumber(string.match(status, "(%d?%d?%d)%%"))
-    if not rv.volume then return end
+    if not rv.volume then
+        rv.volume = ""
+    end
 
     status = string.match(status, "%[(o[^%]]*)%]")
     if not status then status = "on" end
@@ -58,7 +60,13 @@ local function update(obj)
     if not status.mute then
         color = "#009000"
     end
-    obj.widget.text = lib.markup.fg.color(color, "☊") .. string.format(" %03d%%", status.volume)
+
+    local format = " %03d%%"
+    if status.volume == "" then
+        format = ""
+    end
+
+    obj.widget.text = lib.markup.fg.color(color, "" .. obj.abrv .. "" ) .. string.format(format, status.volume)
 end
 
 local function update_by_values(cardid, channel)
@@ -90,13 +98,15 @@ function mixer(term, cardid)
     awful.util.spawn(term .. " -e 'alsamixer -c " .. cardid .. "'")
 end
 
-local function create(_, cardid, channel)
+local function create(_, cardid, channel, abrv)
     local cardid = cardid or 0
     local channel = channel or "Master"
+    local abrv = abrv or "M"
 
     local obj = {
         cardid = cardid,
         channel = channel,
+        abrv = abrv,
         term = "x-terminal-emulator -T Mixer"
     }
 
@@ -119,6 +129,7 @@ local function create(_, cardid, channel)
     obj.set_layout  = function(obj, layout) obj.layout = layout                       return obj end
     obj.set_cardid  = function(obj, id)     obj.cardid = id              obj.update() return obj end
     obj.set_channel = function(obj, id)     obj.channel = id             obj.update() return obj end
+    obj.set_abrv    = function(obj, id)     obj.abrv = id                obj.update() return obj end
     obj.set_term    = function(obj, term)   obj.term = term                           return obj end
     obj.raise       = function(obj, v) raise(obj.cardid, obj.channel, v) return obj end
     obj.lower       = function(obj, v) lower(obj.cardid, obj.channel, v) return obj end
