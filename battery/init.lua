@@ -65,7 +65,13 @@ local function init()
 
     rv = os.execute("apm")
     if rv == 0 then
-        backend = "apm"
+        fh = io.popen("uname")
+        if fh:read("*all") == "OpenBSD\n" then
+            backend = "apm-obsd"
+        else
+            backend = "apm"
+        end
+        fh:close()
         return
     end
 
@@ -124,6 +130,16 @@ function get_data()
         rv.time = data:match("%((.*)%)$")
 
         return rv
+    elseif backend == "apm-obsd" then
+        local fd = io.popen("apm")
+        if not fd then return end
+
+        local data = fd:read("*all")
+        if not data then return end
+
+        rv.state = data:match("A/C adapter state: ([a-zA-Z ]+)")
+        rv.charge = tonumber(data:match("^Battery state: .+ ([%d]?[%d]?[%d])%%"))
+        rv.time = data:match("Battery state: .+ remaining, ([%d]+ minutes)")
     end
     return rv
 end
@@ -178,7 +194,7 @@ local function detail ()
         fd = io.popen("acpi -bta")
     elseif backend == "acpitool" then
         fd = io.popen("acpitool")
-    elseif backend == "apm" then
+    elseif backend == "apm" or backend == "apm-obsd" then
         fd = io.popen("apm")
     else
         naughty.notify({ text = "unknown backend: " .. backend })
