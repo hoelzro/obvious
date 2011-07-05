@@ -129,6 +129,8 @@ function get_data()
         rv.charge = tonumber(data:match(".*, .*: (%d?%d?%d)%%"))
         rv.time = data:match("%((.*)%)$")
 
+        fd:close()
+
         return rv
     elseif backend == "apm-obsd" then
         local fd = io.popen("apm")
@@ -198,6 +200,8 @@ local function detail ()
         fd = io.popen("apm")
     else
         naughty.notify({ text = "unknown backend: " .. backend })
+        update()
+        return
     end
     local d = fd:read("*all"):gsub("\n+$", "")
     fd:close()
