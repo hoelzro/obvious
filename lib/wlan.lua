@@ -15,7 +15,34 @@ local math = {
 
 module("obvious.lib.wlan")
 
-local function get_data(device)
+local os = "unknown"
+
+local function determine_os ()
+    if os ~= "unknown" then
+        return
+    end
+    local fh = io.popen("uname")
+    os = fh:read("*all"):sub(1, -2)
+    fh:close()
+end
+
+local function get_data_openbsd(device)
+    local link = 0
+    local fd = io.popen("ifconfig " .. device)
+    if not fd then return end
+
+    for line in fd:lines() do
+        if line:match("ieee80211: ") then
+            link = tonumber(line:match("(%d?%d?%d)dB$"))
+            break
+        end
+    end
+    fd:close()
+
+    return link * 1.75
+end
+
+local function get_data_linux(device)
     local link = 0
     local fd = io.open("/proc/net/wireless")
     if not fd then return end
@@ -39,6 +66,14 @@ local function get_data(device)
         link = math.floor((link / scale) * 100)
     end
     return link
+end
+
+local function get_data(device)
+    determine_os()
+    if os == "OpenBSD" then
+        return get_data_openbsd(device)
+    end
+    return get_data_linux(device)
 end
 
 setmetatable(_M, { __call = function (_, ...) return get_data(...) end })
