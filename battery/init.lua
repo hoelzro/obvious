@@ -36,6 +36,7 @@ status = {
     ["full"] = "↯",
     ["high"] = "↯",
     ["discharging"] = "▼",
+    ["not connected"] = "▼",
     ["charging"] = "▲",
     ["unknown"] = "⌁"
 }
