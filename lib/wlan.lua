@@ -33,7 +33,7 @@ local function get_data_openbsd(device)
 
     for line in fd:lines() do
         if line:match("ieee80211: ") then
-            link = tonumber(line:match("(%d?%d?%d)dB$"))
+            link = tonumber(line:match("(%d?%d?%d)dB"))
             break
         end
     end
