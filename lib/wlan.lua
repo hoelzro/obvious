@@ -39,6 +39,9 @@ local function get_data_openbsd(device)
     end
     fd:close()
 
+    if not link then
+        return 0
+    end
     return link * 1.75
 end
 
