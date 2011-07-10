@@ -7,7 +7,6 @@ local beautiful = require("beautiful")
 local awful = {
     widget = require("awful.widget")
 }
-local margins = awful.widget.layout.margins
 local setmetatable = setmetatable
 
 module("obvious.lib.widget.progressbar")
@@ -38,11 +37,6 @@ function create(data, layout)
         local max = widget.data.max or 1
         local val = widget.data:get() or max
         widget:set_value(val / max)
-    end
-
-    widget.set_margin = function(widget, margin)
-        margins[widget.widget] = margin
-        return widget
     end
 
     widget.data = data

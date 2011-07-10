@@ -19,6 +19,7 @@ local capi = {
     screen = screen
 }
 local awful = require("awful")
+local wibox = require("wibox")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
 local lib = {
@@ -40,11 +41,7 @@ for key, value in pairs(defaults) do
     settings[key] = value
 end
 
-local widget = capi.widget({
-        type = "textbox",
-        name = "loadavg",
-        align = "right"
-    })
+local widget = wibox.widget.textbox()
 
 widget:buttons(awful.util.table.join(
     awful.button({ }, 1, function ()

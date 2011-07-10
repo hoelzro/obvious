@@ -7,7 +7,6 @@ local beautiful = require("beautiful")
 local awful = {
     widget = require("awful.widget")
 }
-local margins = awful.widget.layout.margins
 local setmetatable = setmetatable
 
 module("obvious.lib.widget.graph")
@@ -50,11 +49,6 @@ function create(data, layout)
     end
 
     widget.data = data
-
-    widget.set_margin = function(widget, margin)
-        margins[widget.widget] = margin
-        return widget
-    end
 
     return widget
 end

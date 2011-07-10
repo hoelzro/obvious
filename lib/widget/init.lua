@@ -24,10 +24,6 @@ set_default_layout = function(lay)
     defaults.layout = lay or layouts.leftright
 end
 
-set_default_margin = function(marg)
-    defaults.margin = marg or { left = 5 }
-end
-
 -- The functions each object from from_data_source will get
 local funcs = { }
 
@@ -42,20 +38,12 @@ funcs.set_type = function (obj, widget_type)
     local widget = widget_type.create(meta.data, defaults.layout)
     obj[1] = widget
     obj.update()
-    obj:set_margin(defaults.margin)
-
     return obj
 end
 
 funcs.set_layout = function (obj, layout)
     obj[1].layout = layout
     obj.layout = layout
-    obj:set_margin(defaults.margin)
-    return obj
-end
-
-funcs.set_margin = function (obj, margin)
-    obj[1]:set_margin(margin)
     return obj
 end
 

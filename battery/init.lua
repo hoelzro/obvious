@@ -13,12 +13,12 @@ local os = {
     execute = os.execute
 }
 local capi = {
-    widget = widget,
     mouse = mouse
 }
 
 local naughty = require("naughty")
 local awful = require("awful")
+local wibox = require("wibox")
 local lib = {
     hooks = require("obvious.lib.hooks"),
     markup = require("obvious.lib.markup")
@@ -26,12 +26,8 @@ local lib = {
 
 module("obvious.battery")
 
-widget = capi.widget({
-    type = "textbox",
-    name = "tb_battery",
-    align = "right"
-})
-status = {
+local widget = wibox.widget.textbox()
+local status = {
     ["charged"] = "↯",
     ["full"] = "↯",
     ["high"] = "↯",
@@ -42,7 +38,6 @@ status = {
 }
 
 local backend = "acpi"
-get_data = nil
 
 local function init()
     local rv = os.execute("acpiconf")
@@ -177,7 +172,7 @@ local function update()
         battery_status = battery_status .. " " .. awful.util.escape(bat.time)
     end
 
-    widget.text = battery_status
+    widget:set_markup(battery_status)
 end
 
 local function detail ()

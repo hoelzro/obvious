@@ -6,9 +6,9 @@
 local setmetatable = setmetatable
 local pairs = pairs
 local type = type
-local widget = widget
 local string = string
 local awful = require("awful")
+local wibox = wibox
 local naughty = require("naughty")
 local lib = {
         mpd = require("obvious.lib.mpd"),
@@ -28,9 +28,7 @@ for key, value in pairs(defaults) do
         settings[key] = value
 end
 
-local widget = widget({ type = "textbox",
-                        name = "mpd-playing",
-                        align = "left" })
+local widget = wibox.widget.textbox()
 
 connection = lib.mpd.new()
 
@@ -124,7 +122,7 @@ function update()
                 end
         end
 
-        widget.text = now_playing
+        widget:set_text(now_playing)
 end
 update()
 lib.hooks.timer.register(1, 30, update, "basic_mpd widget refresh rate")

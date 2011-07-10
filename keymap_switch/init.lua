@@ -14,11 +14,11 @@
 local setmetatable = setmetatable
 local pairs = pairs
 local ipairs = ipairs
-local widget = widget
 local io = {
     popen = io.popen
 }
 local awful = require("awful")
+local wibox = require("wibox")
 local lib = {
     hooks = require("obvious.lib.hooks"),
     markup = require("obvious.lib.markup")
@@ -27,8 +27,8 @@ local lib = {
 local defaults = {}
 defaults.layouts = {}
 defaults.menu = nil
-defaults.widget = widget({ type = "textbox" })
-defaults.widget.text = "..."
+defaults.widget = wibox.widget.textbox()
+defaults.widget:set_text("...")
 
 -- Clone the defaults to the used settings
 local settings = {}

@@ -22,6 +22,7 @@ local capi = {
 
 local naughty = require("naughty")
 local awful = require("awful")
+local wibox = require("wibox")
 
 local lib = {
     hooks = require("obvious.lib.hooks"),
@@ -30,11 +31,7 @@ local lib = {
 
 module("obvious.umts")
 
-widget = capi.widget({
-    type = "textbox",
-    name = "tb_umts",
-    align = "right"
-})
+widget = wibox.widget.textbox()
 
 local fh = nil
 local cops = {}
