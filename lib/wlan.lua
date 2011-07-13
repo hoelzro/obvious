@@ -4,6 +4,7 @@
 --------------------------------
 
 local tonumber = tonumber
+local pcall = pcall
 local setmetatable = setmetatable
 local io = {
     open = io.open,
@@ -22,8 +23,11 @@ local function determine_os ()
         return
     end
     local fh = io.popen("uname")
-    os = fh:read("*all"):sub(1, -2)
+    local ok, os = pcall(function () fh:read("*all"):sub(1, -2) end)
     fh:close()
+    if not ok then
+    	os = "unknown"
+    end
 end
 
 local function get_data_openbsd(device)
