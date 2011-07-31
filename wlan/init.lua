@@ -15,7 +15,17 @@ local lib = {
 
 module("obvious.wlan")
 
-local function format(link)
+function format_decibel(link)
+    local color = "#009000"
+    if link < 20 and link > 5 then
+        color = "#909000"
+    elseif link <= 5 then
+        color = "#900000"
+    end
+    return lib.markup.fg.color(color, "☢") .. string.format(" %02ddB", link)
+end
+
+function format_percent(link)
     local color = "#009000"
     if link < 50 and link > 10 then
         color = "#909000"
@@ -39,7 +49,7 @@ local function get_data_source(device)
     -- Due to historic reasons, this widget defaults to a textbox with
     -- a "special" format.
     ret:set_type("textbox")
-    ret:set_format(format)
+    ret:set_format(format_percent)
 
     return ret
 end
