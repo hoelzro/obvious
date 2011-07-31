@@ -23,11 +23,12 @@ local function determine_os ()
         return
     end
     local fh = io.popen("uname")
-    local ok, os = pcall(function () fh:read("*all"):sub(1, -2) end)
+    local ok, os = pcall(function () return fh:read():sub(1, -1) end)
     fh:close()
     if not ok then
     	os = "unknown"
     end
+    return os
 end
 
 local function get_data_openbsd(device)
@@ -76,7 +77,7 @@ local function get_data_linux(device)
 end
 
 local function get_data(device)
-    determine_os()
+    local os = determine_os()
     if os == "OpenBSD" then
         return get_data_openbsd(device)
     end
