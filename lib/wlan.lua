@@ -35,7 +35,7 @@ end
 local function get_data_openbsd(device)
     local link = 0
     local fd = io.popen("ifconfig " .. device)
-    if not fd then return end
+    if not fd then return 0 end
 
     for line in fd:lines() do
         if line:match("ieee80211: ") then
@@ -46,7 +46,7 @@ local function get_data_openbsd(device)
     fd:close()
 
     if not link then
-        return
+        return 0
     end
     return link
 end
