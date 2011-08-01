@@ -17,7 +17,7 @@ module("obvious.wlan")
 
 function format_decibel(link)
     local color = "#009000"
-    if link < 20 and link > 5 then
+    if link < 25 and link > 5 then
         color = "#909000"
     elseif link <= 5 then
         color = "#900000"
