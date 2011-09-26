@@ -1,7 +1,7 @@
---------------------------------
--- Author: Gregor Best        --
--- Copyright 2009 Gregor Best --
---------------------------------
+--------------------------------------------
+-- Author: Gregor Best                    --
+-- Copyright 2009, 2010, 2011 Gregor Best --
+--------------------------------------------
 
 local tonumber = tonumber
 local tostring = tostring
