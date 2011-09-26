@@ -15,6 +15,9 @@ local os = {
 local capi = {
     mouse = mouse
 }
+local table = {
+    remove = table.remove
+}
 
 local naughty = require("naughty")
 local awful = require("awful")
@@ -37,49 +40,10 @@ local status = {
     ["unknown"] = "⌁"
 }
 
-local backend = "acpi"
-
-local function init()
-    local rv = os.execute("acpiconf")
-    if rv == 0 then
-        backend = "acpiconf"
-        return
-    end
-
-    local rv = os.execute("acpitool")
-    if rv == 0 then
-        backend = "acpitool"
-        return
-    end
-
-    rv = os.execute("acpi")
-    if rv == 0 then
-        backend = "acpi"
-        return
-    end
-
-    rv = os.execute("apm")
-    if rv == 0 then
-        fh = io.popen("uname")
-        if fh:read("*all") == "OpenBSD\n" then
-            backend = "apm-obsd"
-        else
-            backend = "apm"
-        end
-        fh:close()
-        return
-    end
-
-    backend = "none"
-end
-
-function get_data()
-    local rv = { }
-    rv.state = "unknown"
-    rv.charge = nil
-    rv.time = "00:00"
-
-    if backend == "acpiconf" then
+local backend = function() return nil end
+local backends = {
+    ["acpiconf"] = function ()
+        local rv = {}
         local fd = io.popen("acpiconf -i0")
         for l in fd:lines() do
             if l:match("^Remaining capacity") then
@@ -94,8 +58,12 @@ function get_data()
             end
         end
         fd:close()
-    elseif backend == "acpi" or backend == "acpitool" then
-        local fd = io.popen(backend .. " -b")
+        return rv
+    end,
+    ["acpi"] = function (be)
+        be = be or "acpi"
+        local rv = {}
+        local fd = io.popen(be .. " -b")
         if not fd then return end
 
         local line = fd:read("*l")
@@ -113,7 +81,12 @@ function get_data()
         fd:close()
 
         return rv
-    elseif backend == "apm" then
+    end,
+    ["acpitool"] = function()
+        return backends["acpi"]("acpitool")
+    end,
+    ["apm"] = function ()
+        local rv = {}
         local fd = io.popen("apm")
         if not fd then return end
 
@@ -127,18 +100,72 @@ function get_data()
         fd:close()
 
         return rv
-    elseif backend == "apm-obsd" then
-        local fd = io.popen("apm")
+    end,
+    ["apm-obsd"] = function ()
+        local rv = {}
+        local fd = io.popen("apm -l -b -m")
         if not fd then return end
-
-        local data = fd:read("*all")
+        local fields = { "state", "charge", "time" }
+        local states = {
+            ["0"] = "high",
+            ["1"] = "low",
+            ["2"] = "critical",
+            ["3"] = "charging",
+            ["4"] = "absent",
+            ["255"] = "unknown"
+        }
+        for line in fd:lines() do
+            rv[table.remove(fields, 1)] = line
+        end
         fd:close()
-        if not data then return end
 
-        rv.state = data:match("A/C adapter state: ([a-zA-Z ]+)")
-        rv.charge = tonumber(data:match("^Battery state: .+ ([%d]?[%d]?[%d])%%"))
-        rv.time = data:match("Battery state: .+ remaining, ([%d]+ minutes)")
+        rv.state = states[rv.state]
+        if not rv.state then
+            rv.state = "unknown"
+        end
+        rv.charge = tonumber(rv.charge)
+        return rv
     end
+}
+
+local function init()
+    local rv = os.execute("acpiconf")
+    if rv == 0 then
+        backend = backends["acpiconf"]
+        return
+    end
+
+    local rv = os.execute("acpitool")
+    if rv == 0 then
+        backend = backends["acpitool"]
+        return
+    end
+
+    rv = os.execute("acpi")
+    if rv == 0 then
+        backend = backends["acpi"]
+        return
+    end
+
+    rv = os.execute("apm")
+    if rv == 0 then
+        fh = io.popen("uname")
+        if fh:read("*all") == "OpenBSD\n" then
+            backend = backends["apm-obsd"]
+        else
+            backend = backends["apm"]
+        end
+        fh:close()
+        return
+    end
+
+    backend = function () return nil end
+end
+
+function get_data()
+    local rv = backend()
+    rv.state = rv.state or "unknown"
+    rv.time = rv.time or "00:00"
     return rv
 end
 
