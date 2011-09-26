@@ -237,9 +237,11 @@ end
 widget:buttons(awful.util.table.join(
     awful.button({ }, 1, detail)
 ))
-init()
-update()
 lib.hooks.timer.register(60, 300, update)
-lib.hooks.timer.start(update)
 
-setmetatable(_M, { __call = function () return widget end })
+setmetatable(_M, { __call = function ()
+    init()
+    update()
+    lib.hooks.timer.start(update)
+    return widget
+end })
