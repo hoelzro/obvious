@@ -41,6 +41,8 @@ local status = {
 }
 
 local backend = function() return nil end
+local backend_detail = function () return "unknown backend" end
+
 local backends = {
     ["acpiconf"] = function ()
         local rv = {}
@@ -128,22 +130,45 @@ local backends = {
     end
 }
 
+local backends_detail = {
+    ["acpiconf"] = function ()
+        local str = ""
+        local fd = io.popen("sysctl hw.acpi.thermal")
+        for l in fd:lines() do
+            if l:match("tz%d%.temperature") then
+                str = str .. "\n" .. l
+            end
+        end
+        fd:close()
+        return str:gsub("^\n", "")
+    end,
+    ["common"] = function (be)
+        local fd = io.popen(be)
+        local d = fd:read("*all"):gsub("\n+$", "")
+        fd:close()
+        return d
+    end
+}
+
 local function init()
     local rv = os.execute("acpiconf")
     if rv == 0 then
         backend = backends["acpiconf"]
+        backend_detail = backends_detail["acpiconf"]
         return
     end
 
     local rv = os.execute("acpitool")
     if rv == 0 then
         backend = backends["acpitool"]
+        backend_detail = function () return backends_detail["common"]("acpitool") end
         return
     end
 
     rv = os.execute("acpi")
     if rv == 0 then
         backend = backends["acpi"]
+        backend_detail = function () return backends_detail["common"]("acpi") end
         return
     end
 
@@ -156,10 +181,9 @@ local function init()
             backend = backends["apm"]
         end
         fh:close()
+        backend_detail = function () return backends_detail["common"]("apm") end
         return
     end
-
-    backend = function () return nil end
 end
 
 function get_data()
@@ -203,33 +227,8 @@ local function update()
 end
 
 local function detail ()
-    local fd = nil
-    if backend == "acpiconf" then
-        local str = ""
-        fd = io.popen("sysctl hw.acpi.thermal")
-        for l in fd:lines() do
-            if l:match("tz%d%.temperature") then
-                str = str .. "\n" .. l
-            end
-        end
-        fd:close()
-        naughty.notify({ text = str:gsub("^\n", ""), screen = capi.mouse.screen })
-        return
-    elseif backend == "acpi" then
-        fd = io.popen("acpi -bta")
-    elseif backend == "acpitool" then
-        fd = io.popen("acpitool")
-    elseif backend == "apm" or backend == "apm-obsd" then
-        fd = io.popen("apm")
-    else
-        naughty.notify({ text = "unknown backend: " .. backend })
-        update()
-        return
-    end
-    local d = fd:read("*all"):gsub("\n+$", "")
-    fd:close()
     naughty.notify({
-        text = d,
+        text = backend_detail(),
         screen = capi.mouse.screen
     })
     update()
