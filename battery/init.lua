@@ -18,6 +18,9 @@ local capi = {
 local table = {
     remove = table.remove
 }
+local math = {
+    floor = math.floor
+}
 
 local naughty = require("naughty")
 local awful = require("awful")
@@ -126,6 +129,12 @@ local backends = {
             rv.state = "unknown"
         end
         rv.charge = tonumber(rv.charge)
+
+        if rv.time == "unknown" then
+            rv.time = nil
+        else
+            rv.time = tostring(math.floor((rv.time / 60) + 0.5)) .. ":" .. tostring(rv.time % 60)
+        end
         return rv
     end
 }
@@ -189,7 +198,6 @@ end
 function get_data()
     local rv = backend()
     rv.state = rv.state or "unknown"
-    rv.time = rv.time or "00:00"
     return rv
 end
 
