@@ -108,16 +108,12 @@ local backends = {
     end,
     ["apm-obsd"] = function ()
         local rv = {}
-        local fd = io.popen("apm -l -b -m")
+        local fd = io.popen("apm -l -a -m")
         if not fd then return end
-        local fields = { "state", "charge", "time" }
+        local fields = { "charge", "time", "state" }
         local states = {
-            ["0"] = "high",
-            ["1"] = "low",
-            ["2"] = "critical",
-            ["3"] = "charging",
-            ["4"] = "absent",
-            ["255"] = "unknown"
+            ["0"] = "discharging",
+            ["1"] = "charging",
         }
         for line in fd:lines() do
             rv[table.remove(fields, 1)] = line
@@ -134,6 +130,10 @@ local backends = {
             rv.time = nil
         else
             rv.time = tostring(math.floor((rv.time / 60) + 0.5)) .. ":" .. tostring(rv.time % 60)
+        end
+
+        if tonumber(rv.charge) >= 98 and rv.state == "charging" then
+            rv.state = "full"
         end
         return rv
     end
