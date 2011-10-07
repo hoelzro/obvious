@@ -129,7 +129,7 @@ local backends = {
         if rv.time == "unknown" then
             rv.time = nil
         else
-            rv.time = tostring(math.floor((rv.time / 60) + 0.5)) .. ":" .. tostring(rv.time % 60)
+            rv.time = tostring(math.floor((rv.time / 60) + 0.5)) .. ":".. ((rv.time % 60 < 10) and "0" or "") .. tostring(rv.time % 60)
         end
 
         if tonumber(rv.charge) >= 98 and rv.state == "charging" then
