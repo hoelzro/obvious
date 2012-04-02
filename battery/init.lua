@@ -43,7 +43,7 @@ local status = {
     ["unknown"] = "⌁"
 }
 
-local backend = function() return nil end
+local backend = function() return {} end
 local backend_detail = function () return "unknown backend" end
 
 local backends = {

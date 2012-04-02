@@ -1,7 +1,7 @@
---------------------------------
--- Author: Gregor Best        --
--- Copyright 2009 Gregor Best --
---------------------------------
+--------------------------------------------
+-- Author: Gregor Best                    --
+-- Copyright 2009, 2010, 2011 Gregor Best --
+--------------------------------------------
 
 local tonumber = tonumber
 local pcall = pcall
@@ -30,6 +30,37 @@ local function determine_os ()
     	os = "unknown"
     end
     return os
+end
+
+local function get_info_openbsd(device)
+	local repl = {
+		["^\tieee80211: "] = "802.11:\t",
+		["^\tinet(.?) "] = "inet%1:\t",
+		["^\tmedia: "] = "media:\t"
+	}
+	local fh = io.popen("ifconfig " .. device)
+	local rv = ""
+
+	function string:multimatch(patterns)
+		for _, v in ipairs(patterns) do
+			if self:match(v) then
+				return true
+			end
+		end
+		return false
+	end
+
+	for line in fh:lines() do
+		for k, v in pairs(repl) do
+			line = line:gsub(k, v)
+		end
+		if line:multimatch({ "^media", "^802%.11", "^inet" }) then
+			rv = rv .. "\n" .. line
+		end
+	end
+	fh:close()
+
+	return rv:gsub("^\n", "")
 end
 
 local function get_data_openbsd(device)
@@ -83,6 +114,14 @@ local function get_data(device)
         return get_data_openbsd(device)
     end
     return get_data_linux(device)
+end
+
+local function get_info(device)
+	determine_os()
+	if os == "OpenBSD" then
+		return get_info_openbsd(device)
+	end
+	return ""
 end
 
 setmetatable(_M, { __call = function (_, ...) return get_data(...) end })

@@ -1,7 +1,7 @@
---------------------------------
--- Author: Gregor Best        --
--- Copyright 2009 Gregor Best --
---------------------------------
+--------------------------------------------
+-- Author: Gregor Best                    --
+-- Copyright 2009, 2010, 2011 Gregor Best --
+--------------------------------------------
 
 local string = {
     format = string.format
@@ -17,7 +17,7 @@ module("obvious.wlan")
 
 function format_decibel(link)
     local color = "#009000"
-    if link < 25 and link > 5 then
+    if link < 20 and link > 5 then
         color = "#909000"
     elseif link <= 5 then
         color = "#900000"
