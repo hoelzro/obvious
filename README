@@ -1,5 +1,7 @@
 Readme for Obvious
 
+This is a fork of the original obvious repo (git://git.mercenariesguild.net/obvious.git).
+
 -- Widget data sources
    -- cpu()
       -- Widgets
