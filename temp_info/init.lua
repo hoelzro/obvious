@@ -34,7 +34,7 @@ local function update()
 
    local color = colors["hot"]
    if not temp[1] then
-      widget.text = "no data"
+      widget:set_text 'no data'
       return
    end
    if tonumber(temp[1]) < 50 then
@@ -42,7 +42,7 @@ local function update()
    elseif tonumber(temp[1]) >= 50 and tonumber(temp[1]) < 60 then
       color = colors["warm"]
    end
-   widget.text = temp[1] .. " " .. lib.markup.fg.color(color, "C")
+   widget:set_markup(temp[1] .. " " .. lib.markup.fg.color(color, "C"))
 end
 
 lib.hooks.timer.register(5, 30, update)
