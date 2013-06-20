@@ -122,7 +122,7 @@ function update()
                 end
         end
 
-        widget:set_text(now_playing)
+        widget:set_markup(now_playing)
 end
 update()
 lib.hooks.timer.register(1, 30, update, "basic_mpd widget refresh rate")
