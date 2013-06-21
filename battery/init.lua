@@ -206,12 +206,12 @@ local function update()
 
     local bat = get_data()
     if not bat then
-        widget.text = "no data"
+        widget:set_markup("no data")
         return
     end
     local color = "#900000"
     if not bat.charge then
-        widget.text = lib.markup.fg.color("#009000", status.charged) .. " A/C"
+        widget:set_markup(lib.markup.fg.color("#009000", status.charged) .. " A/C")
         return
     elseif bat.charge > 35 and bat.charge < 60 then
         color = "#909000"
