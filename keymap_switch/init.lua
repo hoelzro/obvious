@@ -121,7 +121,7 @@ function set_layouts(layouts_table)
 end
 
 function update()
-    settings.widget.text = get_current_keymap()
+    settings.widget:set_markup(get_current_keymap())
 end
 
 setmetatable(_M, { __call = function() return init(settings.widget) end }) -- TODO let the user specify widget here
