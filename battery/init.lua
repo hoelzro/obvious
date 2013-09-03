@@ -161,28 +161,28 @@ local backends_detail = {
 
 local function init()
     local rv = os.execute("acpiconf")
-    if rv == 0 then
+    if rv then
         backend = backends["acpiconf"]
         backend_detail = backends_detail["acpiconf"]
         return
     end
 
     local rv = os.execute("acpitool")
-    if rv == 0 then
+    if rv then
         backend = backends["acpitool"]
         backend_detail = function () return backends_detail["common"]("acpitool") end
         return
     end
 
     rv = os.execute("acpi")
-    if rv == 0 then
+    if rv then
         backend = backends["acpi"]
         backend_detail = function () return backends_detail["common"]("acpi") end
         return
     end
 
     rv = os.execute("apm")
-    if rv == 0 then
+    if rv then
         fh = io.popen("uname")
         if fh:read("*all") == "OpenBSD\n" then
             backend = backends["apm-obsd"]
