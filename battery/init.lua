@@ -9,9 +9,6 @@ local setmetatable = setmetatable
 local io = {
     popen = io.popen
 }
-local os = {
-    execute = os.execute
-}
 local capi = {
     mouse = mouse
 }
@@ -21,6 +18,18 @@ local table = {
 local math = {
     floor = math.floor
 }
+
+-- Compatability function for 5.1/5.2 (5.1 returns a number, 5.2 returns a boolean)
+local os_execute = os.execute
+local function execute(...)
+  local success = os_execute(...)
+
+  if type(success) == 'number' then
+    success = success == 0
+  end
+
+  return success
+end
 
 local naughty = require("naughty")
 local awful = require("awful")
@@ -160,28 +169,28 @@ local backends_detail = {
 }
 
 local function init()
-    local rv = os.execute("acpiconf")
+    local rv = execute("acpiconf")
     if rv then
         backend = backends["acpiconf"]
         backend_detail = backends_detail["acpiconf"]
         return
     end
 
-    local rv = os.execute("acpitool")
+    local rv = execute("acpitool")
     if rv then
         backend = backends["acpitool"]
         backend_detail = function () return backends_detail["common"]("acpitool") end
         return
     end
 
-    rv = os.execute("acpi")
+    rv = execute("acpi")
     if rv then
         backend = backends["acpi"]
         backend_detail = function () return backends_detail["common"]("acpi") end
         return
     end
 
-    rv = os.execute("apm")
+    rv = execute("apm")
     if rv then
         fh = io.popen("uname")
         if fh:read("*all") == "OpenBSD\n" then
