@@ -17,10 +17,8 @@ local string = {
 local table = {
     insert = table.insert
 }
-local capi = {
-    widget = widget,
-}
 local awful = require("awful")
+local wibox = require("wibox")
 local lib = {
     hooks = require("obvious.lib.hooks"),
     markup = require("obvious.lib.markup")
@@ -28,6 +26,7 @@ local lib = {
 
 module("obvious.volume_alsa")
 
+local widget = wibox.widget.textbox()
 local objects = { }
 
 function get_data(cardid, channel)
@@ -66,7 +65,7 @@ local function update(obj)
         format = ""
     end
 
-    obj.widget.text = lib.markup.fg.color(color, "" .. obj.abrv .. "" ) .. string.format(format, status.volume)
+    obj.widget:set_markup(lib.markup.fg.color(color, "" .. obj.abrv .. "" ) .. string.format(format, status.volume))
 end
 
 local function update_by_values(cardid, channel)
@@ -110,7 +109,6 @@ local function create(_, cardid, channel, abrv)
         term = "x-terminal-emulator -T Mixer"
     }
 
-    local widget = capi.widget({ type  = "textbox" })
     obj.widget = widget
     obj[1] = widget
     obj.update = function() update(obj) end
@@ -143,5 +141,8 @@ local function create(_, cardid, channel, abrv)
     return obj
 end
 
-setmetatable(_M, { __call = create })
+setmetatable(_M, { __call = function ()
+    create()
+    return widget
+end })
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:encoding=utf-8:textwidth=80
