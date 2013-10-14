@@ -26,7 +26,6 @@ local lib = {
 
 module("obvious.volume_alsa")
 
-local widget = wibox.widget.textbox()
 local objects = { }
 
 function get_data(cardid, channel)
@@ -109,6 +108,7 @@ local function create(_, cardid, channel, abrv)
         term = "x-terminal-emulator -T Mixer"
     }
 
+    local widget = wibox.widget.textbox()
     obj.widget = widget
     obj[1] = widget
     obj.update = function() update(obj) end
@@ -138,11 +138,8 @@ local function create(_, cardid, channel, abrv)
     lib.hooks.timer.start(obj.update)
 
     table.insert(objects, obj)
-    return obj
+    return widget
 end
 
-setmetatable(_M, { __call = function ()
-    create()
-    return widget
-end })
+setmetatable(_M, { __call = create })
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:encoding=utf-8:textwidth=80
