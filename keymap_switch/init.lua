@@ -30,6 +30,8 @@ defaults.menu = nil
 defaults.widget = wibox.widget.textbox()
 defaults.widget:set_text("...")
 
+local current_index = 1
+
 -- Clone the defaults to the used settings
 local settings = {}
 for key, value in pairs(defaults) do
@@ -60,12 +62,28 @@ local function init_once()
     setup_done = true
 end
 
+local function switch_keymap(layout_string)
+    awful.util.spawn("setxkbmap \"" .. layout_string .. "\"")
+    delayed_update_once(true)
+end
+
 local function init(widget)
     init_once()
 
     -- Use the default widget if not specified
     if widget then
         settings.widget = widget
+    end
+
+    local layouts = settings.layouts
+    settings.widget.rotate_layout = function()
+        current_index = current_index + 1
+
+        if current_index > #layouts then
+            current_index = 1
+        end
+
+        switch_keymap(layouts[current_index])
     end
 
     -- Reconfigure the menu immediately
@@ -101,17 +119,15 @@ local function get_current_keymap()
     return "unknown layout"
 end
 
-local function switch_keymap(layout_string)
-    awful.util.spawn("setxkbmap \"" .. layout_string .. "\"")
-    delayed_update_once(true)
-end
-
 function set_layouts(layouts_table)
     settings.layouts = layouts_table or settings.layouts
 
     newitems = {}
     for index, value in ipairs(settings.layouts) do
-        newitems[index] = { value, function() switch_keymap(value) end }
+        newitems[index] = { value, function()
+            current_index = index
+            switch_keymap(value)
+        end }
     end
 
     settings.menu = awful.menu.new({
