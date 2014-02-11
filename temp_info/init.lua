@@ -54,4 +54,4 @@ setmetatable(_M, { __call = function ()
    return widget
 end })
 
--- vim: filetype=lua:expandtab:shiftwidth=3:tabstop=3:softtabstop=3:encoding=utf-8:textwidth=80
+-- vim:ft=lua:ts=3:sw=3:sts=3:tw=80:fenc=utf-8:et
