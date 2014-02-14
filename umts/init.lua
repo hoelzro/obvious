@@ -13,11 +13,11 @@
 local assert = assert
 local setmetatable = setmetatable
 local io = {
-    open = io.open
+  open = io.open
 }
 local capi = {
-	widget = widget,
-	mouse = mouse
+  widget = widget,
+  mouse = mouse
 }
 
 local naughty = require("naughty")
@@ -25,8 +25,8 @@ local awful = require("awful")
 local wibox = require("wibox")
 
 local lib = {
-    hooks = require("obvious.lib.hooks"),
-    markup = require("obvious.lib.markup")
+  hooks = require("obvious.lib.hooks"),
+  markup = require("obvious.lib.markup")
 }
 
 module("obvious.umts")
@@ -38,64 +38,64 @@ local cops = {}
 local cind = {}
 
 function wait_for_data(input)
-	fh:write(input)
-	local data = ""
-	local lastline
-	repeat
-	    lastline = assert(fh:read())
-	    data = data .. lastline .. "\n"
-	until lastline:match("OK")
-	return data
+  fh:write(input)
+  local data = ""
+  local lastline
+  repeat
+    lastline = assert(fh:read())
+    data = data .. lastline .. "\n"
+  until lastline:match("OK")
+  return data
 end
 
 function get_indicators()
-	local cind = wait_for_data("AT+CIND?\r\n")
-	local rv = {}
-	rv.signal = cind:match("+CIND: %d,(%d)")
-	rv.service = cind:match("+CIND: %d,%d,%d,%d,(%d)")
-	rv.roaming = cind:match("+CIND: %d,%d,%d,%d,%d,%d,%d,(%d)")
-	return rv
+  local cind = wait_for_data("AT+CIND?\r\n")
+  local rv = {}
+  rv.signal = cind:match("+CIND: %d,(%d)")
+  rv.service = cind:match("+CIND: %d,%d,%d,%d,(%d)")
+  rv.roaming = cind:match("+CIND: %d,%d,%d,%d,%d,%d,%d,(%d)")
+  return rv
 end
 
 function get_operator()
-	wait_for_data("AT+COPS=3,0\r\n")
-	local cops = wait_for_data("AT+COPS?\r\n")
-	local rv = {}
-	rv.mode = cops:match("+COPS: (%d)")
-	rv.format = cops:match("+COPS: %d,(%d)")
-	rv.oper = cops:match("+COPS: %d,%d,\"(%a*)\"")
-	rv.act = cops:match("+COPS: %d,%d,\"%a*\",(%d)")
-	return rv
+  wait_for_data("AT+COPS=3,0\r\n")
+  local cops = wait_for_data("AT+COPS?\r\n")
+  local rv = {}
+  rv.mode = cops:match("+COPS: (%d)")
+  rv.format = cops:match("+COPS: %d,(%d)")
+  rv.oper = cops:match("+COPS: %d,%d,\"(%a*)\"")
+  rv.act = cops:match("+COPS: %d,%d,\"%a*\",(%d)")
+  return rv
 end
 
 local function update()
-	fh = io.open("/dev/ttyACM1", "r+")
-	if not fh then
-	    cops = {}
-	    cind = {}
-	    widget.text = ""
-	    return
-	end
+  fh = io.open("/dev/ttyACM1", "r+")
+  if not fh then
+    cops = {}
+    cind = {}
+    widget.text = ""
+    return
+  end
 
-	cops = get_operator()
-	cind = get_indicators()
-	widget.text = " " .. cops.oper
-	fh:close()
+  cops = get_operator()
+  cind = get_indicators()
+  widget.text = " " .. cops.oper
+  fh:close()
 end
 
 local function detail()
-	if not cops.oper then return end
+  if not cops.oper then return end
 
-	naughty.notify({
-	    text = "Mobile operator: " .. cops.oper ..
-		"\nSignal strength: " .. cind.signal .. "/5" ..
-		"\nRoaming: " .. cind.roaming,
-	    screen = capi.mouse.screen
-	})
+  naughty.notify({
+    text = "Mobile operator: " .. cops.oper ..
+    "\nSignal strength: " .. cind.signal .. "/5" ..
+    "\nRoaming: " .. cind.roaming,
+    screen = capi.mouse.screen
+  })
 end
 
 widget:buttons(awful.util.table.join(
-    awful.button({ }, 1, detail)
+  awful.button({ }, 1, detail)
 ))
 
 update()
@@ -104,4 +104,4 @@ lib.hooks.timer.start(update)
 
 setmetatable(_M, { __call = function () return widget end })
 
--- vim:ft=lua:ts=8:sw=2:sts=2:tw=80:fenc=utf-8:et
+-- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:fenc=utf-8:et
