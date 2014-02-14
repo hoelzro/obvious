@@ -84,4 +84,4 @@ function fg.urgent(text) return fg.color(beautiful.fg_urgent, text) end
 function bg.urgent(text) return bg.color(beautiful.bg_urgent, text) end
 function    urgent(text) return bg.urgent(fg.urgent(text))   end
 
--- vim:ft=lua:ts=4:sw=4:sts=4:tw=80:fenc=utf-8:et
+-- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:fenc=utf-8:et
