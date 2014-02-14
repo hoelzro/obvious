@@ -55,7 +55,27 @@ local status = {
 local backend = function() return {} end
 local backend_detail = function () return "unknown backend" end
 
+
+
 local backends = {
+    ["upower"] = function ()
+        local rv = {}
+        local fd = io.popen("upower -i /org/freedesktop/UPower/devices/battery_BAT0")
+        for l in fd:lines() do
+            if l:match("^ *percentage:") then
+                rv.charge = tonumber(l:match(": *(%d?%d?%d)"))
+            elseif l:match("^ *time to empty:") then
+                rv.time = l:match(": *(%S+)")
+                if rv.time == "unknown" then
+                    rv.time = ""
+                end
+            elseif l:match("state") then
+                rv.state = l:match(": *(%S+)")
+            end
+        end
+        fd:close()
+        return rv
+    end,
     ["acpiconf"] = function ()
         local rv = {}
         local fd = io.popen("acpiconf -i0")
@@ -169,6 +189,13 @@ local backends_detail = {
 }
 
 local function init()
+    local rv = execute("upower -e")
+    if rv then
+        backend = backends["upower"]
+        backend_detail = function () return backends_detail["common"]("upower -i /org/freedesktop/UPower/devices/battery_BAT0") end
+        return
+    end
+
     local rv = execute("acpiconf")
     if rv then
         backend = backends["acpiconf"]
