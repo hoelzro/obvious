@@ -22,3 +22,5 @@ require("obvious.temp_info")
 require("obvious.keymap_switch")
 
 module("obvious")
+
+-- vim:ft=lua:ts=8:sw=2:sts=2:tw=80:fenc=utf-8:et

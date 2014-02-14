@@ -155,4 +155,4 @@ function timer.has(fn)
     end
 end
 
--- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:encoding=utf-8:textwidth=80
+-- vim:ft=lua:ts=4:sw=4:sts=4:tw=80:fenc=utf-8:et

@@ -45,4 +45,5 @@ function create(data, layout)
 end
 
 setmetatable(_M, { __call = function (_, ...) return progressbar(...) end })
--- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:encoding=utf-8:textwidth=80
+
+-- vim:ft=lua:ts=8:sw=4:sts=4:tw=80:fenc=utf-8:et

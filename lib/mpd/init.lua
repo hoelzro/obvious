@@ -209,4 +209,4 @@ function MPD:toggle_play()
     end
 end
 
--- vim:filetype=lua:tabstop=8:shiftwidth=4:expandtab:
+-- vim:ft=lua:ts=8:sw=4:sts=2:tw=80:fenc=utf-8:et

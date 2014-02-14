@@ -150,4 +150,5 @@ function set_unknown(unknown)
 end
 
 setmetatable(_M, { __call = function () return widget end })
--- vim: filetype=lua:expandtab:shiftwidth=8:tabstop=8:softtabstop=8:encoding=utf-8:textwidth=80
+
+-- vim:ft=lua:ts=8:sw=8:sts=8:tw=80:fenc=utf-8:et
