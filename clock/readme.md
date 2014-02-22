@@ -3,8 +3,8 @@ Clock Widget
 
 This widget is a powerful clock. It has a normal view, a roll-over view, and
 configurable, time-based alarms. When an alarm is shown, the clock will change
-its colour to indicate that. If you then click on it, all alarms since the last
-click are shown.
+its colour to indicate that. If you then click on it, all alarms since the
+last click are shown.
 
 Settings Available:
 -------------------
@@ -39,7 +39,7 @@ widget list by adding:
     obvious.clock()
 
 Finally, you want to create the alarm file. The alarm file is contained
-in `${XDG_CONFIG_DIR}/awesome/alarms`. In most cases this would be
+in `${XDG_CONFIG_HOME}/awesome/alarms`. In most cases this would be
 `~/.config/awesome/alarms`. The alarm file has a format like:
 
     14:30
@@ -51,5 +51,5 @@ strftime format `%a-%d-%m-%Y:%H:%M`, which looks like this:
 
     Tue-26-05-2009:22:01
 
-The second line contains the message to show. You can use `\n` inside the message
-body if you want a newline.
+The second line contains the message to show. You can use `\n` inside the
+message body if you want a newline.
