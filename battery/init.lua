@@ -6,6 +6,7 @@
 local tonumber = tonumber
 local tostring = tostring
 local setmetatable = setmetatable
+local type = type
 local io = {
   popen = io.popen
 }
