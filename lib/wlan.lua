@@ -65,7 +65,7 @@ end
 
 local function get_data_openbsd(device)
   local link = 0
-  local fd = io.popen("ifconfig " .. device)
+  local fd = io.popen("/sbin/ifconfig " .. device)
   if not fd then return 0 end
 
   for line in fd:lines() do
@@ -95,7 +95,7 @@ local function get_data_linux(device)
   end
   fd:close()
 
-  fd = io.popen("iwconfig " .. device)
+  fd = io.popen("/sbin/iwconfig " .. device)
   if fd then
     local scale = 100
     for line in fd:lines() do
