@@ -191,15 +191,16 @@ local function init()
   local rv = execute("upower -e")
   if rv then
     local fd = io.popen("upower -e")
-    local battery_filename = ""
+    local battery_filename
     for l in fd:lines() do
       if l:match("battery_BAT") then
         battery_filename = l
+        break
       end
     end
     fd:close()
 
-    if battery_filename ~= "" then
+    if battery_filename then
       backend = function() return backends["upower"](battery_filename) end
       backend_detail = function () return backends_detail["common"]("upower -i " .. battery_filename) end
       return
