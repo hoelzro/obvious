@@ -83,9 +83,14 @@ widget:buttons(awful.util.table.join(
       alarms = { }
       widget.bg = beautiful.bg_normal
     else
+      local cmd = 'cal'
+      if is_bsd() then
+        cmd = 'cal -h'
+      end
+
       naughty.notify({
         text = lib.markup.font("monospace",
-        awful.util.pread("cal -h"):
+        awful.util.pread(cmd):
         gsub("([^0-9])(" .. tonumber(os.date("%d")) .. ")([^0-9])",
         "%1<span foreground=\"#FF0000\">%2</span>%3"):gsub("\n+$", "")),
         screen = capi.mouse.screen
@@ -93,6 +98,11 @@ widget:buttons(awful.util.table.join(
     end
   end)
 ))
+
+-- non BSD-like `cal` for -h return help
+function is_bsd()
+  return not awful.util.pread('cal -h'):find('help')
+end
 
 local function read_alarms(file)
   local rv = { }
