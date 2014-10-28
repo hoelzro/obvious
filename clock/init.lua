@@ -60,6 +60,11 @@ local function edit(file)
   end
 end
 
+-- non BSD-like `cal` for -h return help
+local function is_bsd()
+  return not awful.util.pread('cal -h'):find('help')
+end
+
 local alarmfile = awful.util.getdir("config").."/alarms"
 
 local fulldate = false
@@ -98,11 +103,6 @@ widget:buttons(awful.util.table.join(
     end
   end)
 ))
-
--- non BSD-like `cal` for -h return help
-function is_bsd()
-  return not awful.util.pread('cal -h'):find('help')
-end
 
 local function read_alarms(file)
   local rv = { }
