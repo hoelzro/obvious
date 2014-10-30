@@ -6,7 +6,7 @@ The default is "wlan0".
 
 To add it to your rc.lua, include
     require("obvious.wlan")
-in the top of your rc.lua and add obvious.wlan() to your wibox
+in the top of your rc.lua and add obvious.wlan().widget to your wibox
 
 If you want to use the data gathered by this widget, you can use the function
 obvious.wlan.get_data(). It returns nil on failure, otherwise it returns a table with
