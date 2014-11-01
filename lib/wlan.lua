@@ -88,7 +88,7 @@ local function get_data_linux(device)
   if not fd then return end
 
   for line in fd:lines() do
-    if line:match("^ "..device) then
+    if line:match("^%s*"..device) then
       link = tonumber(line:match("   (%d?%d?%d)"))
       break
     end
