@@ -8,7 +8,11 @@ local tostring = tostring
 local setmetatable = setmetatable
 local type = type
 local io = {
-  popen = io.popen
+  popen = io.popen,
+  open  = io.open
+}
+local os = {
+  getenv = os.getenv
 }
 local capi = {
   mouse = mouse
@@ -187,9 +191,36 @@ local backends_detail = {
   end
 }
 
+local function exists(name)
+  local function check(file)
+    local f = io.open(file,"r")
+    if f ~= nil then
+      f:close()
+      return true
+    else
+      return false
+    end
+  end
+
+  if name:match("^%./") or name:match("^/") then
+    return check(name)
+  end
+
+  local path = os.getenv("PATH") or ""
+
+  for segment in path:gmatch("([^:]+):?") do
+    local file = segment .. "/" .. name
+    if check(file) then
+      return true
+    end
+  end
+
+  return false
+end
+
 local function init()
-  local rv = execute("upower -e")
-  if rv then
+  -- upover
+  if exists('upower') then
     local fd = io.popen("upower -e")
     local battery_filename
     for l in fd:lines() do
@@ -207,29 +238,29 @@ local function init()
     end
   end
 
-  local rv = execute("acpiconf")
-  if rv then
+  -- apiconf
+  if exists('apiconf') then
     backend = backends["acpiconf"]
     backend_detail = backends_detail["acpiconf"]
     return
   end
 
-  local rv = execute("acpitool")
-  if rv then
+  -- acpitool
+  if exists('acpitool') then
     backend = backends["acpitool"]
     backend_detail = function () return backends_detail["common"]("acpitool") end
     return
   end
 
-  rv = execute("acpi")
-  if rv then
+  -- acpi
+  if exists('acpi') then
     backend = backends["acpi"]
     backend_detail = function () return backends_detail["common"]("acpi") end
     return
   end
 
-  rv = execute("apm")
-  if rv then
+  -- apm
+  if exists('apm') then
     fh = io.popen("uname")
     if fh:read("*all") == "OpenBSD\n" then
       backend = backends["apm-obsd"]
