@@ -219,7 +219,7 @@ local function exists(name)
 end
 
 local function init()
-  -- upover
+  -- upower
   if exists('upower') then
     local fd = io.popen("upower -e")
     local battery_filename
@@ -238,7 +238,7 @@ local function init()
     end
   end
 
-  -- apiconf
+  -- acpiconf
   if exists('apiconf') then
     backend = backends["acpiconf"]
     backend_detail = backends_detail["acpiconf"]
