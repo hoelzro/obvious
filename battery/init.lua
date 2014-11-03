@@ -8,11 +8,7 @@ local tostring = tostring
 local setmetatable = setmetatable
 local type = type
 local io = {
-  popen = io.popen,
-  open  = io.open
-}
-local os = {
-  getenv = os.getenv
+  popen = io.popen
 }
 local capi = {
   mouse = mouse
@@ -192,30 +188,15 @@ local backends_detail = {
 }
 
 local function exists(name)
-  local function check(file)
-    local f = io.open(file,"r")
-    if f ~= nil then
-      f:close()
-      return true
-    else
-      return false
-    end
+  local p = io.popen('which '..name..' 2>/dev/null')
+  local exists = p:lines()
+
+  if exists() ~= nil then
+    p:close()
+    return true
+  else
+    return false
   end
-
-  if name:match("^%./") or name:match("^/") then
-    return check(name)
-  end
-
-  local path = os.getenv("PATH") or ""
-
-  for segment in path:gmatch("([^:]+):?") do
-    local file = segment .. "/" .. name
-    if check(file) then
-      return true
-    end
-  end
-
-  return false
 end
 
 local function init()
