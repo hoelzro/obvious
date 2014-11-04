@@ -187,9 +187,21 @@ local backends_detail = {
   end
 }
 
+local function exists(name)
+  local p = io.popen('which '..name..' 2>/dev/null')
+  local exists = p:lines()
+
+  if exists() ~= nil then
+    p:close()
+    return true
+  else
+    return false
+  end
+end
+
 local function init()
-  local rv = execute("upower -e")
-  if rv then
+  -- upower
+  if exists('upower') then
     local fd = io.popen("upower -e")
     local battery_filename
     for l in fd:lines() do
@@ -207,29 +219,29 @@ local function init()
     end
   end
 
-  local rv = execute("acpiconf")
-  if rv then
+  -- acpiconf
+  if exists('apiconf') then
     backend = backends["acpiconf"]
     backend_detail = backends_detail["acpiconf"]
     return
   end
 
-  local rv = execute("acpitool")
-  if rv then
+  -- acpitool
+  if exists('acpitool') then
     backend = backends["acpitool"]
     backend_detail = function () return backends_detail["common"]("acpitool") end
     return
   end
 
-  rv = execute("acpi")
-  if rv then
+  -- acpi
+  if exists('acpi') then
     backend = backends["acpi"]
     backend_detail = function () return backends_detail["common"]("acpi") end
     return
   end
 
-  rv = execute("apm")
-  if rv then
+  -- apm
+  if exists('apm') then
     fh = io.popen("uname")
     if fh:read("*all") == "OpenBSD\n" then
       backend = backends["apm-obsd"]
