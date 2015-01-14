@@ -6,6 +6,7 @@
 local pread        = require('awful').util.pread
 local setmetatable = setmetatable
 local tonumber     = tonumber
+local sformat      = string.format
 local smatch       = string.match
 local sgmatch      = string.gmatch
 local popen        = io.popen
@@ -108,7 +109,7 @@ local function update()
    elseif temp[1] >= 50 and temp[1] < 60 then
       color = colors.warm
    end
-   widget:set_markup(temp[1] .. ' ' .. markup.fg.color(color, 'C'))
+   widget:set_markup(sformat('%.2f', temp[1]) .. ' ' .. markup.fg.color(color, 'C'))
 end
 
 hooks.timer.register(5, 30, update)
