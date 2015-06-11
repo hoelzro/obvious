@@ -75,7 +75,7 @@ local widget = wibox.widget.textbox()
 widget:buttons(awful.util.table.join(
   awful.button({ }, 3, function ()
     menu:toggle()
-  end), 
+  end),
   awful.button({ }, 1, function ()
     if #alarms > 0 then
       for _, v in pairs(alarms) do
@@ -222,7 +222,7 @@ function set_scrolltimeout(timeout)
   settings.scrolltimeout = timeout
 end
 
-setmetatable(_M, { __call = function () 
+setmetatable(_M, { __call = function ()
   update()
   if not initialized then
     lib.hooks.timer.register(settings.shorttimer, settings.longtimer, update)
