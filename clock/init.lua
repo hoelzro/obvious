@@ -37,16 +37,14 @@ local lib = {
 module("obvious.clock")
 
 local initialized = false
-local defaults = { }
-defaults.shorttimeformat = "%T"
-defaults.longtimeformat = "%T %D"
-defaults.editor = nil
-defaults.shorttimer =  60
-defaults.longtimer =  120
-local settings = { }
-for key, value in pairs(defaults) do
-  settings[key] = value
-end
+local defaults = {
+  shorttimeformat = "%T",
+  longtimeformat  = "%T %D",
+  editor          = nil,
+  shorttimer      = 60,
+  longtimer       = 120,
+}
+local settings = setmetatable({}, { __index = defaults })
 
 local menu
 
