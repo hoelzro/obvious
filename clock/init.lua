@@ -43,6 +43,8 @@ local defaults = {
   editor          = nil,
   shorttimer      = 60,
   longtimer       = 120,
+  scrolling       = false,
+  scrolltimeout   = 10,
 }
 local settings = setmetatable({}, { __index = defaults })
 
@@ -210,6 +212,14 @@ end
 
 function set_longtimer(delay)
   settings.longtimer = delay or defaults.longtimer
+end
+
+function set_scrolling(active)
+  settings.scrolling = active
+end
+
+function set_scrolltimeout(timeout)
+  settings.scrolltimeout = timeout
 end
 
 setmetatable(_M, { __call = function () 
