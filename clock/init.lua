@@ -3,6 +3,10 @@
 -- Copyright 2009 Gregor Best --
 --------------------------------
 
+local os_time  = os.time
+local os_date  = os.date
+local tostring = tostring
+
 local pairs = pairs
 local print = print
 local setmetatable = setmetatable
@@ -33,8 +37,6 @@ local lib = {
   hooks = require("obvious.lib.hooks"),
   markup = require("obvious.lib.markup")
 }
-local os_date  = os.date
-local tostring = tostring
 
 module("obvious.clock")
 
@@ -101,9 +103,35 @@ local alarms = { }
 
 local widget = wibox.widget.textbox()
 
+local last_scroll_time = 0
+local displayyear      = 0
+local displaymonth     = 0
+
 widget:buttons(awful.util.table.join(
   awful.button({ }, 3, function ()
     menu:toggle()
+  end),
+  awful.button({}, 4, function()
+    displaymonth = displaymonth + 1
+
+    if displaymonth == 13 then
+      displaymonth = 1
+      displayyear = displayyear + 1
+    end
+
+    show_calendar(displayyear, displaymonth)
+    last_scroll_time = os_time()
+  end),
+  awful.button({}, 5, function()
+    displaymonth = displaymonth - 1
+
+    if displaymonth == 0 then
+      displaymonth = 12
+      displayyear = displayyear - 1
+    end
+
+    show_calendar(displayyear, displaymonth)
+    last_scroll_time = os_time()
   end),
   awful.button({ }, 1, function ()
     if #alarms > 0 then
@@ -117,8 +145,14 @@ widget:buttons(awful.util.table.join(
       alarms = { }
       widget.bg = beautiful.bg_normal
     else
-      local date_info = os_date '*t'
-      show_calendar(date_info.year, date_info.month)
+      if not settings.scrolling or os_time() - settings.scrolltimeout > last_scroll_time then
+        local date_info = os_date '*t'
+        displayyear     = date_info.year
+        displaymonth    = date_info.month
+      end
+
+      show_calendar(displayyear, displaymonth)
+      last_scroll_time = os_time()
     end
   end)
 ))
