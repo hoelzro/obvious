@@ -33,6 +33,8 @@ local lib = {
   hooks = require("obvious.lib.hooks"),
   markup = require("obvious.lib.markup")
 }
+local os_date  = os.date
+local tostring = tostring
 
 module("obvious.clock")
 
@@ -69,11 +71,12 @@ local show_calendar
 do
   local cal_notification
 
-  function show_calendar()
+  function show_calendar(year, month)
     local cmd = 'cal'
     if is_bsd() then
       cmd = 'cal -h'
     end
+    cmd = cmd .. ' ' .. tostring(month) .. ' ' .. tostring(year)
 
     local notify_args = {
       text = lib.markup.font("monospace",
@@ -114,7 +117,8 @@ widget:buttons(awful.util.table.join(
       alarms = { }
       widget.bg = beautiful.bg_normal
     else
-      show_calendar()
+      local date_info = os_date '*t'
+      show_calendar(date_info.year, date_info.month)
     end
   end)
 ))
