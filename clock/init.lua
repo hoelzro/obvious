@@ -65,19 +65,30 @@ local function is_bsd()
   return not awful.util.pread('cal -h'):find('help')
 end
 
-local function show_calendar()
-  local cmd = 'cal'
-  if is_bsd() then
-    cmd = 'cal -h'
-  end
+local show_calendar
+do
+  local cal_notification
 
-  naughty.notify({
-    text = lib.markup.font("monospace",
-    awful.util.pread(cmd):
-    gsub("([^0-9])(" .. tonumber(os.date("%d")) .. ")([^0-9])",
-    "%1<span foreground=\"#FF0000\">%2</span>%3"):gsub("\n+$", "")),
-    screen = capi.mouse.screen
-  })
+  function show_calendar()
+    local cmd = 'cal'
+    if is_bsd() then
+      cmd = 'cal -h'
+    end
+
+    local notify_args = {
+      text = lib.markup.font("monospace",
+      awful.util.pread(cmd):
+      gsub("([^0-9])(" .. tonumber(os.date("%d")) .. ")([^0-9])",
+      "%1<span foreground=\"#FF0000\">%2</span>%3"):gsub("\n+$", "")),
+      screen = capi.mouse.screen
+    }
+
+    if cal_notification and cal_notification.box.visible then
+      notify_args.replaces_id = cal_notification.id
+    end
+
+    cal_notification = naughty.notify(notify_args)
+  end
 end
 
 local alarmfile = awful.util.getdir("config").."/alarms"
