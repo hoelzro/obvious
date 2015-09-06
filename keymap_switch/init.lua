@@ -104,7 +104,7 @@ local function get_current_keymap()
 
   for line in fd:lines() do
     if line:match("xkb_symbols") then
-      local keymap = line:match('%+[%w]*%+')
+      local keymap = line:match('%+[a-zA-Z0-9()]*%+')
 
       fd:close()
       if not keymap then
