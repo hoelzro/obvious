@@ -70,10 +70,7 @@ function from_data_source(data)
       -- Ugly hack: this function wants to be called on the right object
       return function(_, ...)
         -- Ugly hack: this function wants to be called on the right object
-        ret(obj[1], ...)
-        -- Ugly hack 2: We force obj to be returned again and discard
-        -- the function's return value
-        return obj
+        return ret(obj[1], ...)
       end
     end
     return ret
