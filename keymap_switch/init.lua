@@ -142,4 +142,4 @@ end
 
 setmetatable(_M, { __call = function() return init(settings.widget) end }) -- TODO let the user specify widget here
 
--- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:fenc=utf-8:et
+-- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

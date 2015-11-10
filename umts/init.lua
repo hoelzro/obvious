@@ -104,4 +104,4 @@ lib.hooks.timer.start(update)
 
 setmetatable(_M, { __call = function () return widget end })
 
--- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:fenc=utf-8:et
+-- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

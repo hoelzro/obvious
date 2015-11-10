@@ -265,4 +265,4 @@ function set_cache(c)
   settings.cache = c or defaults.cache
 end
 
--- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:fenc=utf-8:et
+-- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

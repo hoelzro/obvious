@@ -23,4 +23,4 @@ require("obvious.keymap_switch")
 
 module("obvious")
 
--- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:fenc=utf-8:et
+-- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et
