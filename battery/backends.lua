@@ -202,7 +202,7 @@ function acpi_backend:state()
     local data = line:match('Battery #?[0-9]%s*: ([^\n]*)')
 
     rv.status  = data:match('([%a]*),.*'):lower()
-    rv.charge  = tonumber(data:match('.*, (%d+%.?%d*)%%'))
+    rv.charge  = floor(tonumber(data:match('.*, (%d+%.?%d*)%%')))
     rv.time    = data:match(".*, (%d*:?%d+:%d+)")
 
     if not rv.status:match('unknown') then
