@@ -85,7 +85,7 @@ local discharging_output = { -- {{{
     energy-full-design:  58.1555 Wh
     energy-rate:         45.4465 W
     voltage:             10.587 V
-    time to empty:       35.3 minutes
+    time to empty:       24.3 minutes
     percentage:          72%
     capacity:            55.5641%
     technology:          lithium-ion
@@ -96,16 +96,16 @@ local discharging_output = { -- {{{
     1447262621	45.447	discharging
   ]],
   ['acpi -b'] = [[
-Battery 0: Discharging, 72%, 00:32:23 remaining
+Battery 0: Discharging, 72%, 00:24:33 remaining
   ]],
   ['acpi'] = [[
-Battery 0: Discharging, 72%, 00:32:50 remaining
+Battery 0: Discharging, 72%, 00:24:33 remaining
   ]],
   ['acpitool -b'] = [[
-  Battery #1     : Discharging, 72.80%, 00:31:11
+  Battery #1     : Discharging, 72.80%, 00:24:33
   ]],
   ['acpitool'] = [[
-  Battery #1     : Discharging, 72.69%, 00:32:17
+  Battery #1     : Discharging, 72.69%, 00:24:33
   AC adapter     : <info not available> 
   Thermal info   : <not available>
   ]],
@@ -143,7 +143,7 @@ local charging_output = { -- {{{
     energy-full-design:  58.1555 Wh
     energy-rate:         21.5126 W
     voltage:             11.894 V
-    time to full:        1.6 hours
+    time to full:        0.4 hours
     percentage:          72%
     capacity:            55.5641%
     technology:          lithium-ion
@@ -158,10 +158,10 @@ Battery 0: Charging, 72%, 00:24:33 until charged
 Battery 0: Charging, 72%, 00:24:31 until charged
   ]],
   ['acpitool -b'] = [[
-  Battery #1     : Charging, 72.96%, 01:05:55
+  Battery #1     : Charging, 72.96%, 00:24:36
   ]],
   ['acpitool'] = [[
-  Battery #1     : Charging, 73.07%, 01:06:01
+  Battery #1     : Charging, 73.07%, 00:24:36
   AC adapter     : <info not available> 
   Thermal info   : <not available>
   ]],
