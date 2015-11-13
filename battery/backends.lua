@@ -106,11 +106,20 @@ function upower_backend:state()
   for line in fd:lines() do
     if line:match('^%s*percentage:') then
       rv.charge = tonumber(line:match(':%s*(%d+)'))
-    elseif line:match('^%s*time to empty:') then
-      rv.time = line:match(':%s*(%S+)')
-      if rv.time == 'unknown' then
-        rv.time = ''
+    elseif line:match('^%s*time to empty:') or line:match('^%s*time to full:') then
+      local time, units = line:match(':%s*(%S+)%s*(%w*)')
+
+      if time == 'unknown' then
+        time = nil
+      elseif units == 'hour' or units == 'hours' then
+        time = floor(time * 60)
+      elseif units == 'minute' or units == 'minutes' then
+        time = tonumber(floor(time))
+      else
+        time = 0
       end
+
+      rv.time = time
     elseif line:match('state') then
       rv.status = upower_status_mapping[line:match(':%s*(%S+)')]
     end
@@ -201,9 +210,13 @@ function acpi_backend:state()
   for line in fd:lines() do
     local data = line:match('Battery #?[0-9]%s*: ([^\n]*)')
 
-    rv.status  = data:match('([%a]*),.*'):lower()
-    rv.charge  = floor(tonumber(data:match('.*, (%d+%.?%d*)%%')))
-    rv.time    = data:match(".*, (%d*:?%d+:%d+)")
+    rv.status = data:match('([%a]*),.*'):lower()
+    rv.charge = floor(tonumber(data:match('.*, (%d+%.?%d*)%%')))
+
+    local hours, minutes = data:match('.*, (%d*):?(%d+):%d+')
+    if hours or minutes then
+      rv.time = (hours or 0) * 60 + minutes
+    end
 
     if not rv.status:match('unknown') then
       break
