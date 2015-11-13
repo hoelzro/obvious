@@ -69,6 +69,13 @@ end
 -- XXX rv is a bad variable name
 
 -- {{{ upower backend
+
+local upower_status_mapping = setmetatable({
+  ['fully-charged'] = 'charged',
+}, { __index = function(_, status)
+  return status
+end})
+
 function upower_backend:configure()
   local fd, err = popen 'upower -e'
   if not fd then
@@ -105,7 +112,7 @@ function upower_backend:state()
         rv.time = ''
       end
     elseif line:match('state') then
-      rv.status = line:match(':%s*(%S+)')
+      rv.status = upower_status_mapping[line:match(':%s*(%S+)')]
     end
   end
   fd:close()
