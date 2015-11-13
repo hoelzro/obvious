@@ -86,26 +86,26 @@ local discharging_output = { -- {{{
     energy-rate:         45.4465 W
     voltage:             10.587 V
     time to empty:       35.3 minutes
-    percentage:          82%
+    percentage:          72%
     capacity:            55.5641%
     technology:          lithium-ion
     icon-name:          'battery-full-symbolic'
   History (charge):
-    1447262621	82.000	discharging
+    1447262621	72.000	discharging
   History (rate):
     1447262621	45.447	discharging
   ]],
   ['acpi -b'] = [[
-Battery 0: Discharging, 77%, 00:32:23 remaining
+Battery 0: Discharging, 72%, 00:32:23 remaining
   ]],
   ['acpi'] = [[
-Battery 0: Discharging, 77%, 00:32:50 remaining
+Battery 0: Discharging, 72%, 00:32:50 remaining
   ]],
   ['acpitool -b'] = [[
-  Battery #1     : Discharging, 76.80%, 00:31:11
+  Battery #1     : Discharging, 72.80%, 00:31:11
   ]],
   ['acpitool'] = [[
-  Battery #1     : Discharging, 76.69%, 00:32:17
+  Battery #1     : Discharging, 72.69%, 00:32:17
   AC adapter     : <info not available> 
   Thermal info   : <not available>
   ]],
@@ -265,7 +265,25 @@ for name, backend_proto in pairs(backends) do
   end
 end
 
--- XXX discharging
+ac_state = 'discharging'
+
+for name, backend_proto in pairs(backends) do
+  if name ~= 'get' and not blacklisted_backends[name] then
+    local backend = backend_proto:configure()
+
+    assert(backend, 'backend ' .. name .. ' should be defined')
+
+    local state = backend:state()
+    local details = backend:details()
+
+    assert(state ~= nil, sformat("backend: %s state should not be nil", name))
+    assert(state.status == 'discharging', sformat("backend: %s status should be 'charging', is %s", name, tostring(state.status)))
+    assert(state.charge == 72, sformat("backend: %s charge should be 72, is %s", name, tostring(state.charge)))
+    -- XXX time
+    assert(type(details) == 'string', sformat("backend: %s details should be a string", name))
+    assert(details ~= '', sformat("backend- %s details should be a non-empty string", name))
+  end
+end
 
 -- XXX handle failure
 -- XXX handle unknown
