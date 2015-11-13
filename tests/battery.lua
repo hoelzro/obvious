@@ -237,12 +237,35 @@ for name, backend_proto in pairs(backends) do
 
     assert(state ~= nil, sformat("backend: %s state should not be nil", name))
     assert(state.status == 'charged', sformat("backend: %s status should be 'charged', is %s", name, tostring(state.status)))
-    assert(state.charge == 100, sformat("backend: %s charge should 100, is %d", name, state.charge))
+    assert(state.charge == 100, sformat("backend: %s charge should be 100, is %d", name, state.charge))
+    -- XXX percentage
     assert(type(details) == 'string', sformat("backend: %s details should be a string", name))
     assert(details ~= '', sformat("backend- %s details should be a non-empty string", name))
   end
 end
--- XXX charging, discharging
+
+ac_state = 'charging'
+
+for name, backend_proto in pairs(backends) do
+  if name ~= 'get' and not blacklisted_backends[name] then
+    local backend = backend_proto:configure()
+
+    assert(backend, 'backend ' .. name .. ' should be defined')
+
+    local state = backend:state()
+    local details = backend:details()
+
+    assert(state ~= nil, sformat("backend: %s state should not be nil", name))
+    assert(state.status == 'charging', sformat("backend: %s status should be 'charging', is %s", name, tostring(state.status)))
+    assert(state.charge == 72, sformat("backend: %s charge should be 72, is %s", name, tostring(state.charge)))
+    -- XXX time
+    -- XXX percentage
+    assert(type(details) == 'string', sformat("backend: %s details should be a string", name))
+    assert(details ~= '', sformat("backend- %s details should be a non-empty string", name))
+  end
+end
+
+-- XXX discharging
 
 -- XXX handle failure
 -- XXX handle unknown
