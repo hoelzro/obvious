@@ -122,6 +122,7 @@ Performance adjustment mode: manual (2531 MHz)
 } -- }}}
 
 local charging_output = { -- {{{
+  ['upower -e'] = charged_output['upower -e'],
   ['upower -i /org/freedesktop/UPower/devices/battery_BAT0'] = [[
   native-path:          BAT0
   vendor:               SMP
@@ -143,7 +144,7 @@ local charging_output = { -- {{{
     energy-rate:         21.5126 W
     voltage:             11.894 V
     time to full:        1.6 hours
-    percentage:          70%
+    percentage:          72%
     capacity:            55.5641%
     technology:          lithium-ion
     icon-name:          'battery-full-charging-symbolic'
@@ -259,7 +260,6 @@ for name, backend_proto in pairs(backends) do
     assert(state.status == 'charging', sformat("backend: %s status should be 'charging', is %s", name, tostring(state.status)))
     assert(state.charge == 72, sformat("backend: %s charge should be 72, is %s", name, tostring(state.charge)))
     -- XXX time
-    -- XXX percentage
     assert(type(details) == 'string', sformat("backend: %s details should be a string", name))
     assert(details ~= '', sformat("backend- %s details should be a non-empty string", name))
   end
