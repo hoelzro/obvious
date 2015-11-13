@@ -239,7 +239,6 @@ for name, backend_proto in pairs(backends) do
     assert(state ~= nil, sformat("backend: %s state should not be nil", name))
     assert(state.status == 'charged', sformat("backend: %s status should be 'charged', is %s", name, tostring(state.status)))
     assert(state.charge == 100, sformat("backend: %s charge should be 100, is %d", name, state.charge))
-    -- XXX percentage
     assert(type(details) == 'string', sformat("backend: %s details should be a string", name))
     assert(details ~= '', sformat("backend- %s details should be a non-empty string", name))
   end
@@ -259,7 +258,7 @@ for name, backend_proto in pairs(backends) do
     assert(state ~= nil, sformat("backend: %s state should not be nil", name))
     assert(state.status == 'charging', sformat("backend: %s status should be 'charging', is %s", name, tostring(state.status)))
     assert(state.charge == 72, sformat("backend: %s charge should be 72, is %s", name, tostring(state.charge)))
-    -- XXX time
+    assert(state.time == 24, sformat("backend: %s time should be 24, is %s", name, tostring(state.time)))
     assert(type(details) == 'string', sformat("backend: %s details should be a string", name))
     assert(details ~= '', sformat("backend- %s details should be a non-empty string", name))
   end
@@ -279,7 +278,7 @@ for name, backend_proto in pairs(backends) do
     assert(state ~= nil, sformat("backend: %s state should not be nil", name))
     assert(state.status == 'discharging', sformat("backend: %s status should be 'charging', is %s", name, tostring(state.status)))
     assert(state.charge == 72, sformat("backend: %s charge should be 72, is %s", name, tostring(state.charge)))
-    -- XXX time
+    assert(state.time == 24, sformat("backend: %s time should be 24, is %s", name, tostring(state.time)))
     assert(type(details) == 'string', sformat("backend: %s details should be a string", name))
     assert(details ~= '', sformat("backend- %s details should be a non-empty string", name))
   end
