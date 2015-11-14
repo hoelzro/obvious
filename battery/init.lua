@@ -32,7 +32,7 @@ local backends = require 'obvious.battery.backends'
 module("obvious.battery")
 
 local widget = wibox.widget.textbox()
-local status = {
+local status_text = {
   ["charged"] = "↯",
   ["full"] = "↯",
   ["high"] = "↯",
@@ -64,10 +64,10 @@ local function update()
   end
 
   local status = bat.status
-  if not status[status] then
+  if not status_text[status] then
     status = "unknown"
   end
-  status = status[status]
+  status = status_text[status]
 
   battery_status = lib.markup.fg.color(color, status) .. " " .. awful.util.escape(tostring(bat.charge)) .. "%"
 
