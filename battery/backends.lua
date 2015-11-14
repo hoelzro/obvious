@@ -148,6 +148,10 @@ function acpiconf_backend:configure()
   end
 end
 
+local acpiconf_status_mapping = defaults_to_key {
+  high = 'charged',
+}
+
 function acpiconf_backend:state()
   local rv = {}
   local fd, err = popen('acpiconf -i0')
@@ -158,14 +162,17 @@ function acpiconf_backend:state()
 
   for line in fd:lines() do
     if line:match('^Remaining capacity') then
-      rv.charge = tonumber(line:match('\t(%d+)'))
+      rv.charge = tonumber(line:match('Remaining capacity:%s*(%d+)'))
     elseif line:match('^Remaining time') then
-      rv.time = line:match('\t(%S+)')
-      if rv.time == 'unknown' then
-        rv.time = ''
+      if line:match '\tunknown' then
+        rv.time = nil
+      else
+        local hours, minutes = line:match 'Remaining time:%s*(%d+):(%d+)'
+
+        rv.time = tonumber(hours) * 60 + tonumber(minutes)
       end
     elseif line:match('^State') then
-      rv.status = line:match('\t(%S+)')
+      rv.status = acpiconf_status_mapping[line:match 'State:%s*(%S+)']
     end
   end
   fd:close()
