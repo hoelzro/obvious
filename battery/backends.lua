@@ -181,16 +181,14 @@ end
 
 function acpiconf_backend:details()
   local details = ''
-  local fd, err = popen('sysctl hw.acpi.thermal')
+  local fd, err = popen('acpiconf -i0')
 
   if not fd then
     return nil, err
   end
 
   for line in fd:lines() do
-    if line:match('tz%d%.temperature') then
-      details = details .. '\n' .. line
-    end
+    details = details .. '\n' .. line
   end
   fd:close()
   return details:gsub('^\n', '')
