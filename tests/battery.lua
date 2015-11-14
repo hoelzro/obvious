@@ -61,6 +61,26 @@ Battery state: high, 100% remaining
 A/C adapter state: connected
 Performance adjustment mode: manual (2531 MHz)
   ]],
+
+  ['acpiconf -i0'] = [[
+Design capacity:	50000 mWh
+Last full capacity:	50000 mWh
+Technology:		secondary (rechargeable)
+Design voltage:		10000 mV
+Capacity (warn):	100 mWh
+Capacity (low):		50 mWh
+Low/warn granularity:	1 mWh
+Warn/full granularity:	1 mWh
+Model number:		1
+Serial number:		0
+Type:			VBOX
+OEM info:		innotek
+State:			high
+Remaining capacity:	100%
+Remaining time:		0:24
+Present rate:		0 mW
+Present voltage:	10000 mV
+  ]],
 } -- }}}
 
 local discharging_output = { -- {{{
@@ -119,6 +139,26 @@ Battery state: high, 72% remaining, 38 minutes life estimate
 A/C adapter state: not connected
 Performance adjustment mode: manual (2531 MHz)
   ]],
+
+  ['acpiconf -i0'] = [[
+Design capacity:	50000 mWh
+Last full capacity:		50000 mWh
+Technology:		secondary (rechargeable)
+Design voltage:		10000 mV
+Capacity (warn):	100 mWh
+Capacity (low):		50 mWh
+Low/warn granularity:	1 mWh
+Warn/full granularity:	1 mWh
+Model number:		1
+Serial number:		0
+Type:			VBOX
+OEM info:		innotek
+State:		discharging
+Remaining capacity:	72%
+Remaining time:	0:24
+Present rate:		44450 mW
+Present voltage:	10000 mV
+  ]],
 } -- }}}
 
 local charging_output = { -- {{{
@@ -169,6 +209,26 @@ Battery 0: Charging, 72%, 00:24:31 until charged
 70
 38
 1
+  ]],
+  ['acpiconf -i0'] = [[
+Design capacity:	50000 mWh
+Last full capacity:	50000 mWh
+Technology:		secondary (rechargeable)
+Design voltage:		10000 mV
+Capacity (warn):	100 mWh
+Capacity (low):		50 mWh
+Low/warn granularity:	1 mWh
+Warn/full granularity:	1 mWh
+Model number:		1
+Serial number:		0
+Type:			VBOX
+OEM info:		innotek
+State:			charging
+Remaining capacity:	72%
+Remaining time:		0:24
+Present rate:		24100 mW
+Present voltage:	10000 mV
+
   ]],
 } -- }}}
 
@@ -221,7 +281,6 @@ io.popen = mock_popen
 local backends = require 'battery.backends'
 
 local blacklisted_backends = {
-  acpiconf        = true, -- XXX gather acpiconf data from FreeBSD
   ['apm-openbsd'] = true, -- XXX mock uname command
   apm             = true, -- XXX need to find a working version of APM
   null            = true, -- null backend has different state
