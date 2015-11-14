@@ -129,26 +129,30 @@ function upower_backend:state()
     return nil, err
   end
 
-  for line in fd:lines() do
-    if line:match('^%s*percentage:') then
-      rv.charge = tonumber(line:match(':%s*(%d+)'))
-    elseif line:match('^%s*time to empty:') or line:match('^%s*time to full:') then
-      local time, units = line:match(':%s*(%S+)%s*(%w*)')
-
-      if time == 'unknown' then
-        time = nil
-      elseif units == 'hour' or units == 'hours' then
-        time = floor(time * 60)
-      elseif units == 'minute' or units == 'minutes' then
-        time = tonumber(floor(time))
-      else
-        time = 0
-      end
-
-      rv.time = time
-    elseif line:match('state') then
-      rv.status = upower_status_mapping[line:match(':%s*(%S+)')]
+  local function handle_time(time, units)
+    if time == 'unknown' then
+      time = nil
+    elseif units == 'hour' or units == 'hours' then
+      time = floor(time * 60)
+    elseif units == 'minute' or units == 'minutes' then
+      time = tonumber(floor(time))
+    else
+      time = 0
     end
+
+    rv.time = time
+  end
+
+  for line in fd:lines() do
+    match_case(line,
+      '^%s*percentage:%s*(%d+)', function(charge)
+        rv.charge = tonumber(charge)
+      end,
+      '%s*time to empty:%s*(%S+)%s*(%w*)', handle_time,
+      '%s*time to full:%s*(%S+)%s*(%w*)', handle_time,
+      'state:%s*(%S+)', function(status)
+        rv.status = upower_status_mapping[status]
+      end)
   end
   fd:close()
   return rv
