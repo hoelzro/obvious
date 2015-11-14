@@ -335,7 +335,7 @@ for name, backend_proto in pairs(backends) do
     local details = backend:details()
 
     assert(state ~= nil, sformat("backend: %s state should not be nil", name))
-    assert(state.status == 'discharging', sformat("backend: %s status should be 'charging', is %s", name, tostring(state.status)))
+    assert(state.status == 'discharging', sformat("backend: %s status should be 'discharging', is %s", name, tostring(state.status)))
     assert(state.charge == 72, sformat("backend: %s charge should be 72, is %s", name, tostring(state.charge)))
     assert(state.time == 24, sformat("backend: %s time should be 24, is %s", name, tostring(state.time)))
     assert(type(details) == 'string', sformat("backend: %s details should be a string", name))
