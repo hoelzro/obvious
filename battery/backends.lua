@@ -399,9 +399,4 @@ end
 
 return _M
 
--- XXX test (use VMs and installation to gather example output for each command)
--- XXX two batteries (simulate with kernel module)
--- XXX upower backend doesn't report timing data (for charging)
--- XXX consistent formatting of time
-
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et:fdm=marker
