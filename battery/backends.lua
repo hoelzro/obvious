@@ -11,6 +11,8 @@ local tonumber     = tonumber
 local tostring     = tostring
 local floor        = math.floor
 local sformat      = string.format
+local smatch       = string.match
+local unpack       = unpack
 
 local backend = {}
 
@@ -73,6 +75,22 @@ local function defaults_to_key(t)
   end
 
   return setmetatable(t, { __index = return_key__index })
+end
+
+local function match_case(input, ...)
+  local args = { ... }
+
+  for i = 1, #args, 2 do
+    local pattern = args[i]
+    local action  = args[i + 1]
+
+    local matches = { smatch(input, pattern) }
+
+    if matches[1] then
+      action(unpack(matches))
+      break
+    end
+  end
 end
 
 -- XXX check for global usage
