@@ -327,12 +327,6 @@ function apm_openbsd_backend:configure()
   end
 end
 
---[[ APM OpenBSD Output:
-100
-unknown
-1
-]]
-
 function apm_openbsd_backend:state()
   local rv = {}
   local fd, err = popen('apm -l -a -m')
