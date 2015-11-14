@@ -179,19 +179,19 @@ function acpiconf_backend:state()
   end
 
   for line in fd:lines() do
-    if line:match('^Remaining capacity') then
-      rv.charge = tonumber(line:match('Remaining capacity:%s*(%d+)'))
-    elseif line:match('^Remaining time') then
-      if line:match '\tunknown' then
+    match_case(line,
+      '^Remaining capacity:%s*(%d+)', function(charge)
+        rv.charge = tonumber(charge)
+      end,
+      '^Remaining time:%s*unknown', function()
         rv.time = nil
-      else
-        local hours, minutes = line:match 'Remaining time:%s*(%d+):(%d+)'
-
+      end,
+      '^Remaining time:%s*(%d+):(%d+)', function(hours, minutes)
         rv.time = tonumber(hours) * 60 + tonumber(minutes)
-      end
-    elseif line:match('^State') then
-      rv.status = acpiconf_status_mapping[line:match 'State:%s*(%S+)']
-    end
+      end,
+      '^State:%s*(%S+)', function(status)
+        rv.status = acpiconf_status_mapping[status]
+      end)
   end
   fd:close()
   return rv
