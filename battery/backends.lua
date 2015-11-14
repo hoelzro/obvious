@@ -67,16 +67,22 @@ local function exists(name)
   return line and line ~= ''
 end
 
+local function defaults_to_key(t)
+  local function return_key__index(_, key)
+    return key
+  end
+
+  return setmetatable(t, { __index = return_key__index })
+end
+
 -- XXX check for global usage
 -- XXX rv is a bad variable name
 
 -- {{{ upower backend
 
-local upower_status_mapping = setmetatable({
+local upower_status_mapping = defaults_to_key {
   ['fully-charged'] = 'charged',
-}, { __index = function(_, status)
-  return status
-end})
+}
 
 function upower_backend:configure()
   local fd, err = popen 'upower -e'
