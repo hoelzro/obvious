@@ -57,12 +57,14 @@ local backends = {
 local function exists(name)
   local pipe = popen('which ' .. name .. ' 2>/dev/null')
 
-  if pipe then
-    pipe:close()
-    return true
-  else
+  if not pipe then
     return false
   end
+
+  local line = pipe:read '*l'
+  pipe:close()
+
+  return line and line ~= ''
 end
 
 -- XXX check for global usage
