@@ -27,6 +27,7 @@ local lib = {
   hooks = require("obvious.lib.hooks"),
   markup = require("obvious.lib.markup")
 }
+local sformat = string.format
 local backends = require 'obvious.battery.backends'
 
 module("obvious.battery")
@@ -72,7 +73,10 @@ local function update()
   battery_status = lib.markup.fg.color(color, status) .. " " .. awful.util.escape(tostring(bat.charge)) .. "%"
 
   if bat.time then
-    battery_status = battery_status .. " " .. awful.util.escape(bat.time)
+    local hours   = math.floor(bat.time / 60)
+    local minutes = bat.time % 60
+
+    battery_status = battery_status .. " " .. awful.util.escape(sformat('%02d:%02d', hours, minutes))
   end
 
   widget:set_markup(battery_status)
