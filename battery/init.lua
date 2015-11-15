@@ -100,7 +100,7 @@ widget:buttons(awful.util.table.join(
 lib.hooks.timer.register(60, 300, update)
 
 setmetatable(_M, { __call = function ()
-  backend = backends.get()
+  backend = backends.get(_M.preferred_backend)
   update()
   lib.hooks.timer.start(update)
   return widget
