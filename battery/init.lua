@@ -49,7 +49,6 @@ local function update()
   local battery_status = ""
 
   local bat = backend:state()
-  -- XXX error handling
   if not bat then
     widget:set_markup("no data")
     return
@@ -83,10 +82,14 @@ local function update()
 end
 
 local function detail ()
-  -- XXX error handling
+  local details = backend:details()
+
+  if not details then
+    details = 'no details available'
+  end
   naughty.notify({
-    text = backend:details(),
-    screen = capi.mouse.screen
+    text = details,
+    screen = capi.mouse.screen,
   })
   update()
 end
