@@ -107,59 +107,81 @@ function upower_backend:configure()
   if not fd then
     return nil, err
   end
-  local battery_filename
+  local battery_filenames = {}
   for line in fd:lines() do
     if line:match('battery_BAT') then
-      battery_filename = line
-      break
+      battery_filenames[#battery_filenames + 1] = line
     end
   end
   fd:close()
 
-  if battery_filename then
-    return upower_backend:clone { filename = battery_filename }
+  if #battery_filenames > 0 then
+    return upower_backend:clone { filenames = battery_filenames }
   end
 end
 
 function upower_backend:state()
-  local rv = {}
-  local fd, err = popen('upower -i ' .. self.filename)
+  local results = {}
 
-  if not fd then
-    return nil, err
-  end
+  for i = 1, #self.filenames do
+    local filename = self.filenames[i]
 
-  local function handle_time(time, units)
-    if time == 'unknown' then
-      time = nil
-    elseif units == 'hour' or units == 'hours' then
-      time = floor(time * 60)
-    elseif units == 'minute' or units == 'minutes' then
-      time = tonumber(floor(time))
-    else
-      time = 0
+    local rv = {}
+    local fd, err = popen('upower -i ' .. filename)
+
+    if not fd then
+      return nil, err
     end
 
-    rv.time = time
+    local function handle_time(time, units)
+      if time == 'unknown' then
+        time = nil
+      elseif units == 'hour' or units == 'hours' then
+        time = floor(time * 60)
+      elseif units == 'minute' or units == 'minutes' then
+        time = tonumber(floor(time))
+      else
+        time = 0
+      end
+
+      rv.time = time
+    end
+
+    for line in fd:lines() do
+      match_case(line,
+        '^%s*percentage:%s*(%d+)', function(charge)
+          rv.charge = tonumber(charge)
+        end,
+        '%s*time to empty:%s*(%S+)%s*(%w*)', handle_time,
+        '%s*time to full:%s*(%S+)%s*(%w*)', handle_time,
+        'state:%s*(%S+)', function(status)
+          rv.status = upower_status_mapping[status]
+        end)
+    end
+    fd:close()
+    results[i] = rv
   end
 
-  for line in fd:lines() do
-    match_case(line,
-      '^%s*percentage:%s*(%d+)', function(charge)
-        rv.charge = tonumber(charge)
-      end,
-      '%s*time to empty:%s*(%S+)%s*(%w*)', handle_time,
-      '%s*time to full:%s*(%S+)%s*(%w*)', handle_time,
-      'state:%s*(%S+)', function(status)
-        rv.status = upower_status_mapping[status]
-      end)
-  end
-  fd:close()
-  return rv
+  return unpack(results)
 end
 
-function upower_backend:details_pipe()
-  return popen('upower -i ' .. self.filename)
+function upower_backend:details()
+  local results = ''
+
+  for i = 1, #self.filenames do
+    local filename = self.filenames[i]
+
+    local pipe, err = popen('upower -i ' .. filename)
+
+    if not pipe then
+      return nil, err
+    end
+
+    local output = pipe:read '*a'
+    results = results .. '\n' .. output:gsub('^\n', '')
+  end
+
+  return results
 end
 -- }}}
 
