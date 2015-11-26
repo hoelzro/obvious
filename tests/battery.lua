@@ -575,13 +575,19 @@ do -- {{{ upower dual output tests (discharging)
   local name = 'upower'
   assert(backend, 'backend ' .. name .. ' should be defined')
 
-  local state = backend:state()
+  local state1, state2 = backend:state()
   local details = backend:details()
 
-  assert(state ~= nil, sformat("backend: %s state should not be nil", name))
-  assert(state.status == 'discharging', sformat("backend: %s status should be 'discharging', is %s", name, tostring(state.status)))
-  assert(state.charge == 72, sformat("backend: %s charge should be 72, is %s", name, tostring(state.charge)))
-  assert(state.time == 24, sformat("backend: %s time should be 24, is %s", name, tostring(state.time)))
+  assert(state1 ~= nil, sformat("backend: %s 1st state should not be nil", name))
+  assert(state1.status == 'discharging', sformat("backend: %s 1st status should be 'discharging', is %s", name, tostring(state1.status)))
+  assert(state1.charge == 72, sformat("backend: %s 1st charge should be 72, is %s", name, tostring(state1.charge)))
+  assert(state1.time == 24, sformat("backend: %s 1st time should be 24, is %s", name, tostring(state1.time)))
+
+  assert(state2 ~= nil, sformat("backend: %s 2nd state should not be nil", name))
+  assert(state2.status == 'discharging', sformat("backend: %s 2nd status should be 'discharging', is %s", name, tostring(state2.status)))
+  assert(state2.charge == 62, sformat("backend: %s 2nd charge should be 72, is %s", name, tostring(state2.charge)))
+  assert(state2.time == 14, sformat("backend: %s 2nd time should be 24, is %s", name, tostring(state2.time)))
+
   assert(type(details) == 'string', sformat("backend: %s details should be a string", name))
   assert(details ~= '', sformat("backend- %s details should be a non-empty string", name))
 end -- }}}
