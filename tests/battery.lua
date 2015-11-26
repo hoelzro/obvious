@@ -232,6 +232,190 @@ Present voltage:	10000 mV
   ]],
 } -- }}}
 
+local charged_output_dual = { -- {{{
+  ['upower -e'] = [[
+/org/freedesktop/UPower/devices/line_power_AC
+/org/freedesktop/UPower/devices/battery_BAT0
+/org/freedesktop/UPower/devices/line_power_AC0
+/org/freedesktop/UPower/devices/battery_BAT1
+/org/freedesktop/UPower/devices/DisplayDevice
+  ]],
+  ['upower -i /org/freedesktop/UPower/devices/battery_BAT0'] = [[
+  native-path:          BAT0
+  vendor:               SMP
+  model:                DELL TXWRR2C
+  serial:               484
+  power supply:         yes
+  updated:              Wed 11 Nov 2015 10:59:41 AM CST (73 seconds ago)
+  has history:          yes
+  has statistics:       yes
+  battery
+    present:             yes
+    rechargeable:        yes
+    state:               fully-charged
+    warning-level:       none
+    energy:              58.0216 Wh
+    energy-empty:        0 Wh
+    energy-full:         58.0216 Wh
+    energy-full-design:  58.1555 Wh
+    energy-rate:         0.011158 W
+    voltage:             12.277 V
+    percentage:          100%
+    capacity:            55.5641%
+    technology:          lithium-ion
+    icon-name:          'battery-full-charged-symbolic'
+  ]],
+  ['upower -i /org/freedesktop/UPower/devices/battery_BAT1'] = [[
+  native-path:          BAT1
+  vendor:               SMP
+  model:                DELL TXWRR2C
+  serial:               484
+  power supply:         yes
+  updated:              Wed 11 Nov 2015 10:59:41 AM CST (73 seconds ago)
+  has history:          yes
+  has statistics:       yes
+  battery
+    present:             yes
+    rechargeable:        yes
+    state:               fully-charged
+    warning-level:       none
+    energy:              58.0216 Wh
+    energy-empty:        0 Wh
+    energy-full:         58.0216 Wh
+    energy-full-design:  58.1555 Wh
+    energy-rate:         0.011158 W
+    voltage:             12.277 V
+    percentage:          100%
+    capacity:            55.5641%
+    technology:          lithium-ion
+    icon-name:          'battery-full-charged-symbolic'
+  ]],
+} -- }}}
+
+local discharging_output_dual = { -- {{{
+  ['upower -e'] = charged_output_dual['upower -e'],
+  ['upower -i /org/freedesktop/UPower/devices/battery_BAT0'] = [[
+  native-path:          BAT0
+  vendor:               SMP
+  model:                DELL TXWRR2C
+  serial:               484
+  power supply:         yes
+  updated:              Wed 11 Nov 2015 11:23:41 AM CST (76 seconds ago)
+  has history:          yes
+  has statistics:       yes
+  battery
+    present:             yes
+    rechargeable:        yes
+    state:               discharging
+    warning-level:       none
+    energy:              26.7346 Wh
+    energy-empty:        0 Wh
+    energy-full:         58.0216 Wh
+    energy-full-design:  58.1555 Wh
+    energy-rate:         45.4465 W
+    voltage:             10.587 V
+    time to empty:       24.3 minutes
+    percentage:          72%
+    capacity:            55.5641%
+    technology:          lithium-ion
+    icon-name:          'battery-full-symbolic'
+  History (charge):
+    1447262621	72.000	discharging
+  History (rate):
+    1447262621	45.447	discharging
+  ]],
+  ['upower -i /org/freedesktop/UPower/devices/battery_BAT1'] = [[
+  native-path:          BAT1
+  vendor:               SMP
+  model:                DELL TXWRR2C
+  serial:               484
+  power supply:         yes
+  updated:              Wed 11 Nov 2015 11:23:41 AM CST (76 seconds ago)
+  has history:          yes
+  has statistics:       yes
+  battery
+    present:             yes
+    rechargeable:        yes
+    state:               discharging
+    warning-level:       none
+    energy:              26.7346 Wh
+    energy-empty:        0 Wh
+    energy-full:         58.0216 Wh
+    energy-full-design:  58.1555 Wh
+    energy-rate:         45.4465 W
+    voltage:             10.587 V
+    time to empty:       14.3 minutes
+    percentage:          62%
+    capacity:            55.5641%
+    technology:          lithium-ion
+    icon-name:          'battery-full-symbolic'
+  History (charge):
+    1447262621	62.000	discharging
+  History (rate):
+    1447262621	45.447	discharging
+  ]],
+} -- }}}
+
+local charging_output_dual = { -- {{{
+  ['upower -e'] = charged_output_dual['upower -e'],
+  ['upower -i /org/freedesktop/UPower/devices/battery_BAT0'] = [[
+  native-path:          BAT0
+  vendor:               SMP
+  model:                DELL TXWRR2C
+  serial:               484
+  power supply:         yes
+  updated:              Wed 11 Nov 2015 11:29:41 AM CST (88 seconds ago)
+  has history:          yes
+  has statistics:       yes
+  battery
+    present:             yes
+    rechargeable:        yes
+    state:               charging
+    warning-level:       none
+    energy:              22.9408 Wh
+    energy-empty:        0 Wh
+    energy-full:         58.0216 Wh
+    energy-full-design:  58.1555 Wh
+    energy-rate:         21.5126 W
+    voltage:             11.894 V
+    time to full:        0.4 hours
+    percentage:          72%
+    capacity:            55.5641%
+    technology:          lithium-ion
+    icon-name:          'battery-full-charging-symbolic'
+  History (rate):
+    1447262981	21.513	charging
+  ]],
+  ['upower -i /org/freedesktop/UPower/devices/battery_BAT1'] = [[
+  native-path:          BAT1
+  vendor:               SMP
+  model:                DELL TXWRR2C
+  serial:               484
+  power supply:         yes
+  updated:              Wed 11 Nov 2015 11:29:41 AM CST (88 seconds ago)
+  has history:          yes
+  has statistics:       yes
+  battery
+    present:             yes
+    rechargeable:        yes
+    state:               charging
+    warning-level:       none
+    energy:              22.9408 Wh
+    energy-empty:        0 Wh
+    energy-full:         58.0216 Wh
+    energy-full-design:  58.1555 Wh
+    energy-rate:         21.5126 W
+    voltage:             11.894 V
+    time to full:        0.5 hours
+    percentage:          62%
+    capacity:            55.5641%
+    technology:          lithium-ion
+    icon-name:          'battery-full-charging-symbolic'
+  History (rate):
+    1447262981	21.513	charging
+  ]],
+} -- }}}
+
 -- {{{ mock setup
 for _, output_table in ipairs { charged_output, discharging_output, charging_output } do
   for key, output in pairs(output_table) do
@@ -244,6 +428,10 @@ local mock_output = {
   charged     = charged_output,
   discharging = discharging_output,
   charging    = charging_output,
+
+  charged_dual     = charged_output_dual,
+  discharging_dual = discharging_output_dual,
+  charging_dual    = charging_output_dual,
 }
 
 local smatch   = string.match
