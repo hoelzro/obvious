@@ -46,39 +46,46 @@ local status_text = {
 local backend
 
 local function update()
-  local battery_status = ""
+  local bats = { backend:state() }
 
-  local bat = backend:state()
-  if not bat then
+  if #bats == 0 then
     widget:set_markup("no data")
     return
   end
-  local color = "#900000"
-  if not bat.charge then
-    widget:set_markup(lib.markup.fg.color("#009000", status.charged) .. " A/C")
-    return
-  elseif bat.charge > 35 and bat.charge < 60 then
-    color = "#909000"
-  elseif bat.charge >= 40 then
-    color = "#009000"
+
+  local markup = ''
+
+  for i = 1, #bats do
+    local bat = bats[i]
+    local color
+
+    if bat.charge >= 60 then
+      color = '#009000'
+    elseif bat.charge > 35 then
+      color = '#909000'
+    else
+      color = '#900000'
+    end
+
+    local status = status_text[bat.status] or 'unknown'
+
+    local battery_status = lib.markup.fg.color(color, status) .. ' ' .. awful.util.escape(tostring(bat.charge)) .. '%'
+
+    if bat.time then
+      local hours   = math.floor(bat.time / 60)
+      local minutes = bat.time % 60
+
+      battery_status = battery_status .. ' ' .. awful.util.escape(sformat('%02d:%02d', hours, minutes))
+    end
+
+    if i == 1 then
+      markup = markup .. battery_status
+    else
+      markup = markup .. ' ' .. battery_status
+    end
   end
 
-  local status = bat.status
-  if not status_text[status] then
-    status = "unknown"
-  end
-  status = status_text[status]
-
-  battery_status = lib.markup.fg.color(color, status) .. " " .. awful.util.escape(tostring(bat.charge)) .. "%"
-
-  if bat.time then
-    local hours   = math.floor(bat.time / 60)
-    local minutes = bat.time % 60
-
-    battery_status = battery_status .. " " .. awful.util.escape(sformat('%02d:%02d', hours, minutes))
-  end
-
-  widget:set_markup(battery_status)
+  widget:set_markup(markup)
 end
 
 local function detail ()
