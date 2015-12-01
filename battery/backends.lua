@@ -4,7 +4,7 @@
 --------------------------------------------
 
 local assert       = assert
-local popen        = io.popen
+local iopopen      = io.popen
 local setmetatable = setmetatable
 local tremove      = table.remove
 local tonumber     = tonumber
@@ -15,6 +15,10 @@ local smatch       = string.match
 local unpack       = unpack
 
 local backend = {}
+
+local function popen(cmd)
+  return iopopen('LANG=C ' .. cmd)
+end
 
 function backend:clone(clone)
   return setmetatable(clone or {}, { __index = self })
