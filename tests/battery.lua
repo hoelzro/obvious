@@ -441,6 +441,12 @@ local sformat  = string.format
 local ac_state = 'charged'
 
 local function mock_popen(command)
+  local lang_c_match = smatch(command, '^LANG=C%s+(.*)')
+
+  if lang_c_match then
+    command = lang_c_match
+  end
+
   local which_match = smatch(command, '^which%s+(%w+)')
   local output
 
