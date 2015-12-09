@@ -17,7 +17,7 @@ local unpack       = unpack
 local backend = {}
 
 local function popen(cmd)
-  return iopopen('LANG=C ' .. cmd)
+  return iopopen('LANG=C ' .. cmd .. ' 2>/dev/null')
 end
 
 function backend:clone(clone)
@@ -61,7 +61,7 @@ local backends = {
 }
 
 local function exists(name)
-  local pipe = popen('which ' .. name .. ' 2>/dev/null')
+  local pipe = popen('which ' .. name)
 
   if not pipe then
     return false

@@ -447,6 +447,12 @@ local function mock_popen(command)
     command = lang_c_match
   end
 
+  local stderr_redirect_match = smatch(command, '^(.-)%s*2>/dev/null$')
+
+  if stderr_redirect_match then
+    command = stderr_redirect_match
+  end
+
   local which_match = smatch(command, '^which%s+(%w+)')
   local output
 
