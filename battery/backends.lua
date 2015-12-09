@@ -404,6 +404,7 @@ end
 
 -- {{{ null backend
 function null_backend:configure()
+  return self
 end
 
 function null_backend:state()
