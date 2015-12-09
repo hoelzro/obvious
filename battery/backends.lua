@@ -436,9 +436,7 @@ local function get(preferred_backend) -- {{{
     end
   end
 
-  if not backend then
-    assert 'I should always fall back to the null backend!'
-  end
+  assert(backend, 'I should always fall back to the null backend!')
 
   return backend
 end -- }}}
