@@ -447,7 +447,7 @@ local function remove_environment(command, ...)
   end
 
   local other_vars = ''
-  
+
   while true do
     command, count = command:gsub("^(([%w_]+=%S+)%s+)", function(full, env)
       if not vars[env] then
