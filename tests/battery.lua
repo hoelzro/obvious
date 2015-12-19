@@ -440,12 +440,29 @@ local sformat  = string.format
 
 local ac_state = 'charged'
 
-local function mock_popen(command)
-  local lang_c_match = smatch(command, '^LANG=C%s+(.*)')
-
-  if lang_c_match then
-    command = lang_c_match
+local function remove_environment(command, ...)
+  local vars = {}
+  for _, v in ipairs{...} do
+    vars[v] = true
   end
+
+  local other_vars = ''
+  
+  while true do
+    command, count = command:gsub("^(([%w_]+=%S+)%s+)", function(full, env)
+      if not vars[env] then
+        other_vars = other_vars .. full
+      end
+      return ''
+    end)
+    if count == 0 then break end
+  end
+
+  return other_vars .. command
+end
+
+local function mock_popen(command)
+  command = remove_environment(command, 'LANG=C', 'LC_ALL=C')
 
   local stderr_redirect_match = smatch(command, '^(.-)%s*2>/dev/null$')
 

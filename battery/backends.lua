@@ -17,7 +17,7 @@ local unpack       = unpack
 local backend = {}
 
 local function popen(cmd)
-  return iopopen('LANG=C ' .. cmd .. ' 2>/dev/null')
+  return iopopen('LC_ALL=C LANG=C ' .. cmd .. ' 2>/dev/null')
 end
 
 function backend:clone(clone)
