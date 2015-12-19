@@ -455,7 +455,10 @@ local function remove_environment(command, ...)
       end
       return ''
     end)
-    if count == 0 then break end
+
+    if count == 0 then
+      break
+    end
   end
 
   return other_vars .. command
