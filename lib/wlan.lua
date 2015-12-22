@@ -18,6 +18,8 @@ module("obvious.lib.wlan")
 
 local os = "unknown"
 
+local first_wlan = nil
+
 local function determine_os ()
   if os ~= "unknown" then
     return
@@ -82,6 +84,29 @@ local function get_data_openbsd(device)
   return link
 end
 
+local function find_first_wlan_openbsd()
+  local device = nil
+
+  local fd = io.popen("/sbin/ifconfig " .. device)
+  if not fd then return 0 end
+
+  for line in fd:lines() do
+    local m = line:match("^(%w+): ")
+    if m then
+      device = m
+    else
+      m = line:match("%s+ieee80211: ")
+      if m and device then
+        break
+      end
+    end
+  end
+
+  fd:close()
+
+  return device
+end
+
 local function get_data_linux(device)
   local link = 0
   local fd = io.open("/proc/net/wireless")
@@ -108,6 +133,38 @@ local function get_data_linux(device)
   return link
 end
 
+local function find_first_wlan_linux()
+  local device = nil
+  local fd = io.open("/proc/net/wireless")
+  if not fd then return end
+
+  for line in fd:lines() do
+    local m = line:match("^%s*(%w+): ")
+    if m then
+      device = m
+      break
+    end
+  end
+  fd:close()
+
+  return device
+end
+
+local function find_first_wlan()
+  if first_wlan then
+    return first_wlan
+  end
+
+  determine_os()
+  if os == "OpenBSD" then
+    first_wlan = find_first_wlan_openbsd()
+  else
+    first_wlan = find_first_wlan_linux()
+  end
+
+  return first_wlan
+end
+
 local function get_data(device)
   determine_os()
   if os == "OpenBSD" then
@@ -123,6 +180,8 @@ local function get_info(device)
   end
   return ""
 end
+
+_M.find_first_wlan = find_first_wlan
 
 setmetatable(_M, { __call = function (_, ...) return get_data(...) end })
 
