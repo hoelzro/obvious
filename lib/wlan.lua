@@ -88,7 +88,9 @@ local function find_first_wlan_openbsd()
   local device = nil
 
   local fd = io.popen("/sbin/ifconfig " .. device)
-  if not fd then return 0 end
+  if not fd then
+    return
+  end
 
   for line in fd:lines() do
     local m = line:match("^(%w+): ")
