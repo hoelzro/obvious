@@ -152,7 +152,7 @@ local function find_first_wlan_linux()
   return device
 end
 
-local function find_first_wlan()
+function find_first_wlan()
   if first_wlan then
     return first_wlan
   end
@@ -182,8 +182,6 @@ local function get_info(device)
   end
   return ""
 end
-
-_M.find_first_wlan = find_first_wlan
 
 setmetatable(_M, { __call = function (_, ...) return get_data(...) end })
 
