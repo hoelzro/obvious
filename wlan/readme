@@ -2,7 +2,7 @@ WLAN widget
 
 This widget monitors your WLAN's signal strength. To set the device it monitors, use
     obvious.wlan.set_device(dev)
-The default is "wlan0".
+The default is "wlan0". Specify "auto" to use the first available WLAN in your system.
 
 To add it to your rc.lua, include
     require("obvious.wlan")
