@@ -85,9 +85,10 @@ local function get_data_openbsd(device)
 end
 
 local function find_first_wlan_openbsd()
-  local device = nil
+  local last_device = nil
+  local wlan_device = nil
 
-  local fd = io.popen("/sbin/ifconfig " .. device)
+  local fd = io.popen("/sbin/ifconfig")
   if not fd then
     return
   end
@@ -95,10 +96,11 @@ local function find_first_wlan_openbsd()
   for line in fd:lines() do
     local m = line:match("^(%w+): ")
     if m then
-      device = m
+      last_device = m
     else
       m = line:match("%s+ieee80211: ")
-      if m and device then
+      if m and last_device then
+        wlan_device = last_device
         break
       end
     end
@@ -106,7 +108,7 @@ local function find_first_wlan_openbsd()
 
   fd:close()
 
-  return device
+  return wlan_device
 end
 
 local function get_data_linux(device)
