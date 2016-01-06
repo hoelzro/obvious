@@ -36,7 +36,12 @@ function format_percent(link)
 end
 
 local function get_data_source(device)
-  local device = device or "wlan0"
+  local device = device
+  if device == "auto" then
+    device = lib.wlan.find_first_wlan()
+  end
+  device = device or "wlan0"
+
   local data = {}
 
   data.device = device
