@@ -38,6 +38,9 @@ end
 -- Note: It's possible to pause the timer with timer.stop() instead.
 -- @param fn The function you want to unregister.
 function timer.unregister(fn)
+  if not registry[fn] then
+    return
+  end
   if registry[fn].timer.started then
     registry[fn].timer:stop()
   end
