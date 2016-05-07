@@ -59,9 +59,14 @@ local function update()
     local bat = bats[i]
     local color
 
-    if bat.charge >= 60 then
+    local charge = bat.charge
+
+    if charge == nil then
+      color = '#900000'
+      charge = 'Unknown charge'
+    elseif charge >= 60 then
       color = '#009000'
-    elseif bat.charge > 35 then
+    elseif charge > 35 then
       color = '#909000'
     else
       color = '#900000'
@@ -69,7 +74,7 @@ local function update()
 
     local status = status_text[bat.status] or 'unknown'
 
-    local battery_status = lib.markup.fg.color(color, status) .. ' ' .. awful.util.escape(tostring(bat.charge)) .. '%'
+    local battery_status = lib.markup.fg.color(color, status) .. ' ' .. awful.util.escape(tostring(charge)) .. '%'
 
     if bat.time then
       local hours   = math.floor(bat.time / 60)
