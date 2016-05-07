@@ -408,7 +408,7 @@ function null_backend:configure()
 end
 
 function null_backend:state()
-  return {}
+  return nil
 end
 
 function null_backend:details()
