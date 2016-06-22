@@ -131,6 +131,13 @@ local function detail ()
   update(true)
 end
 
+function get_data()
+  local bats = { backend:state() }
+  if bats then
+    return bats[1]
+  end
+end
+
 widget:buttons(awful.util.table.join(
   awful.button({ }, 1, detail)
 ))
