@@ -45,8 +45,19 @@ local status_text = {
 
 local backend
 
-local function update()
-  local bats = { backend:state() }
+local inverted = false
+local cycle_count = 0
+local previous_state
+
+local function update(force)
+  if force then
+    cycle_count = 0
+  end
+  if cycle_count == 0 then
+    previous_state = { backend:state() }
+  end
+  cycle_count = (cycle_count + 1) % 60
+  local bats = previous_state
 
   if #bats == 0 then
     widget:set_markup("no data")
@@ -59,6 +70,8 @@ local function update()
     local bat = bats[i]
     local color
 
+    local blinking = false
+
     local charge = bat.charge
 
     if charge == nil then
@@ -70,11 +83,18 @@ local function update()
       color = '#909000'
     else
       color = '#900000'
+      blinking = bat.charge <= 20 and (bat.status == 'discharging' or bat.status == 'not connected')
     end
 
     local status = status_text[bat.status] or 'unknown'
 
-    local battery_status = lib.markup.fg.color(color, status) .. ' ' .. awful.util.escape(tostring(charge)) .. '%'
+    local battery_status
+
+    if blinking and inverted then
+      battery_status = status .. ' ' .. awful.util.escape(tostring(bat.charge)) .. '%'
+    else
+      battery_status = lib.markup.fg.color(color, status) .. ' ' .. awful.util.escape(tostring(bat.charge)) .. '%'
+    end
 
     if bat.time then
       local hours   = math.floor(bat.time / 60)
@@ -82,6 +102,11 @@ local function update()
 
       battery_status = battery_status .. ' ' .. awful.util.escape(sformat('%02d:%02d', hours, minutes))
     end
+
+    if blinking and inverted then
+      battery_status = lib.markup.bg.color(color, battery_status)
+    end
+    inverted = not inverted
 
     if i == 1 then
       markup = markup .. battery_status
@@ -103,13 +128,14 @@ local function detail ()
     text = details,
     screen = capi.mouse.screen,
   })
-  update()
+  update(true)
 end
 
 widget:buttons(awful.util.table.join(
   awful.button({ }, 1, detail)
 ))
-lib.hooks.timer.register(60, 300, update)
+-- XXX FIXME
+lib.hooks.timer.register(1, 300, update)
 
 setmetatable(_M, { __call = function ()
   backend = backends.get(_M.preferred_backend)
