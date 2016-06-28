@@ -132,6 +132,10 @@ local function detail ()
 end
 
 function get_data()
+  if not backend then
+    backend = backends.get(_M.preferred_backend)
+  end
+
   local bats = { backend:state() }
   if bats then
     return bats[1]
@@ -145,7 +149,9 @@ widget:buttons(awful.util.table.join(
 lib.hooks.timer.register(1, 300, update)
 
 setmetatable(_M, { __call = function ()
-  backend = backends.get(_M.preferred_backend)
+  if not backend then
+    backend = backends.get(_M.preferred_backend)
+  end
   update()
   lib.hooks.timer.start(update)
   return widget
