@@ -271,6 +271,10 @@ function acpi_backend:state()
   for line in fd:lines() do
     local data = line:match('Battery #?[0-9]%s*: ([^\n]*)')
 
+    if not data then
+      break
+    end
+
     rv.status = data:match('([%a]*),.*'):lower()
     rv.charge = floor(tonumber(data:match('.*, (%d+%.?%d*)%%')))
 
