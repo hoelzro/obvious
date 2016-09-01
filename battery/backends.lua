@@ -6,7 +6,6 @@
 local assert       = assert
 local iopopen      = io.popen
 local setmetatable = setmetatable
-local tremove      = table.remove
 local tonumber     = tonumber
 local tostring     = tostring
 local floor        = math.floor
@@ -59,6 +58,15 @@ local backends = {
   apm_openbsd_backend,
   null_backend,
 }
+
+local function default_configure(orig_backend)
+  local backend = orig_backend:clone()
+    local rv = backend:state()
+    if next(rv) == nil then
+      return nil
+    end
+    return backend
+end
 
 local function exists(name)
   local pipe = popen('which ' .. name)
@@ -191,9 +199,7 @@ end
 
 -- {{{ acpiconf backend
 function acpiconf_backend:configure()
-  if exists 'acpiconf' then
-    return acpiconf_backend:clone()
-  end
+  return default_configure(acpiconf_backend)
 end
 
 local acpiconf_status_mapping = defaults_to_key {
@@ -245,9 +251,7 @@ end
 
 -- {{{ acpitool backend
 function acpitool_backend:configure()
-  if exists 'acpitool' then
-    return acpitool_backend:clone()
-  end
+  return default_configure(acpitool_backend)
 end
 
 acpitool_backend.backend = 'acpitool'
@@ -255,9 +259,7 @@ acpitool_backend.backend = 'acpitool'
 
 -- {{{ acpi backend
 function acpi_backend:configure()
-  if exists 'acpi' then
-    return acpi_backend:clone()
-  end
+  return default_configure(acpi_backend)
 end
 
 function acpi_backend:state()
