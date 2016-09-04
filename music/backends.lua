@@ -44,8 +44,15 @@ function mpd_backend:configure()
 end
 
 function mpd_backend:ontrackchange(callback)
+  local prev_state
+  local prev_songid
+
   local function update()
     local status = self.connection:send 'status'
+
+    if prev_state == status.state and prev_songid == status.songid then
+      return
+    end
 
     if not status.state then -- MPD isn't running
       callback(nil)
@@ -55,6 +62,9 @@ function mpd_backend:ontrackchange(callback)
         info = self.connection:send 'currentsong',
       }
     end
+
+    prev_state  = status.state
+    prev_songid = status.songid
   end
 
   hooks.timer.register(1, 30, update, 'basic_mpd widget refresh rate')
