@@ -2,14 +2,17 @@ local backends = require 'obvious.music.backends'
 
 local awful  = require 'awful'
 local markup = require 'obvious.lib.markup'
+local hooks  = require 'obvious.lib.hooks'
 local wibox  = require 'wibox'
 
 local widget = wibox.widget.textbox()
 local backend
+local marquee_timer
 
 local format = '$title - $album - $artist'
 local maxlength = 75
 local unknown = '(unknown)'
+local marquee = false
 
 local function format_metadata(format, info)
   if type(format) == 'function' then
@@ -23,7 +26,27 @@ local function format_metadata(format, info)
   end)
 end
 
+local function rotate_string(s)
+  return function(_, v)
+    -- XXX UTF-8/graphemes
+    return string.sub(v, 2) .. string.sub(v, 1, 1)
+  end, s, s
+end
+
+local function scroll_marquee(s)
+  for rotated in rotate_string(s) do
+    local truncated = string.sub(rotated, 1, maxlength - 3) .. '...'
+    widget:set_markup(awful.util.escape(truncated))
+    coroutine.yield()
+  end
+end
+
 local function update(info)
+  if marquee_timer then
+    hooks.timer.unregister(marquee_timer)
+    marquee_timer = nil
+  end
+
   if not info then
     widget:set_markup(markup.fg.color('yellow', 'Music Off'))
     return
@@ -38,10 +61,18 @@ local function update(info)
 
   -- XXX UTF-8/graphemes
   if string.len(formatted) > maxlength then
-    formatted = string.sub(formatted, 1, maxlength - 3) .. '...'
+    if marquee then
+      local marquee_coro = coroutine.create(scroll_marquee)
+      coroutine.resume(marquee_coro, ' ' .. formatted)
+      marquee_timer = function()
+        coroutine.resume(marquee_coro)
+      end
+      hooks.timer.register(1, nil, marquee_timer, 'Marquee Timer')
+      return
+    else
+      formatted = string.sub(formatted, 1, maxlength - 3) .. '...'
+    end
   end
-
-  formatted = awful.util.escape(formatted)
 
   widget:set_markup(formatted)
 end
@@ -58,6 +89,10 @@ end
 
 function _M.set_unknown(unknown_)
   unknown = unknown_
+end
+
+function _M.set_marquee(marquee_)
+  marquee = marquee_
 end
 
 function _M.set_backend(backend_name)
