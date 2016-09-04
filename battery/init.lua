@@ -50,6 +50,10 @@ local cycle_count = 0
 local previous_state
 
 local function update(force)
+  if not backend then
+    return
+  end
+
   if force then
     cycle_count = 0
   end
