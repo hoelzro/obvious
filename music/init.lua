@@ -104,14 +104,13 @@ end
 
 local function rotate_string(s)
   return function(_, v)
-    -- XXX UTF-8/graphemes
-    return string.sub(v, 2) .. string.sub(v, 1, 1)
+    return utf8sub(v, 2) .. utf8sub(v, 1, 1)
   end, s, s
 end
 
 local function scroll_marquee(s)
   for rotated in rotate_string(s) do
-    local truncated = string.sub(rotated, 1, maxlength - 3) .. '...'
+    local truncated = utf8sub(rotated, 1, maxlength - 3) .. '...'
     widget:set_markup(awful.util.escape(truncated))
     coroutine.yield()
   end
@@ -135,8 +134,7 @@ local function update(info)
 
   local formatted = format_metadata(format, info.info)
 
-  -- XXX UTF-8/graphemes
-  if string.len(formatted) > maxlength then
+  if utf8length(formatted) > maxlength then
     if marquee then
       local marquee_coro = coroutine.create(scroll_marquee)
       coroutine.resume(marquee_coro, ' ' .. formatted)
@@ -146,7 +144,7 @@ local function update(info)
       hooks.timer.register(1, nil, marquee_timer, 'Marquee Timer')
       return
     else
-      formatted = string.sub(formatted, 1, maxlength - 3) .. '...'
+      formatted = utf8sub(formatted, 1, maxlength - 3) .. '...'
     end
   end
 
