@@ -14,10 +14,18 @@ local maxlength = 75
 local unknown = '(unknown)'
 local marquee = false
 
-local function format_metadata(format, info)
+local icons = {
+  playing = '⏵',
+  paused  = '⏸',
+  stopped = '⏹',
+}
+
+local function format_metadata(format, state, info)
   if type(format) == 'function' then
     return format(info)
   end
+
+  info = setmetatable({ icon = icons[state] }, { __index = info })
 
   assert(type(format) == 'string')
 
@@ -132,7 +140,7 @@ local function update(info)
     return
   end
 
-  local formatted = format_metadata(format, info.info)
+  local formatted = format_metadata(format, info.state, info.info)
 
   if utf8length(formatted) > maxlength then
     if marquee then
