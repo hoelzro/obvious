@@ -1,2 +1,4 @@
 *.swp
 *.todo
+*.o
+*.so
