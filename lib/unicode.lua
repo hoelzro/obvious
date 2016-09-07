@@ -1,6 +1,12 @@
 local utf8length
 local utf8positions
 
+local has_native, nativelib = pcall(require, 'obvious.lib.unicode.native')
+
+if has_native then
+  return nativelib
+end
+
 if utf8 then
   utf8length = utf8.len
 else
