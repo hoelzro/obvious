@@ -22,9 +22,11 @@ end
 -- }}}
 
 local mpd_backend = backend:clone { name = 'mpd' }
+local mpris_backend = backend:clone { name = 'mpris' }
 
 local backends = {
   mpd_backend,
+  mpris_backend,
 }
 
 -- {{{ MPD backend
@@ -70,6 +72,57 @@ function mpd_backend:ontrackchange(callback)
   hooks.timer.register(1, 30, update, 'basic_mpd widget refresh rate')
 end
 
+-- }}}
+
+-- {{{ MPRIS backend
+
+local NORMALIZED_MPRIS_STATES = {
+  Playing = 'playing',
+  Stopped = 'stopped',
+  Paused  = 'paused',
+}
+
+function mpris_backend:configure()
+  return self
+end
+
+function mpris_backend:ontrackchange(callback)
+  local current_status = 'stopped'
+  local current_metadata = {}
+
+  dbus.add_match('session', "path='/org/mpris/MediaPlayer2',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged'")
+  dbus.connect_signal('org.freedesktop.DBus.Properties', function(metadata, name, payload)
+    if name ~= 'org.mpris.MediaPlayer2.Player' then
+      return
+    end
+
+    if payload.PlaybackStatus then
+      current_status = NORMALIZED_MPRIS_STATES[payload.PlaybackStatus]
+    end
+
+    if payload.Metadata then
+      current_metadata = {}
+      for k, v in pairs(payload.Metadata) do
+        if string.sub(k, 1, 6) == 'xesam:' then
+          if type(v) == 'table' then
+            v = table.concat(v, ' & ')
+          end
+          current_metadata[string.sub(k, 7)] = v
+        end
+      end
+    end
+
+    callback {
+      state = current_status,
+      info  = current_metadata,
+    }
+  end)
+
+  callback {
+    state = current_status,
+    info  = current_metadata,
+  }
+end
 -- }}}
 
 local _M = {}
