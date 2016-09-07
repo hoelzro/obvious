@@ -18,32 +18,33 @@ _handle_error(lua_State *L, UErrorCode error)
     return 2;
 }
 
-#define HANDLE_ERROR(L, error)\
-    if(U_FAILURE(error)) {\
-        return _handle_error(L, error);\
-    }
-
 static int
 luaunicode_length(lua_State *L)
 {
     UErrorCode error = U_ZERO_ERROR;
     UText text = UTEXT_INITIALIZER;
-    // XXX clean up resources
     const char *utf8bytes = luaL_checkstring(L, 1);
 
-    // XXX is there a C++ function that does this?
     utext_openUTF8(&text, utf8bytes, -1, &error);
 
-    HANDLE_ERROR(L, error);
+    if(U_FAILURE(error)) {
+        return _handle_error(L, error);
+    }
 
     BreakIterator *i = BreakIterator::createCharacterInstance(Locale::getUS(), error);
-    // XXX clean up resources
 
-    HANDLE_ERROR(L, error);
+    if(U_FAILURE(error)) {
+        utext_close(&text);
+        return _handle_error(L, error);
+    }
 
     i->setText(&text, error);
 
-    HANDLE_ERROR(L, error);
+    if(U_FAILURE(error)) {
+        delete i;
+        utext_close(&text);
+        return _handle_error(L, error);
+    }
 
     int length = 0;
     int32_t p = i->first();
@@ -53,6 +54,10 @@ luaunicode_length(lua_State *L)
     length--; // NUL byte appears to be counted
 
     lua_pushinteger(L, length);
+
+    delete i;
+    utext_close(&text);
+
     return 1;
 }
 
@@ -78,17 +83,26 @@ luaunicode_sub(lua_State *L)
         return luaL_error(L, "unicode.sub: start must be less than or equal to end");
     }
 
-    // XXX is there a C++ function that does this
     utext_openUTF8(&text, utf8bytes, -1, &error);
-    // XXX clean up
 
-    HANDLE_ERROR(L, error);
+    if(U_FAILURE(error)) {
+        return _handle_error(L, error);
+    }
 
     BreakIterator *i = BreakIterator::createCharacterInstance(Locale::getUS(), error);
-    // XXX clean up
+
+    if(U_FAILURE(error)) {
+        utext_close(&text);
+        return _handle_error(L, error);
+    }
+
     i->setText(&text, error);
 
-    HANDLE_ERROR(L, error);
+    if(U_FAILURE(error)) {
+        delete i;
+        utext_close(&text);
+        return _handle_error(L, error);
+    }
 
     for(int32_t pos = 1, p = i->first(); p != BreakIterator::DONE; p = i->next(), pos++) {
         if(pos == start) {
@@ -103,6 +117,8 @@ luaunicode_sub(lua_State *L)
         }
     }
     lua_pushlstring(L, utf8bytes + start_byte, end_byte - start_byte);
+    delete i;
+    utext_close(&text);
 
     return 1;
 }
