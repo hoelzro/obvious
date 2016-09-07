@@ -19,7 +19,7 @@ _handle_error(lua_State *L, UErrorCode error)
 }
 
 static int
-luaunicode_length(lua_State *L)
+luaunicode_length(lua_State *L) throw ()
 {
     UErrorCode error = U_ZERO_ERROR;
     UText text = UTEXT_INITIALIZER;
@@ -62,7 +62,7 @@ luaunicode_length(lua_State *L)
 }
 
 static int
-luaunicode_sub(lua_State *L)
+luaunicode_sub(lua_State *L) throw ()
 {
     UErrorCode error = U_ZERO_ERROR;
     UText text = UTEXT_INITIALIZER;
