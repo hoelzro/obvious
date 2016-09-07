@@ -1,9 +1,10 @@
 local backends = require 'obvious.music.backends'
 
-local awful  = require 'awful'
-local markup = require 'obvious.lib.markup'
-local hooks  = require 'obvious.lib.hooks'
-local wibox  = require 'wibox'
+local awful   = require 'awful'
+local markup  = require 'obvious.lib.markup'
+local hooks   = require 'obvious.lib.hooks'
+local unicode = require 'obvious.lib.unicode'
+local wibox   = require 'wibox'
 
 local widget = wibox.widget.textbox()
 local backend
@@ -34,91 +35,15 @@ local function format_metadata(format, state, info)
   end)
 end
 
-local utf8length
-local utf8positions
-
-if utf8 then
-  utf8length = utf8.len
-else
-  local sbyte = string.byte
-
-  function utf8positions(s)
-    local function iter(s, pos)
-      if not pos then
-        return 1
-      end
-
-      local byte = sbyte(s, pos)
-
-      if byte >= 0xf0 then
-        pos = pos + 4
-      elseif byte >= 0xe0 then
-        pos = pos + 3
-      elseif byte >= 0xc0 then
-        pos = pos + 2
-      else
-        pos = pos + 1
-      end
-
-      if pos > #s then
-        return nil
-      end
-
-      return pos
-    end
-
-    if s == '' then
-      return function() end, s, nil
-    else
-      return iter, s, nil
-    end
-  end
-
-  function utf8length(s)
-    local count = 0
-
-    for _ in utf8positions(s) do
-      count = count + 1
-    end
-
-    return count
-  end
-end
-
-local function utf8sub(s, start, finish)
-  local start_byte
-  local end_byte = #s
-
-  local charno = 1
-  for pos in utf8positions(s) do
-    if charno == start then
-      start_byte = pos
-
-      if not finish then
-        break
-      end
-    end
-
-    if finish and charno == finish + 1 then
-      end_byte = pos - 1
-      break
-    end
-
-    charno = charno + 1
-  end
-
-  return string.sub(s, start_byte, end_byte)
-end
-
 local function rotate_string(s)
   return function(_, v)
-    return utf8sub(v, 2) .. utf8sub(v, 1, 1)
+    return unicode.sub(v, 2) .. unicode.sub(v, 1, 1)
   end, s, s
 end
 
 local function scroll_marquee(s)
   for rotated in rotate_string(s) do
-    local truncated = utf8sub(rotated, 1, maxlength - 3) .. '...'
+    local truncated = unicode.sub(rotated, 1, maxlength - 3) .. '...'
     widget:set_markup(awful.util.escape(truncated))
     coroutine.yield()
   end
@@ -142,7 +67,7 @@ local function update(info)
 
   local formatted = format_metadata(format, info.state, info.info)
 
-  if utf8length(formatted) > maxlength then
+  if unicode.length(formatted) > maxlength then
     if marquee then
       local marquee_coro = coroutine.create(scroll_marquee)
       coroutine.resume(marquee_coro, ' ' .. formatted)
@@ -152,7 +77,7 @@ local function update(info)
       hooks.timer.register(1, nil, marquee_timer, 'Marquee Timer')
       return
     else
-      formatted = utf8sub(formatted, 1, maxlength - 3) .. '...'
+      formatted = unicode.sub(formatted, 1, maxlength - 3) .. '...'
     end
   end
 
