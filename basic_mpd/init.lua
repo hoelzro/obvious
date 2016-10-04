@@ -22,6 +22,7 @@ local defaults = {
   format = "$title - $album - $artist",
   length = 75,
   unknown = "(unknown)",
+  update_interval = 1
 }
 local settings = {}
 for key, value in pairs(defaults) do
@@ -124,7 +125,7 @@ function update()
   widget:set_markup(now_playing)
 end
 update()
-lib.hooks.timer.register(1, 30, update, "basic_mpd widget refresh rate")
+lib.hooks.timer.register(settings.update_interval, 30, update, "basic_mpd widget refresh rate")
 
 -- SETTINGS
 -- Set the format string
@@ -145,6 +146,11 @@ end
 -- @param format The string to use for unknown metadata
 function set_unknown(unknown)
   settings.unknown = unknown or defaults.unknown
+  update()
+end
+
+function set_update_interval(t)
+  settings.update_interval = t or defaults.update_interval
   update()
 end
 
