@@ -22,7 +22,7 @@ local defaults = {
   format = "$title - $album - $artist",
   length = 75,
   unknown = "(unknown)",
-  update_interval = 1
+  update_interval = 1,
 }
 local settings = {}
 for key, value in pairs(defaults) do
