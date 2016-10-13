@@ -81,7 +81,7 @@ local function update(info)
     end
   end
 
-  widget:set_markup(formatted)
+  widget:set_markup(awful.util.escape(formatted))
 end
 
 local _M = {}
