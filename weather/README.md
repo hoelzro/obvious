@@ -19,6 +19,7 @@ widget_box:add(weather())
 
 # Nice to Have Features
 
+  * Be able to update your location without writing Lua (by hand, or ask a service)
   * Details view popup when you click on the widget (perhaps with hourly/daily) forecast
   * Phases of the moon
   * Custom icons rather than just Unicode glyphs
