@@ -1,11 +1,14 @@
 local backends = require 'obvious.music.backends'
 
-local awful   = require 'awful'
-local naughty = require 'naughty'
-local markup  = require 'obvious.lib.markup'
-local hooks   = require 'obvious.lib.hooks'
-local unicode = require 'obvious.lib.unicode'
-local wibox   = require 'wibox'
+local awful       = require 'awful'
+local naughty     = require 'naughty'
+local markup      = require 'obvious.lib.markup'
+local hooks       = require 'obvious.lib.hooks'
+local unicode     = require 'obvious.lib.unicode'
+local markup_rope = require 'obvious.lib.markup_rope'
+local wibox       = require 'wibox'
+
+local min = math.min
 
 local widget = wibox.widget.textbox()
 local backend
@@ -36,17 +39,24 @@ local function format_metadata(format, state, info)
   end)
 end
 
-local function rotate_string(s)
-  return function(_, v)
-    return unicode.sub(v, 2) .. unicode.sub(v, 1, 1)
-  end, s, s
+local function rotate_markup_string(s, maxlength)
+  return function(rope, rotation_amount)
+    local first_chunk_length = min(rope:len() - rotation_amount, maxlength)
+
+    local rotated = rope:sub(rotation_amount + 1, rotation_amount + first_chunk_length + 1)
+
+    if first_chunk_length < maxlength then
+      rotated = rotated .. rope:sub(1, min(maxlength - first_chunk_length, rotation_amount))
+    end
+
+    return (rotation_amount % rope:len()) + 1, rotated
+  end, markup_rope(s), 1
 end
 
 local function scroll_marquee(prefix, s, suffix)
-  local maxlength = maxlength - #prefix - #suffix
-  for rotated in rotate_string(s) do
-    local truncated = unicode.sub(rotated, 1, maxlength - 3) .. '...'
-    widget:set_markup(prefix .. truncated .. suffix)
+  local maxlength = maxlength - markup_rope(prefix):len() - markup_rope(suffix):len()
+  for _, rotated in rotate_markup_string(s, maxlength - 3) do
+    widget:set_markup(prefix .. rotated .. '...' .. suffix)
     coroutine.yield()
   end
 end
@@ -82,8 +92,8 @@ local function update(info)
   if unicode.length(formatted) > maxlength then
     if marquee then
       local marquee_coro = coroutine.create(scroll_marquee)
-      local prefix, marquee, suffix = parse_marquee(formatted)
-      local ok, err = coroutine.resume(marquee_coro, prefix, ' ' .. marquee, suffix)
+      local prefix, marquee_text, suffix = parse_marquee(formatted)
+      local ok, err = coroutine.resume(marquee_coro, prefix, ' ' .. marquee_text, suffix)
       if not ok then
         naughty.notify {
           title = 'Obvious',
@@ -108,9 +118,11 @@ local function update(info)
       hooks.timer.register(1, nil, marquee_timer, 'Marquee Timer')
       return
     else
-      formatted = unicode.sub(formatted, 1, maxlength - 3) .. '...'
+      formatted = markup_rope(formatted):sub(1, maxlength - 3) .. '...'
     end
   end
+
+  formatted = table.concat { parse_marquee(formatted) }
 
   widget:set_markup(formatted)
 end
