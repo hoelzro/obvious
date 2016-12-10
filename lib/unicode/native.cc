@@ -72,9 +72,7 @@ luaunicode_sub(lua_State *L) throw ()
     size_t start_byte;
     size_t end_byte;
 
-    if(end == 0) {
-        end_byte = strlen(utf8bytes);
-    }
+    end_byte = strlen(utf8bytes);
 
     if(start <= 0 || end < 0) {
         return luaL_error(L, "unicode.sub: start and end must be greater than zero");
