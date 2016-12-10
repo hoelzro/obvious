@@ -43,11 +43,22 @@ local function rotate_string(s)
 end
 
 local function scroll_marquee(prefix, s, suffix)
+  local maxlength = maxlength - #prefix - #suffix
   for rotated in rotate_string(s) do
     local truncated = unicode.sub(rotated, 1, maxlength - 3) .. '...'
-    widget:set_markup(truncated)
+    widget:set_markup(prefix .. truncated .. suffix)
     coroutine.yield()
   end
+end
+
+local function parse_marquee(format)
+  local start, finish, inner = string.find(format, '<marquee>(.*)</marquee>')
+
+  if not start then
+    return '', format, ''
+  end
+
+  return string.sub(format, 1, start - 1), inner, string.sub(format, finish + 1)
 end
 
 local function update(info)
@@ -71,7 +82,8 @@ local function update(info)
   if unicode.length(formatted) > maxlength then
     if marquee then
       local marquee_coro = coroutine.create(scroll_marquee)
-      local ok, err = coroutine.resume(marquee_coro, ' ' .. formatted)
+      local prefix, marquee, suffix = parse_marquee(formatted)
+      local ok, err = coroutine.resume(marquee_coro, prefix, ' ' .. marquee, suffix)
       if not ok then
         naughty.notify {
           title = 'Obvious',
