@@ -32,7 +32,7 @@ local function format_metadata(format, state, info)
   assert(type(format) == 'string')
 
   return string.gsub(format, '%$(%w+)', function(key)
-    return info[key] or unknown
+    return awful.util.escape(info[key] or unknown)
   end)
 end
 
@@ -42,10 +42,10 @@ local function rotate_string(s)
   end, s, s
 end
 
-local function scroll_marquee(s)
+local function scroll_marquee(prefix, s, suffix)
   for rotated in rotate_string(s) do
     local truncated = unicode.sub(rotated, 1, maxlength - 3) .. '...'
-    widget:set_markup(awful.util.escape(truncated))
+    widget:set_markup(truncated)
     coroutine.yield()
   end
 end
@@ -100,7 +100,7 @@ local function update(info)
     end
   end
 
-  widget:set_markup(awful.util.escape(formatted))
+  widget:set_markup(formatted)
 end
 
 local _M = {}
