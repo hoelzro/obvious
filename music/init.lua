@@ -1,6 +1,7 @@
 local backends = require 'obvious.music.backends'
 
 local awful   = require 'awful'
+local naughty = require 'naughty'
 local markup  = require 'obvious.lib.markup'
 local hooks   = require 'obvious.lib.hooks'
 local unicode = require 'obvious.lib.unicode'
@@ -70,9 +71,27 @@ local function update(info)
   if unicode.length(formatted) > maxlength then
     if marquee then
       local marquee_coro = coroutine.create(scroll_marquee)
-      coroutine.resume(marquee_coro, ' ' .. formatted)
+      local ok, err = coroutine.resume(marquee_coro, ' ' .. formatted)
+      if not ok then
+        naughty.notify {
+          title = 'Obvious',
+          text = 'Error: ' .. tostring(err),
+          preset = naughty.config.presets.critical,
+        }
+        return
+      end
+
       marquee_timer = function()
-        coroutine.resume(marquee_coro)
+        local ok, err = coroutine.resume(marquee_coro)
+        if not ok then
+          naughty.notify {
+            title = 'Obvious',
+            text = 'Error: ' .. tostring(err),
+            preset = naughty.config.presets.critical,
+          }
+          hooks.timer.unregister(marquee_timer)
+          marquee_timer = nil
+        end
       end
       hooks.timer.register(1, nil, marquee_timer, 'Marquee Timer')
       return
