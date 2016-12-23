@@ -29,7 +29,12 @@ local function update()
   local response, err = pcall(forecast.get, api_key, latitude, longitude, metric and 'si' or 'us')
 
   if not response then
-    widget:set_text('Unable to retrieve forecast: ' .. err)
+    widget:set_text 'Unable to retrieve forecast @_@'
+    naughty.notify {
+      title = 'Forecast Error',
+      text = err,
+      preset = naughty.config.presets.critical,
+    }
     return
   end
   response = err
