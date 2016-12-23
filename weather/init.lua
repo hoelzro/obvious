@@ -1,3 +1,4 @@
+local awful    = require 'awful'
 local naughty  = require 'naughty'
 local wibox    = require 'wibox'
 local forecast = require 'obvious.weather.forecast'
@@ -72,6 +73,10 @@ end
 function _M.set_metric(is_metric)
   metric = is_metric
 end
+
+widget:buttons(awful.util.table.join(
+  awful.button({ }, 1, update)
+))
 
 return setmetatable(_M, { __call = function()
   if is_setup() then
