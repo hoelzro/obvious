@@ -5,7 +5,7 @@
 -- Awful Timer Wrapper With Speed Controls
 
 local pairs = pairs
-local capi = { timer = timer }
+local gears_timer = require('gears').timer
 
 module("obvious.lib.hooks")
 
@@ -26,7 +26,7 @@ function timer.register(reg_time, slow_time, fn, descr)
     slow=slow_time,
     speed="regular",
     description=descr or "Undescribed timer",
-    timer=capi.timer({ timeout = 600 })
+    timer=gears_timer({ timeout = 600 })
   }
   registry[fn].timer:connect_signal("timeout", fn)
   -- set_speed() will :stop() again and start with the real timeout

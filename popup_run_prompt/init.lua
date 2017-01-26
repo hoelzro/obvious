@@ -102,7 +102,7 @@ function set_default(s)
 end
 
 function do_slide_up()
-  local s = mouse.screen
+  local s = mouse.screen.index
   startgeom = runwibox[s]:geometry()
   runwibox[s]:geometry({
     y = startgeom.y - settings.move_amount
@@ -159,7 +159,7 @@ function do_slide_down()
 end
 
 function hide_wibox()
-  local s = runwibox.screen or mouse.screen
+  local s = runwibox.screen or mouse.screen.index
 
   if settings.slide == true then
     runwibox[s].visible = true
@@ -187,11 +187,11 @@ end
 
 function run_prompt()
   ensure_init()
-  show_wibox(mouse.screen)
+  show_wibox(mouse.screen.index)
 
   awful.prompt.run(
     { prompt = settings.prompt_string, font = settings.prompt_font },
-    mypromptbox[mouse.screen],
+    mypromptbox[mouse.screen.index],
     settings.run_function,
     settings.completion_function,
     awful.util.getdir("cache") .. settings.cache,
