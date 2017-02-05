@@ -8,12 +8,12 @@ local tonumber     = tonumber
 local sformat      = string.format
 local smatch       = string.match
 local sgmatch      = string.gmatch
-local popen        = io.popen
 local wibox        = require 'wibox'
 local markup       = require 'obvious.lib.markup'
 local hooks        = require 'obvious.lib.hooks'
 local async        = require 'obvious.lib.async'
 local spawn        = require 'awful.spawn'
+local type         = type
 
 module 'obvious.temp_info'
 
@@ -42,34 +42,33 @@ local function acpi_backend(callback)
 end
 
 local function sensors_backend(callback)
-   local pipe          = popen('sensors -u', 'r')
    local in_temp_block = false
    local stats         = {}
 
-   if not pipe then
-      return callback()
-   end
-
-   -- we assume that the first temp1 block is the CPU, and that
-   -- the CPU stats are under temp1
-   for line in pipe:lines() do
-     if line == 'temp1:' then
-       in_temp_block = true
-     elseif in_temp_block then
-       if line == '' then
-         break
-       end
-       local name, value = smatch(line, '^%s*temp1_(%w+):%s+(.+)')
-       if name and value then
-         stats[name] = tonumber(value)
-       end
-     end
-   end
-
-   if stats.input then
-      return callback({ stats.input })
-   else
-      return callback()
+   local result = spawn.with_line_callback('sensors -u', {
+                               stdout = function(line)
+                                  if line == 'temp1:' then
+                                     in_temp_block = true
+                                  elseif in_temp_block then
+                                     if line == '' then
+                                        return
+                                     end
+                                     local name, value = smatch(line, '^%s*temp1_(%w+):%s+(.+)')
+                                     if name and value then
+                                        stats[name] = tonumber(value)
+                                     end
+                                  end
+                               end,
+                               exit = function()
+                                  if stats.input then
+                                     return callback({ stats.input })
+                                  else
+                                     return callback()
+                                  end
+                               end
+   })
+   if type(result) == 'string' then
+      callback()
    end
 end
 
