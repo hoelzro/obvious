@@ -3,7 +3,6 @@
 -- Copyright 2009 Eligio Becerra --
 -----------------------------------
 
-local pread        = require('awful').util.pread
 local setmetatable = setmetatable
 local tonumber     = tonumber
 local sformat      = string.format
@@ -24,6 +23,16 @@ local colors = {
    warm   = '#909000',
    hot    = '#900000',
 }
+
+local function pread(cmd)
+  local pipe = popen(cmd)
+  if not pipe then
+    return ''
+  end
+  local results = pipe:read '*a'
+  pipe:close()
+  return results
+end
 
 local function acpi_backend()
    local d    = pread 'acpi -t'
