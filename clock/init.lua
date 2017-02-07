@@ -17,7 +17,8 @@ local os = {
   getenv = os.getenv
 }
 local io = {
-  lines = io.lines
+  lines = io.lines,
+  popen = io.popen,
 }
 local string = {
   match = string.match
@@ -64,9 +65,19 @@ local function edit(file)
   end
 end
 
+local function pread(cmd)
+  local pipe = io.popen(cmd)
+  if not pipe then
+    return ''
+  end
+  local results = pipe:read '*a'
+  pipe:close()
+  return results
+end
+
 -- non BSD-like `cal` for -h return help
 local function is_bsd()
-  return not awful.util.pread('cal -h'):find('help')
+  return not pread('cal -h'):find('help')
 end
 
 local show_calendar
@@ -82,7 +93,7 @@ do
 
     local notify_args = {
       text = lib.markup.font("monospace",
-      awful.util.pread(cmd):
+      pread(cmd):
       gsub("([^0-9])(" .. tonumber(os.date("%d")) .. ")([^0-9])",
       "%1<span foreground=\"#FF0000\">%2</span>%3"):gsub("\n+$", "")),
       screen = capi.mouse.screen
