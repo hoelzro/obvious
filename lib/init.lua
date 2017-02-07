@@ -6,6 +6,7 @@
 require("obvious.lib.hooks")
 require("obvious.lib.markup")
 require("obvious.lib.mpd")
+require("obvious.lib.spawn")
 require("obvious.lib.widget")
 require("obvious.lib.wlan")
 
