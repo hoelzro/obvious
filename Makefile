@@ -1,4 +1,4 @@
-LUA_INCLUDES=/usr/include/lua5.1
+LUA_INCLUDES=/usr/include/
 
 lib/unicode/native.so: lib/unicode/native.o
 	$(CXX) -o $@ -shared $^ $(shell pkg-config --libs icu-uc)
