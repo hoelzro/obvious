@@ -81,7 +81,7 @@ function parse_nmea(line)
   local msg = string.sub(line,0,6)
   if (msg == "$GPGGA") then
     -- Match GGA message
-    local time, latitude, longitude, quality, satellites, dilution, altitude, height, checksum = line:match("^\$GPGGA,([0-9.]+),([0-9.]+),[NS],([0-9.]+),[EW],([0-8]?),([0-9]+),([0-9.]*),([0-9.-]+),M,([0-9.]+),M,,\*(.*)")
+    local time, latitude, longitude, quality, satellites, dilution, altitude, height, checksum = line:match("^%$GPGGA,([0-9.]+),([0-9.]+),[NS],([0-9.]+),[EW],([0-8]?),([0-9]+),([0-9.]*),([0-9.-]+),M,([0-9.]+),M,,%*(.*)")
     latitude = tonumber(latitude)
     longitude = tonumber(longitude)
     local dd
@@ -97,7 +97,7 @@ function parse_nmea(line)
     position.height = tonumber(height)
   elseif (msg == "$GPRMC") then
     -- Match RMC message
-    local time, status, latitude, longitude, speed, course, date, variation, node, checksum = line:match("^\$GPRMC,([0-9.]+),[AV],([0-9.]+),[NS],([0-9.]+),[EW],([0-9.]+),([0-9.]+),([0-9]+),([0-9.]*),[EW]?,([NADE])\*(.*)")
+    local time, status, latitude, longitude, speed, course, date, variation, node, checksum = line:match("^%$GPRMC,([0-9.]+),[AV],([0-9.]+),[NS],([0-9.]+),[EW],([0-9.]+),([0-9.]+),([0-9]+),([0-9.]*),[EW]?,([NADE])%*(.*)")
     latitude = tonumber(latitude)
     longitude = tonumber(longitude)
     local dd
