@@ -5,7 +5,7 @@
 
 local mouse = mouse
 local awful = require("awful")
-local widget = widget
+local wibox = require("wibox")
 local screen = screen
 local ipairs = ipairs
 local pairs = pairs
@@ -64,10 +64,10 @@ function ensure_init()
 
   inited = true
   for s = 1, screen.count() do
-    mypromptbox[s] = widget({
-      type = "textbox",
+    mypromptbox[s] = wibox.widget({
       name = "mypromptbox" .. s,
-      align = "left"
+      align = "left",
+      widget = wibox.widget.textbox,
     })
 
     runwibox[s] = capi.wibox({
@@ -83,10 +83,7 @@ function ensure_init()
     runwibox[s].ontop = true
 
     -- Widgets for prompt wibox
-    runwibox[s].widgets = {
-      mypromptbox[s],
-      layout = awful.widget.layout.vertical.center
-    }
+    runwibox[s].widget = mypromptbox[s]
   end
 end
 
@@ -181,22 +178,32 @@ function hide_wibox()
   end
 end
 
-function run_prompt_callback()
+function run_prompt_callback(command)
+   settings.run_function(command)
   hide_wibox()
 end
+
+local hooks = {
+   -- Hide the prompt when user types 'ESC'
+   {{}, "Escape", function(_)
+	 hide_wibox()
+   end},
+}
 
 function run_prompt()
   ensure_init()
   show_wibox(mouse.screen.index)
 
   awful.prompt.run(
-    { prompt = settings.prompt_string, font = settings.prompt_font },
-    mypromptbox[mouse.screen.index],
-    settings.run_function,
-    settings.completion_function,
-    awful.util.getdir("cache") .. settings.cache,
-    100,
-    run_prompt_callback
+     { prompt = settings.prompt_string,
+       font = settings.prompt_font ,
+       hooks = hooks,
+       textbox = mypromptbox[mouse.screen.index],
+       exe_callback = run_prompt_callback,
+       completion_callback = settings.completion_function,
+       history_path = awful.util.getdir("cache") .. settings.cache,
+       history_max = 100,
+     }
   )
 end
 
