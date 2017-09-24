@@ -32,7 +32,7 @@ local function background_update()
   local response = forecast.get(api_key, latitude, longitude, metric and 'si' or 'us')
 
   local icon = icons[response.currently.icon] or ''
-  local description = string.format('%.1f °%s', response.currently.temperature, metric and 'C' or 'us')
+  local description = string.format('%.1f °%s', response.currently.temperature, metric and 'C' or 'F')
   widget:set_text(icon .. ' ' ..description)
   request_in_flight = false
 end
