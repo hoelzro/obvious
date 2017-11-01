@@ -3,18 +3,15 @@
 -- Copyright 2009 Eligio Becerra --
 -----------------------------------
 
-local setmetatable = setmetatable
-local tonumber     = tonumber
 local sformat      = string.format
 local smatch       = string.match
 local sgmatch      = string.gmatch
 local popen        = io.popen
-local ipairs       = ipairs
 local wibox        = require 'wibox'
 local markup       = require 'obvious.lib.markup'
 local hooks        = require 'obvious.lib.hooks'
 
-module 'obvious.temp_info'
+local temperature = {}
 
 local widget = wibox.widget.textbox()
 
@@ -124,11 +121,13 @@ end
 hooks.timer.register(5, 30, update)
 hooks.timer.stop(update)
 
-setmetatable(_M, { __call = function ()
+setmetatable(temperature, { __call = function ()
    find_backend()
    hooks.timer.start(update)
    update()
    return widget
 end })
+
+return temperature
 
 -- vim: filetype=lua:expandtab:shiftwidth=3:tabstop=3:softtabstop=3:textwidth=80
