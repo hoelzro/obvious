@@ -90,7 +90,7 @@ local function update(force)
       local hours   = math.floor(bat.time / 60)
       local minutes = bat.time % 60
 
-      battery_status = battery_status .. ' ' .. awful.util.escape(sformat('%02d:%02d', hours, minutes))
+      battery_status = battery_status .. ' ' .. awful.util.escape(string.format('%02d:%02d', hours, minutes))
     end
 
     if blinking and inverted then
