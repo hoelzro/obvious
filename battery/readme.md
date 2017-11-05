@@ -28,3 +28,9 @@ first is returned. The table has the following fields:
 * `charge`: a number representing the current battery charge as a number between
   0 and 100
 * `time`: the time left to full charge or complete discharge, in minutes
+
+To set your preferred backend:
+
+    local battery = require("obvious.battery")
+    battery.preferred_backend = 'apm'
+    battery()
