@@ -3,10 +3,15 @@
 -- Copyright 2015 Rob Hoelz               --
 --------------------------------------------
 
+local assert       = assert
 local iopopen      = io.popen
+local setmetatable = setmetatable
+local tonumber     = tonumber
+local tostring     = tostring
 local floor        = math.floor
 local sformat      = string.format
-local unpack       = table.unpack
+local smatch       = string.match
+local unpack       = unpack or table.unpack
 
 local backend = {}
 
@@ -91,7 +96,7 @@ local function match_case(input, ...)
     local pattern = args[i]
     local action  = args[i + 1]
 
-    local matches = { string.match(input, pattern) }
+    local matches = { smatch(input, pattern) }
 
     if matches[1] then
       action(unpack(matches))
