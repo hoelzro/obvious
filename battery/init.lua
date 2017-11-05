@@ -137,7 +137,7 @@ end
 
 function battery.get_data()
   if not backend then
-    backend = backends.get()
+    backend = backends.get(battery.preferred_backend)
   end
 
   local bats = { backend:state() }
@@ -154,7 +154,7 @@ lib.hooks.timer.register(1, 300, update)
 
 setmetatable(battery, { __call = function ()
   if not backend then
-     backend = backends.get()
+     backend = backends.get(battery.preferred_backend)
   end
   update()
   lib.hooks.timer.start(update)
