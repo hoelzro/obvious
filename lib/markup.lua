@@ -5,6 +5,7 @@
 -----------------------------------
 
 local beautiful = require("beautiful")
+local tostring = tostring
 
 local markup = {
    fg = {},

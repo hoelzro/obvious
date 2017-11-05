@@ -3,10 +3,13 @@
 -- Copyright 2009 Eligio Becerra --
 -----------------------------------
 
+local setmetatable = setmetatable
+local tonumber     = tonumber
 local sformat      = string.format
 local smatch       = string.match
 local sgmatch      = string.gmatch
 local popen        = io.popen
+local ipairs       = ipairs
 local wibox        = require 'wibox'
 local markup       = require 'obvious.lib.markup'
 local hooks        = require 'obvious.lib.hooks'

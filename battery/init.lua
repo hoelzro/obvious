@@ -3,8 +3,21 @@
 -- Copyright 2009, 2010, 2011 Gregor Best --
 --------------------------------------------
 
+local tonumber = tonumber
+local tostring = tostring
+local setmetatable = setmetatable
+local type = type
+local io = {
+  popen = io.popen
+}
 local capi = {
   mouse = mouse
+}
+local table = {
+  remove = table.remove
+}
+local math = {
+  floor = math.floor
 }
 
 local naughty = require("naughty")
@@ -14,6 +27,7 @@ local lib = {
   hooks = require("obvious.lib.hooks"),
   markup = require("obvious.lib.markup")
 }
+local sformat = string.format
 local backends = require 'obvious.battery.backends'
 
 local battery = {}
@@ -90,7 +104,7 @@ local function update(force)
       local hours   = math.floor(bat.time / 60)
       local minutes = bat.time % 60
 
-      battery_status = battery_status .. ' ' .. awful.util.escape(string.format('%02d:%02d', hours, minutes))
+      battery_status = battery_status .. ' ' .. awful.util.escape(sformat('%02d:%02d', hours, minutes))
     end
 
     if blinking and inverted then
