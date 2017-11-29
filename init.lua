@@ -3,7 +3,7 @@
 -- Copyright 2009 Gregor Best            --
 -------------------------------------------
 
-local obvious = {}
+local obvious = require 'obvious.widget_registry'
 
 obvious.basic_mpd        = require 'obvious.basic_mpd'
 obvious.battery          = require 'obvious.battery'
