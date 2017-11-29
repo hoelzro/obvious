@@ -7,10 +7,10 @@
 local beautiful = require("beautiful")
 local tostring = tostring
 
-module('obvious.lib.markup')
-
-fg = {}
-bg = {}
+local markup = {
+   fg = {},
+   bg = {}
+}
 
 --[[
 
@@ -48,40 +48,42 @@ bg = {}
 ]]
 
 -- Basic stuff...
-function bold(text)      return '<b>'     .. tostring(text) .. '</b>'     end
-function italic(text)    return '<i>'     .. tostring(text) .. '</i>'     end
-function strike(text)    return '<s>'     .. tostring(text) .. '</s>'     end
-function underline(text) return '<u>'     .. tostring(text) .. '</u>'     end
-function big(text)       return '<big>'   .. tostring(text) .. '</big>'   end
-function small(text)     return '<small>' .. tostring(text) .. '</small>' end
+function markup.bold(text)      return '<b>'     .. tostring(text) .. '</b>'     end
+function markup.italic(text)    return '<i>'     .. tostring(text) .. '</i>'     end
+function markup.strike(text)    return '<s>'     .. tostring(text) .. '</s>'     end
+function markup.underline(text) return '<u>'     .. tostring(text) .. '</u>'     end
+function markup.big(text)       return '<big>'   .. tostring(text) .. '</big>'   end
+function markup.small(text)     return '<small>' .. tostring(text) .. '</small>' end
 
-function font(font, text)
+function markup.font(font, text)
   return '<span font_desc="'  .. tostring(font)  .. '">' .. tostring(text) ..'</span>'
 end
 
 -- Set the foreground.
-function fg.color(color, text)
+function markup.fg.color(color, text)
   return '<span foreground="' .. tostring(color) .. '">' .. tostring(text) .. '</span>'
 end
 
 -- Set the background.
-function bg.color(color, text)
+function markup.bg.color(color, text)
   return '<span background="' .. tostring(color) .. '">' .. tostring(text) .. '</span>'
 end
 
 -- Context: focus
-function fg.focus(text)  return fg.color(beautiful.fg_focus, text)  end
-function bg.focus(text)  return bg.color(beautiful.bg_focus, text)  end
-function    focus(text)  return bg.focus(fg.focus(text))     end
+function markup.fg.focus(text)  return markup.fg.color(beautiful.fg_focus, text)  end
+function markup.bg.focus(text)  return markup.bg.color(beautiful.bg_focus, text)  end
+function    markup.focus(text)  return markup.bg.focus(markup.fg.focus(text))     end
 
 -- Context: normal
-function fg.normal(text) return fg.color(beautiful.fg_normal, text) end
-function bg.normal(text) return bg.color(beautiful.bg_normal, text) end
-function    normal(text) return bg.normal(fg.normal(text))   end
+function markup.fg.normal(text) return markup.fg.color(beautiful.fg_normal, text) end
+function markup.bg.normal(text) return markup.bg.color(beautiful.bg_normal, text) end
+function    markup.normal(text) return markup.bg.normal(markup.fg.normal(text))   end
 
 -- Context: urgent
-function fg.urgent(text) return fg.color(beautiful.fg_urgent, text) end
-function bg.urgent(text) return bg.color(beautiful.bg_urgent, text) end
-function    urgent(text) return bg.urgent(fg.urgent(text))   end
+function markup.fg.urgent(text) return markup.fg.color(beautiful.fg_urgent, text) end
+function markup.bg.urgent(text) return markup.bg.color(beautiful.bg_urgent, text) end
+function    markup.urgent(text) return markup.bg.urgent(markup.fg.urgent(text))   end
+
+return markup
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

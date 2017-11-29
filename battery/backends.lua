@@ -11,7 +11,7 @@ local tostring     = tostring
 local floor        = math.floor
 local sformat      = string.format
 local smatch       = string.match
-local unpack       = unpack
+local unpack       = unpack or table.unpack
 
 local backend = {}
 

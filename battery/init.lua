@@ -30,7 +30,7 @@ local lib = {
 local sformat = string.format
 local backends = require 'obvious.battery.backends'
 
-module("obvious.battery")
+local battery = {}
 
 local widget = wibox.widget.textbox()
 local status_text = {
@@ -122,7 +122,7 @@ local function update(force)
   widget:set_markup(markup)
 end
 
-local function detail ()
+local function detail()
   local details = backend:details()
 
   if not details then
@@ -135,9 +135,9 @@ local function detail ()
   update(true)
 end
 
-function get_data()
+function battery.get_data()
   if not backend then
-    backend = backends.get(_M.preferred_backend)
+    backend = backends.get(battery.preferred_backend)
   end
 
   local bats = { backend:state() }
@@ -152,13 +152,14 @@ widget:buttons(awful.util.table.join(
 -- XXX FIXME
 lib.hooks.timer.register(1, 300, update)
 
-setmetatable(_M, { __call = function ()
+setmetatable(battery, { __call = function ()
   if not backend then
-    backend = backends.get(_M.preferred_backend)
+     backend = backends.get(battery.preferred_backend)
   end
   update()
   lib.hooks.timer.start(update)
   return widget
 end })
+return battery
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et
