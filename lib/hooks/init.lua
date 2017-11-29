@@ -101,14 +101,14 @@ end
 -- Note: This function returns a copy of the internal registry, so assigning to
 -- it doesn't work.
 function hooks.timer.get_speeds(fn)
-  copy = {}
+  local copy = {}
   if fn then
     for key, value in pairs(registry[fn]) do
       copy[key] = value
     end
   else
     for key, value in pairs(registry) do
-      subcopy = {}
+      local subcopy = {}
       for subkey, subvalue in pairs(registry[key]) do
         subcopy[subkey] = subvalue
       end
