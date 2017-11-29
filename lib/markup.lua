@@ -9,7 +9,7 @@ local tostring = tostring
 
 local markup = {
    fg = {},
-   bg = {}
+   bg = {},
 }
 
 --[[
