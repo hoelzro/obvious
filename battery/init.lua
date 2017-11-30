@@ -160,6 +160,7 @@ setmetatable(battery, { __call = function ()
   lib.hooks.timer.start(update)
   return widget
 end })
+require('obvious.widget_registry').battery = battery
 return battery
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

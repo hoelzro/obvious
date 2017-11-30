@@ -131,6 +131,7 @@ setmetatable(temperature, { __call = function ()
    return widget
 end })
 
+require('obvious.widget_registry').temp_info = temperature
 return temperature
 
 -- vim: filetype=lua:expandtab:shiftwidth=3:tabstop=3:softtabstop=3:textwidth=80

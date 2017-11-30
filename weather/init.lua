@@ -105,7 +105,7 @@ widget:buttons(awful.util.table.join(
   awful.button({ }, 1, update)
 ))
 
-return setmetatable(_M, { __call = function()
+local weather = setmetatable(_M, { __call = function()
   if is_setup() then
     init_timer()
   else
@@ -114,3 +114,7 @@ return setmetatable(_M, { __call = function()
 
   return widget
 end })
+
+require('obvious.widget_registry').weather = weather
+
+return weather
