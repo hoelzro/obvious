@@ -1,4 +1,4 @@
-local unicode = require 'obvious.lib.unicode.native'
+local unicode = require 'obvious.lib.unicode'
 
 local assert = assert
 local error = error
