@@ -7,6 +7,14 @@ if has_native then
   return nativelib
 end
 
+local naughty = require 'naughty'
+
+naughty.notify {
+  title   = 'Obvious',
+  text    = 'Not using native Unicode library for obvious - it is highly recommended to compile the native library for accuracy',
+  timeout = 0,
+}
+
 if utf8 then
   utf8length = utf8.len
 else
