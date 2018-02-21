@@ -8,7 +8,7 @@ local function get(api_key, latitude, longitude, units)
     latitude,
     longitude,
     units)
-  local headers, stream = assert(http_request.new_from_uri(url):go())
+  local headers, stream = assert(http_request.new_from_uri(url):go(5))
   local body = assert(stream:get_body_as_string())
 
   return json.decode(body)
