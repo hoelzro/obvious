@@ -46,18 +46,29 @@ popup_run_prompt.defaults.cache = "/history"
 popup_run_prompt.defaults.position = "top"
 
 -- Clone the defaults for the used settings
-settings = {}
+local settings = {}
 for key, value in pairs(popup_run_prompt.defaults) do
   settings[key] = value
 end
 
-runwibox = {}
-mypromptbox = {}
-inited = false
+local runwibox = {}
+local mypromptbox = {}
+local inited = false
+
+local function set_default(s)
+  runwibox[s]:geometry({
+    width = screen[s].geometry.width * settings.width,
+    height = settings.height,
+    x = screen[s].geometry.x + screen[s].geometry.width *
+      ((1 - settings.width) / 2),
+    y = screen[s].geometry.y + screen[s].geometry.height -
+      settings.height,
+  })
+end
 
 -- We want to "lazy init" so that in case beautiful inits late or something,
 -- this is still likely to work.
-function ensure_init()
+local function ensure_init()
   if inited then
   return
   end
@@ -87,18 +98,7 @@ function ensure_init()
   end
 end
 
-function set_default(s)
-  runwibox[s]:geometry({
-    width = screen[s].geometry.width * settings.width,
-    height = settings.height,
-    x = screen[s].geometry.x + screen[s].geometry.width *
-      ((1 - settings.width) / 2),
-    y = screen[s].geometry.y + screen[s].geometry.height -
-      settings.height,
-  })
-end
-
-function do_slide_up()
+local function do_slide_up()
   local s = mouse.screen.index
   startgeom = runwibox[s]:geometry()
   runwibox[s]:geometry({
@@ -112,7 +112,7 @@ function do_slide_up()
   end
 end
 
-function show_wibox(s)
+local function show_wibox(s)
   runwibox.screen = s
   if settings.slide == true then
     startgeom = runwibox[s]:geometry()
@@ -141,7 +141,7 @@ function show_wibox(s)
   end
 end
 
-function do_slide_down()
+local function do_slide_down()
   local s = runwibox.screen
   startgeom = runwibox[s]:geometry()
   runwibox[s]:geometry({
@@ -155,7 +155,7 @@ function do_slide_down()
   end
 end
 
-function hide_wibox()
+local function hide_wibox()
   local s = runwibox.screen or mouse.screen.index
 
   if settings.slide == true then
@@ -178,7 +178,7 @@ function hide_wibox()
   end
 end
 
-function run_prompt_callback(command)
+local function run_prompt_callback(command)
    settings.run_function(command)
   hide_wibox()
 end
