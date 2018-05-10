@@ -37,8 +37,8 @@ To set one of these settings, simply do something like:
 Implementation:
 ---------------
 To use it, include it into your rc.lua by inserting this line:
-    require("obvious.popup_run_prompt")
+    local popup = require("obvious.popup_run_prompt")
 
 Then add a bind to pop up the run prompt in your binds. Bind syntax changes,
 but it is roughly:
-    awful.key({ modkey }, "r", obvious.popup_run_prompt.run_prompt),
+    awful.key({ modkey }, "r", popup.run_prompt),
