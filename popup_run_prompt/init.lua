@@ -18,46 +18,57 @@ local capi = {
   wibox = wibox
 }
 
-module("obvious.popup_run_prompt")
+local popup_run_prompt = {}
 
-defaults = {}
+popup_run_prompt.defaults = {}
 -- Default is 1 for people without compositing
-defaults.opacity = 1.0
-defaults.prompt_string = "  Run~  "
-defaults.prompt_font = nil
+popup_run_prompt.defaults.opacity = 1.0
+popup_run_prompt.defaults.prompt_string = "  Run~  "
+popup_run_prompt.defaults.prompt_font = nil
 -- Whether or not the bar should slide up or just pop up
-defaults.slide = false
+popup_run_prompt.defaults.slide = false
 -- Bar will be percentage of screen width
-defaults.width = 0.6
+popup_run_prompt.defaults.width = 0.6
 -- Bar will be this high in pixels
-defaults.height = 22
-defaults.border_width = 1
+popup_run_prompt.defaults.height = 22
+popup_run_prompt.defaults.border_width = 1
 -- When sliding, it'll move this often (in seconds)
-defaults.move_speed = 0.02
+popup_run_prompt.defaults.move_speed = 0.02
 -- When sliding, it'll move this many pixels per move
-defaults.move_amount = 3
+popup_run_prompt.defaults.move_amount = 3
 -- Default run function
-defaults.run_function = awful.util.spawn
+popup_run_prompt.defaults.run_function = awful.util.spawn
 -- Default completion function
-defaults.completion_function = awful.completion.shell
+popup_run_prompt.defaults.completion_function = awful.completion.shell
 -- Default cache
-defaults.cache = "/history"
+popup_run_prompt.defaults.cache = "/history"
 -- Default position
-defaults.position = "top"
+popup_run_prompt.defaults.position = "top"
 
 -- Clone the defaults for the used settings
-settings = {}
-for key, value in pairs(defaults) do
+local settings = {}
+for key, value in pairs(popup_run_prompt.defaults) do
   settings[key] = value
 end
 
-runwibox = {}
-mypromptbox = {}
-inited = false
+local runwibox = {}
+local mypromptbox = {}
+local inited = false
+
+local function set_default(s)
+  runwibox[s]:geometry({
+    width = screen[s].geometry.width * settings.width,
+    height = settings.height,
+    x = screen[s].geometry.x + screen[s].geometry.width *
+      ((1 - settings.width) / 2),
+    y = screen[s].geometry.y + screen[s].geometry.height -
+      settings.height,
+  })
+end
 
 -- We want to "lazy init" so that in case beautiful inits late or something,
 -- this is still likely to work.
-function ensure_init()
+local function ensure_init()
   if inited then
   return
   end
@@ -87,18 +98,7 @@ function ensure_init()
   end
 end
 
-function set_default(s)
-  runwibox[s]:geometry({
-    width = screen[s].geometry.width * settings.width,
-    height = settings.height,
-    x = screen[s].geometry.x + screen[s].geometry.width *
-      ((1 - settings.width) / 2),
-    y = screen[s].geometry.y + screen[s].geometry.height -
-      settings.height,
-  })
-end
-
-function do_slide_up()
+local function do_slide_up()
   local s = mouse.screen.index
   startgeom = runwibox[s]:geometry()
   runwibox[s]:geometry({
@@ -112,7 +112,7 @@ function do_slide_up()
   end
 end
 
-function show_wibox(s)
+local function show_wibox(s)
   runwibox.screen = s
   if settings.slide == true then
     startgeom = runwibox[s]:geometry()
@@ -141,7 +141,7 @@ function show_wibox(s)
   end
 end
 
-function do_slide_down()
+local function do_slide_down()
   local s = runwibox.screen
   startgeom = runwibox[s]:geometry()
   runwibox[s]:geometry({
@@ -155,7 +155,7 @@ function do_slide_down()
   end
 end
 
-function hide_wibox()
+local function hide_wibox()
   local s = runwibox.screen or mouse.screen.index
 
   if settings.slide == true then
@@ -178,26 +178,26 @@ function hide_wibox()
   end
 end
 
-function run_prompt_callback(command)
+local function run_prompt_callback(command)
    settings.run_function(command)
   hide_wibox()
 end
 
-local hooks = {
+popup_run_prompt.hooks = {
    -- Hide the prompt when user types 'ESC'
    {{}, "Escape", function(_)
 	 hide_wibox()
    end},
 }
 
-function run_prompt()
+function popup_run_prompt.run_prompt()
   ensure_init()
   show_wibox(mouse.screen.index)
 
   awful.prompt.run(
      { prompt = settings.prompt_string,
        font = settings.prompt_font ,
-       hooks = hooks,
+       hooks = popup_run_prompt.hooks,
        textbox = mypromptbox[mouse.screen.index],
        exe_callback = run_prompt_callback,
        completion_callback = settings.completion_function,
@@ -208,59 +208,59 @@ function run_prompt()
 end
 
 -- SETTINGS
-function set_opacity(amount)
+function popup_run_prompt.set_opacity(amount)
   settings.opacity = amount or defaults.opacity
   update_settings()
 end
 
-function set_prompt_string(string)
-  settings.prompt_string = string or defaults.prompt_string
+function popup_run_prompt.set_prompt_string(string)
+  settings.prompt_string = string or popup_run_prompt.defaults.prompt_string
 end
 
-function set_prompt_font(font_string)
-  settings.prompt_font = font_string or defaults.prompt_font
+function popup_run_prompt.set_prompt_font(font_string)
+  settings.prompt_font = font_string or popup_run_prompt.defaults.prompt_font
 end
 
-function set_slide(tf)
-  settings.slide = tf or defaults.slide
+function popup_run_prompt.set_slide(tf)
+  settings.slide = tf or popup_run_prompt.defaults.slide
 end
 
-function set_width(amount)
-  settings.width = amount or defaults.width
+function popup_run_prompt.set_width(amount)
+  settings.width = amount or popup_run_prompt.defaults.width
   update_settings()
 end
 
-function set_height(amount)
-  settings.height = amount or defaults.height
+function popup_run_prompt.set_height(amount)
+  settings.height = amount or popup_run_prompt.defaults.height
   update_settings()
 end
 
-function set_border_width(amount)
-  settings.border_width = amount or defaults.border_width
+function popup_run_prompt.set_border_width(amount)
+  settings.border_width = amount or popup_run_prompt.defaults.border_width
   update_settings()
 end
 
-function set_move_speed(amount)
-  settings.move_speed = amount or defaults.move_speed
+function popup_run_prompt.set_move_speed(amount)
+  settings.move_speed = amount or popup_run_prompt.defaults.move_speed
 end
 
-function set_move_amount(amount)
-  settings.move_amount = amount or defaults.move_amount
+function popup_run_prompt.set_move_amount(amount)
+  settings.move_amount = amount or popup_run_prompt.defaults.move_amount
 end
 
-function set_run_function(fn)
-  settings.run_function = fn or defaults.run_function
+function popup_run_prompt.set_run_function(fn)
+  settings.run_function = fn or popup_run_prompt.defaults.run_function
 end
 
-function set_completion_function(fn)
-  settings.completion_function = fn or defaults.completion_function
+function popup_run_prompt.set_completion_function(fn)
+  settings.completion_function = fn or popup_run_prompt.defaults.completion_function
 end
 
-function set_position(p)
+function popup_run_prompt.set_position(p)
   settings.position = p
 end
 
-function update_settings()
+function popup_run_prompt.update_settings()
   for s, value in ipairs(runwibox) do
     value.border_width = settings.border_width
     set_default(s)
@@ -268,8 +268,10 @@ function update_settings()
   end
 end
 
-function set_cache(c)
-  settings.cache = c or defaults.cache
+function popup_run_prompt.set_cache(c)
+  settings.cache = c or popup_run_prompt.defaults.cache
 end
+
+return popup_run_prompt
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et
