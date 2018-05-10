@@ -39,7 +39,7 @@ local lib = {
   markup = require("obvious.lib.markup")
 }
 
-module("obvious.clock")
+local clock = {}
 
 local initialized = false
 local defaults = {
@@ -256,37 +256,37 @@ widget:connect_signal("mouse::leave", function ()
   update(false)
 end)
 
-function set_editor(e)
+function clock.set_editor(e)
   settings.editor = e or defaults.editor
 end
 
-function set_longformat(strOrFn)
+function clock.set_longformat(strOrFn)
   settings.longtimeformat = strOrFn or defaults.longtimeformat
   update(false)
 end
 
-function set_shortformat(strOrFn)
+function clock.set_shortformat(strOrFn)
   settings.shorttimeformat = strOrFn or defaults.shorttimeformat
   update(false)
 end
 
-function set_shorttimer(delay)
+function clock.set_shorttimer(delay)
   settings.shorttimer = delay or defaults.shorttimer
 end
 
-function set_longtimer(delay)
+function clock.set_longtimer(delay)
   settings.longtimer = delay or defaults.longtimer
 end
 
-function set_scrolling(active)
+function clock.set_scrolling(active)
   settings.scrolling = active
 end
 
-function set_scrolltimeout(timeout)
+function clock.set_scrolltimeout(timeout)
   settings.scrolltimeout = timeout
 end
 
-setmetatable(_M, { __call = function ()
+setmetatable(clock, { __call = function ()
   update()
   if not initialized then
     lib.hooks.timer.register(settings.shorttimer, settings.longtimer, update)
@@ -305,5 +305,7 @@ setmetatable(_M, { __call = function ()
 
   return widget
 end })
+
+return clock
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et
