@@ -29,14 +29,14 @@ Implementation:
 ---------------
 To use it, include it into your rc.lua by inserting this line:
 
-    require("obvious.clock")
+    local clock = require("obvious.clock")
 
 Then configure at least the editor setting (see Settings Available).
 
 To finish your rc.lua changes, add the clock widget to your wibox's
 widget list by adding:
 
-    obvious.clock()
+    clock()
 
 Finally, you want to create the alarm file. The alarm file is contained
 in `${XDG_CONFIG_HOME}/awesome/alarms`. In most cases this would be
