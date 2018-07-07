@@ -57,6 +57,11 @@ local function scroll_marquee(prefix, s, suffix)
   local maxlength = maxlength - markup_rope(prefix):len() - markup_rope(suffix):len()
   for _, rotated in rotate_markup_string(s, maxlength - 3) do
     widget:set_markup(prefix .. rotated .. '...' .. suffix)
+    local current_width = widget:get_preferred_size()
+    if current_width > (widget.forced_width or 0) then
+      widget.forced_width = current_width
+    end
+
     coroutine.yield()
   end
 end
@@ -72,6 +77,7 @@ local function parse_marquee(format)
 end
 
 local function update(info)
+  widget.forced_width = nil
   if marquee_timer then
     hooks.timer.unregister(marquee_timer)
     marquee_timer = nil
