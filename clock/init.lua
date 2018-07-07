@@ -306,6 +306,7 @@ setmetatable(clock, { __call = function ()
   return widget
 end })
 
+require('obvious.widget_registry').clock = clock
 return clock
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et
