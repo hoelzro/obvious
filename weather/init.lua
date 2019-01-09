@@ -28,6 +28,8 @@ local icons = {
 
 local request_in_flight = false
 local previous_fetch_time
+local sunrise_time
+local sunset_time
 
 local function background_update()
   local response = forecast.get(api_key, latitude, longitude, metric and 'si' or 'us')
@@ -35,8 +37,12 @@ local function background_update()
   local icon = icons[response.currently.icon] or ''
   local description = string.format('%.1f °%s', response.currently.temperature, metric and 'C' or 'F')
   widget:set_text(icon .. ' ' ..description)
+
   previous_fetch_time = os.time()
   request_in_flight = false
+
+  sunrise_time = response.daily.data[1].sunriseTime
+  sunset_time = response.daily.data[1].sunsetTime
 end
 
 local function update()
@@ -121,6 +127,15 @@ do
     if request_in_flight then
       lines[#lines + 1] = 'Retrieving status since ' .. os.date('%F %T', request_in_flight)
     end
+
+    if sunrise_time then
+      lines[#lines + 1] = 'Sunrise: ' .. os.date('%T', sunrise_time)
+    end
+
+    if sunset_time then
+      lines[#lines + 1] = 'Sunset: ' .. os.date('%T', sunset_time)
+    end
+
     local text = table.concat(lines, '\n')
     local args = {
       title = 'Weather',
