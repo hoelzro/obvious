@@ -27,6 +27,7 @@ local icons = {
 }
 
 local request_in_flight = false
+local previous_fetch_time
 
 local function background_update()
   local response = forecast.get(api_key, latitude, longitude, metric and 'si' or 'us')
@@ -34,6 +35,7 @@ local function background_update()
   local icon = icons[response.currently.icon] or ''
   local description = string.format('%.1f °%s', response.currently.temperature, metric and 'C' or 'F')
   widget:set_text(icon .. ' ' ..description)
+  previous_fetch_time = os.time()
   request_in_flight = false
 end
 
@@ -41,7 +43,7 @@ local function update()
   if request_in_flight then
     return
   end
-  request_in_flight = true
+  request_in_flight = os.time()
 
   local c = cqueues.new()
   c:wrap(background_update)
@@ -104,6 +106,39 @@ end
 widget:buttons(awful.util.table.join(
   awful.button({ }, 1, update)
 ))
+
+do
+  local notification
+
+  widget:connect_signal('mouse::enter', function()
+    local lines = {}
+
+    if previous_fetch_time then
+      lines[#lines + 1] = 'Last refresh: ' .. os.date('%F %T', previous_fetch_time)
+    end
+
+    -- XXX show error data if last fetch was bad
+    if request_in_flight then
+      lines[#lines + 1] = 'Retrieving status since ' .. os.date('%F %T', request_in_flight)
+    end
+    local text = table.concat(lines, '\n')
+    local args = {
+      title = 'Weather',
+      text = text,
+    }
+    if notification and notification.box.visible then
+      args.replaces_id = notification.id
+    end
+    notification = naughty.notify(args)
+  end)
+
+  widget:connect_signal('mouse::leave', function()
+    if notification then
+      naughty.destroy(notification, naughty.notificationClosedReason.dismissedByCommand)
+      notification = nil
+    end
+  end)
+end
 
 local weather = setmetatable(_M, { __call = function()
   if is_setup() then
