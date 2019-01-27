@@ -24,7 +24,7 @@ local lib = {
   markup = require("obvious.lib.markup")
 }
 
-module("obvious.volume_alsa")
+local volume_alsa = {}
 
 local objects = { }
 
@@ -141,6 +141,6 @@ local function create(_, cardid, channel, abrv)
   return widget
 end
 
-setmetatable(_M, { __call = create })
+return setmetatable(volume_alsa, { __call = create })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et
