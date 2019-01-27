@@ -48,7 +48,7 @@ Scrolling up and down on a widget changes the volume by 1. If you hold the
 If you want to use the data gathered by this widget, you can use the function
 
 ```lua
-    volume_alsa.get_data(cardid, channel).
+    volume_alsa.get_data(cardid, channel)
 ```
 
 It returns nil on failure, otherwise it returns a table with the following fields:
