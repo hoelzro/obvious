@@ -52,7 +52,7 @@ function volume_alsa.get_data(cardid, channel)
 end
 
 local function update(obj)
-  local status = get_data(obj.cardid, obj.channel) or { mute = true, volume = 0 }
+  local status = volume_alsa.get_data(obj.cardid, obj.channel) or { mute = true, volume = 0 }
 
   local color = "#900000"
   if not status.mute then
@@ -114,13 +114,13 @@ local function create(_, cardid, channel, abrv)
   obj.update = function() update(obj) end
 
   widget:buttons(awful.util.table.join(
-    awful.button({ }, 4, function () raise(obj.cardid, obj.channel, 1) obj.update() end),
-    awful.button({ }, 5, function () lower(obj.cardid, obj.channel, 1) obj.update() end),
-    awful.button({ "Shift" }, 4, function () raise(obj.cardid, obj.channel, 10) obj.update() end),
-    awful.button({ "Shift" }, 5, function () lower(obj.cardid, obj.channel, 10) obj.update() end),
-    awful.button({ "Control" }, 4, function () raise(obj.cardid, obj.channel, 5) obj.update() end),
-    awful.button({ "Control" }, 5, function () lower(obj.cardid, obj.channel, 5) obj.update() end),
-    awful.button({ }, 1, function () mute(obj.cardid, obj.channel)     obj.update() end),
+    awful.button({ }, 4, function () volume_alsa.raise(obj.cardid, obj.channel, 1) obj.update() end),
+    awful.button({ }, 5, function () volume_alsa.lower(obj.cardid, obj.channel, 1) obj.update() end),
+    awful.button({ "Shift" }, 4, function () volume_alsa.raise(obj.cardid, obj.channel, 10) obj.update() end),
+    awful.button({ "Shift" }, 5, function () volume_alsa.lower(obj.cardid, obj.channel, 10) obj.update() end),
+    awful.button({ "Control" }, 4, function () volume_alsa.raise(obj.cardid, obj.channel, 5) obj.update() end),
+    awful.button({ "Control" }, 5, function () volume_alsa.lower(obj.cardid, obj.channel, 5) obj.update() end),
+    awful.button({ }, 1, function () volume_alsa.mute(obj.cardid, obj.channel)     obj.update() end),
     awful.button({ }, 3, function () mixer(obj.term, obj.cardid)       obj.update() end)
   ))
 
@@ -129,9 +129,9 @@ local function create(_, cardid, channel, abrv)
   obj.set_channel = function(obj, id)     obj.channel = id obj.update()     return obj end
   obj.set_abrv    = function(obj, id)     obj.abrv = id    obj.update()     return obj end
   obj.set_term    = function(obj, term)   obj.term = term                   return obj end
-  obj.raise       = function(obj, v)      raise(obj.cardid, obj.channel, v) return obj end
-  obj.lower       = function(obj, v) lower(obj.cardid, obj.channel, v)      return obj end
-  obj.mute        = function(obj, v) mute(obj.cardid, obj.channel, v)       return obj end
+  obj.raise       = function(obj, v)      volume_alsa.raise(obj.cardid, obj.channel, v) return obj end
+  obj.lower       = function(obj, v) volume_alsa.lower(obj.cardid, obj.channel, v)      return obj end
+  obj.mute        = function(obj, v) volume_alsa.mute(obj.cardid, obj.channel, v)       return obj end
 
   obj.update()
   lib.hooks.timer.register(10, 30, obj.update, "Update for the volume widget")
