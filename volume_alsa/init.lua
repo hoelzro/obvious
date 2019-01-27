@@ -28,7 +28,7 @@ local volume_alsa = {}
 
 local objects = { }
 
-function get_data(cardid, channel)
+local function get_data(cardid, channel)
   local rv = { }
   local fd = io.popen("amixer -c " .. cardid .. " -- sget " .. channel)
   if not fd then return end
@@ -75,24 +75,24 @@ local function update_by_values(cardid, channel)
   end
 end
 
-function raise(cardid, channel, v)
+local function raise(cardid, channel, v)
   v = v or 1
   awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "+", false)
   update_by_values(cardid, channel)
 end
 
-function lower(cardid, channel, v)
+local function lower(cardid, channel, v)
   v = v or 1
   awful.util.spawn("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. v .. "-", false)
   update_by_values(cardid, channel)
 end
 
-function mute(cardid, channel)
+local function mute(cardid, channel)
   awful.util.spawn("amixer -c " .. cardid .. " sset " .. channel .. " toggle", false)
   update_by_values(cardid, channel)
 end
 
-function mixer(term, cardid)
+local function mixer(term, cardid)
   awful.util.spawn(term .. " -e 'alsamixer -c " .. cardid .. "'")
 end
 
