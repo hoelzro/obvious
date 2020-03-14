@@ -9,7 +9,6 @@ local sformat      = string.format
 local smatch       = string.match
 local sgmatch      = string.gmatch
 local popen        = io.popen
-local ipairs       = ipairs
 local wibox        = require 'wibox'
 local markup       = require 'obvious.lib.markup'
 local hooks        = require 'obvious.lib.hooks'
@@ -34,7 +33,7 @@ local function pread(cmd)
   return results
 end
 
-local function acpi_backend()
+local function acpi_backend(callback)
   local d    = pread 'acpi -t'
   local temp = {}
   for t in sgmatch(d, 'Thermal %d+: %w+, (%d+.?%d*) degrees') do
@@ -42,19 +41,19 @@ local function acpi_backend()
   end
 
   if #temp == 0 then
-    return
+    return callback()
   end
 
-  return temp
+  return callback(temp)
 end
 
-local function sensors_backend()
+local function sensors_backend(callback)
   local pipe          = popen('sensors -u', 'r')
   local in_temp_block = false
   local stats         = {}
 
   if not pipe then
-    return
+    return callback()
   end
 
   -- we assume that the first temp1 block is the CPU, and that
@@ -74,14 +73,14 @@ local function sensors_backend()
   end
 
   if stats.input then
-    return { stats.input }
+    return callback { stats.input }
   else
-    return
+    return callback()
   end
 end
 
-local function noop_backend()
-  return {}
+local function noop_backend(callback)
+  callback {}
 end
 
 local backends = {
@@ -91,43 +90,53 @@ local backends = {
 }
 local current_backend
 
-local function find_backend()
+local function find_backend(next_backend_idx, callback)
   if current_backend then
-    return current_backend
+    return callback(current_backend)
   end
 
-  for _, backend in ipairs(backends) do
-    local stats = backend()
+  local backend = backends[next_backend_idx]
+
+  backend(function(stats)
     if stats then
       current_backend = backend
-      break
+      return callback(backend)
     end
-  end
+
+    if next_backend_idx < #backends then
+      find_backend(next_backend_idx + 1, callback)
+    end
+  end)
 end
 
 local function update()
-  local temp = current_backend()
+  current_backend(function(temp)
+    local color = colors.hot
 
-  local color = colors.hot
-  if not temp[1] then
-    widget:set_text 'no data'
-    return
-  end
-  if temp[1] < 50 then
-    color = colors.normal
-  elseif temp[1] >= 50 and temp[1] < 60 then
-    color = colors.warm
-  end
-  widget:set_markup(sformat('%.2f', temp[1]) .. ' ' .. markup.fg.color(color, 'C'))
+    if not temp[1] then
+      widget:set_text 'no data'
+      return
+    end
+
+    if temp[1] < 50 then
+      color = colors.normal
+    elseif temp[1] >= 50 and temp[1] < 60 then
+      color = colors.warm
+    end
+
+    widget:set_markup(sformat('%.2f', temp[1]) .. ' ' .. markup.fg.color(color, 'C'))
+  end)
 end
 
 hooks.timer.register(5, 30, update)
 hooks.timer.stop(update)
 
 setmetatable(temperature, { __call = function ()
-  find_backend()
-  hooks.timer.start(update)
-  update()
+  find_backend(1, function()
+    hooks.timer.start(update)
+    update()
+  end)
+
   return widget
 end })
 
