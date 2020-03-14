@@ -8,7 +8,8 @@ local tonumber     = tonumber
 local sformat      = string.format
 local smatch       = string.match
 local sgmatch      = string.gmatch
-local popen        = io.popen
+local tconcat      = table.concat
+local spawn        = require 'awful.spawn'
 local wibox        = require 'wibox'
 local markup       = require 'obvious.lib.markup'
 local hooks        = require 'obvious.lib.hooks'
@@ -23,48 +24,57 @@ local colors = {
   hot    = '#900000',
 }
 
-local function pread(cmd)
-  local pipe = popen(cmd)
-  if not pipe then
-    return ''
-  end
-  local results = pipe:read '*a'
-  pipe:close()
-  return results
-end
-
 local function acpi_backend(callback)
-  local d    = pread 'acpi -t'
-  local temp = {}
-  for t in sgmatch(d, 'Thermal %d+: %w+, (%d+.?%d*) degrees') do
-    temp[#temp + 1] = tonumber(t)
+  local callbacks = {}
+
+  local lines = {}
+
+  function callbacks.stdout(line)
+    lines[#lines + 1] = line
   end
 
-  if #temp == 0 then
+  function callbacks.output_done()
+    local d = tconcat(lines)
+    local temp = {}
+    for t in sgmatch(d, 'Thermal %d+: %w+, (%d+.?%d*) degrees') do
+      temp[#temp + 1] = tonumber(t)
+    end
+
+    if #temp == 0 then
+      return callback()
+    end
+
+    return callback(temp)
+  end
+
+  local err = spawn.with_line_callback({'acpi', '-t'}, callbacks)
+
+  if type(err) == 'string' then
     return callback()
   end
-
-  return callback(temp)
 end
 
 local function sensors_backend(callback)
-  local pipe          = popen('sensors -u', 'r')
-  local in_temp_block = false
-  local stats         = {}
+  local callbacks = {}
 
-  if not pipe then
-    return callback()
-  end
+  local in_temp_block        = false
+  local ignore_further_lines = false
+  local stats                = {}
 
-  -- we assume that the first temp1 block is the CPU, and that
-  -- the CPU stats are under temp1
-  for line in pipe:lines() do
+  function callbacks.stdout(line)
+    if ignore_further_lines then
+      return
+    end
+
+    -- we assume that the first temp1 block is the CPU, and that
+    -- the CPU stats are under temp1
     if line == 'temp1:' then
       in_temp_block = true
     elseif in_temp_block then
       if line == '' then
-        break
+        ignore_further_lines = true
       end
+
       local name, value = smatch(line, '^%s*temp1_(%w+):%s+(.+)')
       if name and value then
         stats[name] = tonumber(value)
@@ -72,9 +82,17 @@ local function sensors_backend(callback)
     end
   end
 
-  if stats.input then
-    return callback { stats.input }
-  else
+  function callbacks.output_done()
+    if stats.input then
+      return callback { stats.input }
+    else
+      return callback()
+    end
+  end
+
+  local err = spawn.with_line_callback({'sensors', '-u'}, callbacks)
+
+  if type(err) == 'string' then
     return callback()
   end
 end
