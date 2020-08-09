@@ -15,31 +15,26 @@ local table = table
 local io = {
   open = io.open
 }
-local capi = {
-  widget = widget,
-  mouse = mouse
-}
+local mouse = mouse
 
-local naughty = require("naughty")
-local awful = require("awful")
-local http = require("socket.http")
-local ltn12 = require("ltn12")
-local json = require("json")
+local naughty = require 'naughty'
+local awful   = require 'awful'
+local wibox   = require 'wibox'
+
+local http  = require 'socket.http' -- XXX don't use this - it blocks
+local json  = require 'json'
 
 local lib = {
   hooks = require("obvious.lib.hooks"),
   markup = require("obvious.lib.markup")
 }
 
-module("obvious.gps")
+local widget = wibox.widget {
+  align  = 'right',
+  widget = wibox.widget.textbox,
+}
 
-widget = capi.widget({
-  type = "textbox",
-  name = "tb_gps",
-  align = "right"
-})
-
-position = {
+local position = {
   date = 0,
   time = 0,
   latitude = 0.0,
@@ -60,34 +55,32 @@ position = {
 
 -- Set the local device for NMEA data
 local device = "/dev/rfcomm0"
-function set_device(dev)
+local function set_device(dev)
   device = dev
 end
 
 -- Set the browser for opening openstreetmap
 local browser = "/usr/bin/uzbl"
-function set_browser(path)
+local function set_browser(path)
   browser = path
 end
 
 -- Returns the position struct
-function get_data()
+local function get_data()
   return position
 end
 
 -- Parse the NMEA messages (GGA, RMC, GSV)
-local fh = nil
-function parse_nmea(line)
+local function parse_nmea(line)
   local msg = string.sub(line,0,6)
   if (msg == "$GPGGA") then
     -- Match GGA message
     local time, latitude, longitude, quality, satellites, dilution, altitude, height, checksum = line:match("^%$GPGGA,([0-9.]+),([0-9.]+),[NS],([0-9.]+),[EW],([0-8]?),([0-9]+),([0-9.]*),([0-9.-]+),M,([0-9.]+),M,,%*(.*)")
     latitude = tonumber(latitude)
     longitude = tonumber(longitude)
-    local dd
-    dd,_ = math.modf(latitude / 100)
+    local dd = math.modf(latitude / 100)
     position.latitude = dd + (latitude - dd * 100) / 60
-    dd,_ = math.modf(longitude / 100)
+    dd = math.modf(longitude / 100)
     position.longitude = dd + (longitude - dd * 100) / 60
     position.time = time
     position.quality = tonumber(quality)
@@ -100,10 +93,9 @@ function parse_nmea(line)
     local time, status, latitude, longitude, speed, course, date, variation, node, checksum = line:match("^%$GPRMC,([0-9.]+),[AV],([0-9.]+),[NS],([0-9.]+),[EW],([0-9.]+),([0-9.]+),([0-9]+),([0-9.]*),[EW]?,([NADE])%*(.*)")
     latitude = tonumber(latitude)
     longitude = tonumber(longitude)
-    local dd
-    dd,_ = math.modf(latitude / 100)
+    local dd = math.modf(latitude / 100)
     position.latitude = dd + (latitude - dd * 100) / 60
-    dd,_ = math.modf(longitude / 100)
+    dd = math.modf(longitude / 100)
     position.longitude = dd + (longitude - dd * 100) / 60
     position.time = time
     position.date = date
@@ -123,7 +115,7 @@ function parse_nmea(line)
 end
 
 -- Reverse geocode a position using geonames.org
-function reverse_geocode()
+local function reverse_geocode()
   local c, err, h = http.request("http://ws.geonames.org/findNearbyPlaceNameJSON?lat="..position.latitude.."&lng="..position.longitude)
   if c then
     c = json.decode(c)
@@ -134,17 +126,17 @@ end
 
 -- Update position data
 local function update()
-  fh = io.open(device)
+  local fh = io.open(device)
   if fh then
-  local line = fh:read("*l")
-  local maxlines = 3
-  local l = 0
-  while line and l < maxlines do
-    parse_nmea(line)
-    l = l + 1
+    local line = fh:read "*l"
+    local maxlines = 3
+    local l = 0
+    while line and l < maxlines do
+      parse_nmea(line)
+      l = l + 1
+    end
+    fh:close()
   end
-  fh:close()
-end
   widget.text = string.format("%f,%f", position.latitude, position.longitude)
 end
 
@@ -153,7 +145,7 @@ local function detail()
    local d = string.format("Latitude:\t%f\nLongitude:\t%f\nAltitude:\t%f\nDilution:\t%f", position.latitude, position.longitude, position.altitude, position.dilution)
    naughty.notify({
     text = d,
-    screen = capi.mouse.screen
+    screen = mouse.screen
   })
 end
 
@@ -164,7 +156,7 @@ local function lookup()
     local d = string.format("Country:\t%s\nName:\t%s", geodata.countryName, geodata.name)
     naughty.notify({
       text = d,
-      screen = capi.mouse.screen
+      screen = mouse.screen
     })
   end
 end
@@ -185,6 +177,10 @@ update()
 lib.hooks.timer.register(60, 300, update)
 lib.hooks.timer.start(update)
 
-setmetatable(_M, { __call = function () return widget end })
+return setmetatable({
+  get_data    = get_data,
+  set_browser = set_browser,
+  set_device  = set_device,
+}, { __call = function () return widget end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

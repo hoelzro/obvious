@@ -8,33 +8,26 @@
 
 local assert = assert
 local string = string
-local setmetatable = setmetatable
 local table = table
 local io = {
   popen = io.popen
 }
-local capi = {
-  widget = widget,
-  mouse = mouse
-}
+local mouse = mouse
 
 local naughty = require("naughty")
 local awful = require("awful")
+local wibox = require 'wibox'
 
 local lib = {
   hooks = require("obvious.lib.hooks"),
   markup = require("obvious.lib.markup")
 }
 
-module("obvious.bluetooth")
-
-widget = capi.widget({
-  type = "textbox",
-  name = "tb_gps",
-  align = "right"
-})
-
-widget.text = "⋊"
+local widget = wibox.widget {
+  align  = 'right',
+  text   = '⋊',
+  widget = wibox.widget.textbox,
+}
 
 -- Major device classes
 local classes = {
@@ -49,8 +42,8 @@ local classes = {
 }
 
 -- Return device list
-devices = {}
-function get_data()
+local devices = {}
+local function get_data()
   return devices
 end
 
@@ -77,7 +70,7 @@ local function detail()
   table.foreach(devices, function(i,dev)
                             d = d.."\n"..dev.address.."\t"..dev.class
                           end)
-  naughty.notify({ text = d, screen = capi.mouse.screen })
+  naughty.notify({ text = d, screen = mouse.screen })
 end
 
 widget:buttons(awful.util.table.join(
@@ -87,6 +80,8 @@ widget:buttons(awful.util.table.join(
 lib.hooks.timer.register(60, 300, update)
 lib.hooks.timer.start(update)
 
-setmetatable(_M, { __call = function () return widget end })
+return setmetatable({
+  get_data = get_data,
+}, { __call = function () return widget end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

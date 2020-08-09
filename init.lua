@@ -6,10 +6,12 @@
 return {
   basic_mpd        = require 'obvious.basic_mpd',
   battery          = require 'obvious.battery',
+  bluetooth        = require 'obvious.bluetooth',
   clock            = require 'obvious.clock',
   cpu              = require 'obvious.cpu',
   fs_usage         = require 'obvious.fs_usage',
   io               = require 'obvious.io',
+  gps              = require 'obvious.gps',
   lib              = require 'obvious.lib',
   loadavg          = require 'obvious.loadavg',
   mem              = require 'obvious.mem',
