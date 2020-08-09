@@ -32,13 +32,23 @@ Settings available:
    default is awful.completion.shell
 
 To set one of these settings, simply do something like:
-    obvious.popup_run_prompt.set_opacity(0.7)
+
+```lua
+    local popup = require("obvious.popup_run_prompt")
+    popup.set_opacity(0.7)
+```
 
 Implementation:
 ---------------
 To use it, include it into your rc.lua by inserting this line:
+
+```lua
     local popup = require("obvious.popup_run_prompt")
+```
 
 Then add a bind to pop up the run prompt in your binds. Bind syntax changes,
 but it is roughly:
+
+```lua
     awful.key({ modkey }, "r", popup.run_prompt),
+```

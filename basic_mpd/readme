@@ -46,31 +46,37 @@ Implementation:
 ---------------
 To use it, include it into your rc.lua by inserting this line (near the top
 preferably):
-    require("obvious.basic_mpd")
+
+```lua
+    local mpd = require("obvious.basic_mpd")
+```
 
 Then add it to your wibox's widgets list:
-    obvious.basic_mpd()
+
+```lua
+  mpd()
+```
 
 It's also possible to create binds to control MPD via Obvious' MPD library:
     -- mod-p to pause/play.
     awful.key({ modkey }, "p", function()
-        obvious.basic_mpd.connection:toggle_play()
+        mpd.connection:toggle_play()
     end),
 
     -- mod-plus/minus to decrease and increase volume by increments of 5.
     awful.key({ modkey, "Shift" }, "=", function ()
-        obvious.basic_mpd.connection:volume_up(5)
+        mpd.connection:volume_up(5)
     end),
     awful.key({ modkey }, "-", function ()
-        obvious.basic_mpd.connection:volume_down(5)
+        mpd.connection:volume_down(5)
     end),
 
     -- mod-> and mod-< to go forward/backward a song.
     bind({ modkey, "Shift" }, ",", function ()
-        obvious.basic_mpd.connection:previous()
-        obvious.basic_mpd.update()
+        mpd.connection:previous()
+        mpd.update()
     end)
     bind({ modkey, "Shift" }, ".", function ()
-        obvious.basic_mpd.connection:next()
-        obvious.basic_mpd.update()
+        mpd.connection:next()
+        mpd.update()
     end)

@@ -12,13 +12,22 @@
 
 ** Usage
    Include the following line into your rc.lua :
-     require("obvious.gps")
+
+```lua
+     local gps = require("obvious.gps")
+```lua
 
    Then set the device and the browser:
-     obvious.gps.set_device("/dev/rfcomm0")
-     obvious.gps.set_browser("/usr/bin/uzbl")
+
+```lua
+     gps.set_device("/dev/rfcomm0")
+     gps.set_browser("/usr/bin/uzbl")
+```
 
    And add it to your wibox's widgets list:
-     obvious.gps()
+
+```lua
+     gps()
+```
 
 Christian Kuka [christian@kuka.cc]

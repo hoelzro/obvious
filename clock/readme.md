@@ -23,20 +23,27 @@ Settings Available:
 
 To set one of these settings, simply do something like:
 
-    obvious.clock.set_editor("xterm -e vim")
+```lua
+    local clock = require("obvious.clock")
+    clock.set_editor("xterm -e vim")
+```
 
 Implementation:
 ---------------
 To use it, include it into your rc.lua by inserting this line:
 
+```lua
     local clock = require("obvious.clock")
+```
 
 Then configure at least the editor setting (see Settings Available).
 
 To finish your rc.lua changes, add the clock widget to your wibox's
 widget list by adding:
 
+```lua
     clock()
+```
 
 Finally, you want to create the alarm file. The alarm file is contained
 in `${XDG_CONFIG_HOME}/awesome/alarms`. In most cases this would be

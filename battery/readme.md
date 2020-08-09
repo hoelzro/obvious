@@ -10,14 +10,18 @@ If you click on the widget, additional information is displayed.
 
 To use it, include it into your rc.lua by inserting this line:
 
-    require("obvious.battery")
+```lua
+    local battery = require("obvious.battery")
+```
 
 into the top of your rc.lua. Then add the widget to your wibox. It's called
 
-    obvious.battery()
+```lua
+    battery()
+```
 
 If you want to use the data gathered by this widget to create your own, use the
-function `obvious.battery.get_data()`. It returns nil on failure and it returns
+function `battery.get_data()`. It returns nil on failure and it returns
 a table on success. If you have multiple batteries, only information for the
 first is returned. The table has the following fields:
 

@@ -28,11 +28,15 @@ Implementation:
 
 To use it, include it into your rc.lua by inserting this line:
 
-  require("obvious.loadavg")
+```lua
+  local loadavg = require("obvious.loadavg")
+```
 
 Then may configure it like this:
 
-  obvious.loadavg.set_shorttimer(10)
-  obvious.loadavg.set_command("urxvt -e htop")
-  obvious.loadavg.set_prefix('<span foreground="#cccccc" font_size="x-large">')
-  obvious.loadavg.set_suffix("</span>")
+```lua
+  loadavg.set_shorttimer(10)
+  loadavg.set_command("urxvt -e htop")
+  loadavg.set_prefix('<span foreground="#cccccc" font_size="x-large">')
+  loadavg.set_suffix("</span>")
+```

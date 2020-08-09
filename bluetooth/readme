@@ -4,9 +4,15 @@
 
 ** Usage
    Include the following line into your rc.lua :
-     require("obvious.bluetooth")
+
+```lua
+     local bluetooth = require("obvious.bluetooth")
+```
 
    Add it to your wibox's widgets list:
-     obvious.bluetooth()
+
+```lua
+     bluetooth()
+```
 
 Christian Kuka [christian@kuka.cc]

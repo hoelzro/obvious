@@ -7,7 +7,13 @@ Implementation:
 ---------------
 To use it, include it into your rc.lua by inserting this line (near the top
 preferably):
+
+```lua
     require("obvious.temp_info")
+```
 
 Then add it to your wibox's widgets list:
-    obvious.temp_info()
+
+```lua
+    temp_info()
+```
