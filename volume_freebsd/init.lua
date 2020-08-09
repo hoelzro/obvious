@@ -26,11 +26,9 @@ local lib = {
   markup = require("obvious.lib.markup")
 }
 
-module("obvious.volume_freebsd")
-
 local objects = { }
 
-function get_data(channel)
+local function get_data(channel)
   local rv = { }
   local fd = io.popen("mixer " .. channel)
   if not fd then return end
@@ -67,13 +65,13 @@ local function update_by_values(channel)
   end
 end
 
-function raise(channel, v)
+local function raise(channel, v)
   v = v or 1
   awful.util.spawn("mixer " .. channel .. " +" .. v, false)
   update_by_values(channel)
 end
 
-function lower(channel, v)
+local function lower(channel, v)
   v = v or 1
   awful.util.spawn("mixer " .. channel .. " -" .. v, false)
   update_by_values(channel)
@@ -111,6 +109,9 @@ local function create(_, channel)
   return obj
 end
 
-setmetatable(_M, { __call = create })
+return setmetatable({
+  raise = raise,
+  lower = lower,
+}, { __call = create })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

@@ -38,8 +38,6 @@ for key, value in pairs(defaults) do
   settings[key] = value
 end
 
-module("obvious.keymap_switch")
-
 -- Updates once after a short delay and then unregisters its timer
 local function delayed_update_once(start)
   if start == true then
@@ -51,7 +49,7 @@ local function delayed_update_once(start)
   end
 end
 
-setup_done = false
+local setup_done = false
 local function init_once()
   if setup_done then
     return
@@ -140,6 +138,9 @@ function update()
   settings.widget:set_markup(get_current_keymap())
 end
 
-setmetatable(_M, { __call = function() return init(settings.widget) end }) -- TODO let the user specify widget here
+return setmetatable({
+  set_layouts = set_layouts,
+  update      = update,
+}, { __call = function() return init(settings.widget) end }) -- TODO let the user specify widget here
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

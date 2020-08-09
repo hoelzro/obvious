@@ -9,9 +9,7 @@ local awful = {
 }
 local setmetatable = setmetatable
 
-module("obvious.lib.widget.graph")
-
-function graph(layout, scale)
+local function graph(layout, scale)
   local theme = beautiful.get()
   local color = theme.graph_fg_color or theme.widget_fg_color or theme.fg_normal
   local back  = theme.graph_bg_color or theme.widget_bg_color or theme.bg_normal
@@ -34,7 +32,7 @@ function graph(layout, scale)
   return widget
 end
 
-function create(data, layout)
+local function create(data, layout)
   local scale = true
   if data.max then
     scale = false
@@ -53,6 +51,8 @@ function create(data, layout)
   return widget
 end
 
-setmetatable(_M, { __call = function (_, ...) return graph(...) end })
+return setmetatable({
+  create = create,
+}, { __call = function (_, ...) return graph(...) end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

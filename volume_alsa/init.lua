@@ -141,8 +141,6 @@ local function create(_, cardid, channel, abrv)
   return widget
 end
 
-local volume_alsa = setmetatable(volume_alsa, { __call = create })
-require('obvious.widget_registry').volume_alsa = volume_alsa
-return volume_alsa
+return setmetatable(volume_alsa, { __call = create })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

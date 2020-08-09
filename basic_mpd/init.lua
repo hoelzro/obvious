@@ -16,8 +16,6 @@ local lib = {
   hooks = require("obvious.lib.hooks"),
 }
 
-module("obvious.basic_mpd")
-
 local defaults = {
   format = "$title - $album - $artist",
   length = 75,
@@ -31,7 +29,9 @@ end
 
 local widget = wibox.widget.textbox()
 
-connection = lib.mpd.new()
+local connection = lib.mpd.new()
+
+local update -- forward declaration for update()
 
 -- Utility function to handle the text for MPD
 -- @param songinfo: a table with fields "artist", "album", "title" in text
@@ -39,16 +39,15 @@ connection = lib.mpd.new()
 -- respects settings.length and tries to make fields as close to the same
 -- lenghths as possible if shortening is required.
 local function format_metadata(songinfo)
-  format = settings.format or defaults.format
+  local format = settings.format or defaults.format
 
   if (settings.length or defaults.length) <= 0 then
     return ""
   end
 
-  used_keys = {}
-  local start, stop
-  start = 1
-  stop = 1
+  local used_keys = {}
+  local start = 1
+  local stop = 1
   while start do
     local key
     start, stop = string.find(format, "%$%w+", stop)
@@ -62,12 +61,12 @@ local function format_metadata(songinfo)
     end
   end
 
-  retval = ""
+  local retval = ''
   while true do
     retval = string.gsub(format, "%$(%w+)", used_keys)
     if #retval > (settings.length or defaults.length) then
-      longest_key = nil
-      longest_value = ""
+      local longest_key = nil
+      local longest_value = ''
       for key, value in pairs(used_keys) do
           if #value > #longest_value then
             longest_key = key
@@ -81,7 +80,7 @@ local function format_metadata(songinfo)
                    #longest_value - 1)
       else
         -- Seems like the format itself's too long
-        err = "obvious.basic_mpd: impossible to fit " ..
+        local err = "obvious.basic_mpd: impossible to fit " ..
              "output into " .. (settings.length or
              defaults.length) .. " characters.\n" ..
              "Widget paused."
@@ -98,7 +97,7 @@ local function format_metadata(songinfo)
 end
 
 -- Updates the widget's display
-function update()
+--[[local]] function update()
   local status = connection:send("status")
   local now_playing, songstats
 
@@ -109,7 +108,7 @@ function update()
     now_playing = "Music Stopped"
   else
     songstats = connection:send("playlistid " .. status.songid)
-    format = settings.format or defaults.format
+    local format = settings.format or defaults.format
     if type(format) == "string" then
       now_playing = format_metadata(songstats)
     elseif type(format) == "function" then
@@ -130,30 +129,35 @@ lib.hooks.timer.register(settings.update_interval, 30, update, "basic_mpd widget
 -- SETTINGS
 -- Set the format string
 -- @param format The format string
-function set_format(format)
+local function set_format(format)
   settings.format = format or defaults.format
   update()
 end
 
 -- Set the widget's text max length
 -- @param format The max length (in characters) of the widget's text
-function set_length(length)
+local function set_length(length)
   settings.length = length or defaults.length
   update()
 end
 
 -- Set the string to use for unknown metadata
 -- @param format The string to use for unknown metadata
-function set_unknown(unknown)
+local function set_unknown(unknown)
   settings.unknown = unknown or defaults.unknown
   update()
 end
 
-function set_update_interval(t)
+local function set_update_interval(t)
   settings.update_interval = t or defaults.update_interval
   update()
 end
 
-setmetatable(_M, { __call = function () return widget end })
+return setmetatable({
+  set_format          = set_format,
+  set_length          = set_length,
+  set_unknown         = set_unknown,
+  set_update_interval = set_update_interval,
+}, { __call = function () return widget end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

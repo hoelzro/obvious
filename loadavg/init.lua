@@ -27,8 +27,6 @@ local lib = {
   markup = require("obvious.lib.markup")
 }
 
-module("obvious.loadavg")
-
 local initialized = false
 local defaults = { }
 defaults.shorttimer =  5 -- loadavg won't change faster it seems anyway
@@ -51,21 +49,21 @@ widget:buttons(awful.util.table.join(
 
 
 -- update interval
-function set_shorttimer(e)
+local function set_shorttimer(e)
   settings.shorttimer = e or defaults.shorttimer
 end
 -- command to issue on Button1 click
-function set_command(e)
+local function set_command(e)
   settings.command = e or defaults.command
 end
 
 -- prefix to the data - e.g. using pango 'text markup language'
-function set_prefix(e)
+local function set_prefix(e)
   settings.prefix = e or defaults.prefix
 end
 
 -- suffix to the data
-function set_suffix(e)
+local function set_suffix(e)
   settings.suffix = e or defaults.suffix
 end
 
@@ -78,7 +76,12 @@ local function update ()
   widget.text = settings.prefix .. loadavg .. settings.suffix
 end
 
-setmetatable(_M, { __call = function () 
+return setmetatable({
+  set_command    = set_command,
+  set_prefix     = set_prefix,
+  set_shorttimer = set_shorttimer,
+  set_suffix     = set_suffix,
+}, { __call = function ()
   update()
   if not initialized then
     lib.hooks.timer.register(settings.shorttimer, settings.longtimer, update)

@@ -15,9 +15,6 @@ local lib = {
   hooks = require("obvious.lib.hooks")
 }
 
-module("obvious.lib.widget")
-
-
 local defaults = { }
 
 -- The functions each object from from_data_source will get
@@ -37,7 +34,7 @@ funcs.set_type = function (obj, widget_type)
   return obj
 end
 
-function from_data_source(data)
+local function from_data_source(data)
   local ret = { }
 
   for k, v in pairs(funcs) do
@@ -79,5 +76,9 @@ function from_data_source(data)
   setmetatable(ret, meta)
   return ret
 end
+
+return {
+  from_data_source = from_data_source,
+}
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

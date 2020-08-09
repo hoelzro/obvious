@@ -10,10 +10,8 @@ local lib = {
   widget = require("obvious.lib.widget")
 }
 
-module("obvious.fs_usage")
-
 -- This returns the percentage of used space on the given mountpoint
-function fs(path)
+local function fs(path)
   local df = io.popen("LC_ALL=C df -hP " .. path)
   local key
   local ret = nil
@@ -51,6 +49,8 @@ local function get_data_source(path)
   return lib.widget.from_data_source(ret)
 end
 
-setmetatable(_M, { __call = function (_, ...) return get_data_source(...) end })
+return setmetatable({
+  fs = fs,
+}, { __call = function (_, ...) return get_data_source(...) end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

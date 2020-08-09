@@ -29,15 +29,13 @@ local lib = {
   markup = require("obvious.lib.markup")
 }
 
-module("obvious.umts")
-
-widget = wibox.widget.textbox()
+local widget = wibox.widget.textbox()
 
 local fh = nil
 local cops = {}
 local cind = {}
 
-function wait_for_data(input)
+local function wait_for_data(input)
   fh:write(input)
   local data = ""
   local lastline
@@ -48,7 +46,7 @@ function wait_for_data(input)
   return data
 end
 
-function get_indicators()
+local function get_indicators()
   local cind = wait_for_data("AT+CIND?\r\n")
   local rv = {}
   rv.signal = cind:match("+CIND: %d,(%d)")
@@ -57,7 +55,7 @@ function get_indicators()
   return rv
 end
 
-function get_operator()
+local function get_operator()
   wait_for_data("AT+COPS=3,0\r\n")
   local cops = wait_for_data("AT+COPS?\r\n")
   local rv = {}
@@ -102,6 +100,6 @@ update()
 lib.hooks.timer.register(60, 300, update)
 lib.hooks.timer.start(update)
 
-setmetatable(_M, { __call = function () return widget end })
+return setmetatable({}, { __call = function () return widget end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

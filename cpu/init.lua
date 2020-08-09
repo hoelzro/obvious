@@ -11,8 +11,6 @@ local lib = {
   widget = require("obvious.lib.widget")
 }
 
-module("obvious.cpu")
-
 local function cpu_info()
   local f = io.open("/proc/stat")
   local line = f:read()
@@ -82,6 +80,6 @@ local function get_data_source()
   return lib.widget.from_data_source(ret)
 end
 
-setmetatable(_M, { __call = function (_, ...) return get_data_source(...) end })
+return setmetatable({}, { __call = function (_, ...) return get_data_source(...) end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

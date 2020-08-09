@@ -10,8 +10,6 @@ local lib = {
   widget = require("obvious.lib.widget")
 }
 
-module("obvious.mem")
-
 local function mem_usage()
   local f = io.open("/proc/meminfo")
   local ret = { }
@@ -72,6 +70,7 @@ local function get_data_source()
   return lib.widget.from_data_source(ret)
 end
 
-setmetatable(_M, { __call = function (_, ...) return get_data_source(...) end })
+return setmetatable({
+}, { __call = function (_, ...) return get_data_source(...) end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

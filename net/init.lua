@@ -3,14 +3,11 @@
 -- Copyright 2009 Uli Schlachter --
 -----------------------------------
 
-local setmetatable = setmetatable
 local io = io
 local tonumber = tonumber
 local lib = {
   widget = require("obvious.lib.widget")
 }
-
-module("obvious.net")
 
 -- Returns the total traffic send/received on some interface
 local function netinfo(interface)
@@ -69,12 +66,17 @@ local function data(device, key)
   return lib.widget.from_data_source(ret)
 end
 
-function recv(device)
+local function recv(device)
   return data(device, "recv")
 end
 
-function send(device)
+local function send(device)
   return data(device, "send")
 end
+
+return {
+  recv = recv,
+  send = send,
+}
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

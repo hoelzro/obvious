@@ -6,26 +6,13 @@
 local string = {
   format = string.format
 }
-local setmetatable = setmetatable
 local lib = {
   widget = require("obvious.lib.widget"),
   markup = require("obvious.lib.markup"),
   wlan   = require("obvious.lib.wlan")
 }
 
-module("obvious.wlan")
-
-function format_decibel(link)
-  local color = "#009000"
-  if link < 20 and link > 5 then
-    color = "#909000"
-  elseif link <= 5 then
-    color = "#900000"
-  end
-  return lib.markup.fg.color(color, "☢") .. string.format(" %02ddB", link)
-end
-
-function format_percent(link)
+local function format_percent(link)
   local color = "#009000"
   if link < 50 and link > 10 then
     color = "#909000"
@@ -59,6 +46,6 @@ local function get_data_source(device)
   return ret
 end
 
-setmetatable(_M, { __call = function (_, ...) return get_data_source(...) end })
+return setmetatable({}, { __call = function (_, ...) return get_data_source(...) end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

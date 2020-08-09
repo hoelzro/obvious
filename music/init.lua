@@ -163,6 +163,4 @@ function _M.set_backend(backend_name)
   backend:ontrackchange(update)
 end
 
-local music = setmetatable(_M, { __call = function() return widget end })
-require('obvious.widget_registry').music = music
-return music
+return setmetatable(_M, { __call = function() return widget end })

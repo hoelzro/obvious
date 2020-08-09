@@ -10,9 +10,7 @@ local string = {
   format = string.format
 }
 
-module("obvious.lib.widget.textbox")
-
-function create(data, layout)
+local function create(data, layout)
   local obj = { }
 
   obj.data = data
@@ -43,5 +41,9 @@ function create(data, layout)
 
   return obj
 end
+
+return {
+  create = create,
+}
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

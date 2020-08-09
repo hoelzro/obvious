@@ -50,10 +50,10 @@ local setmetatable = setmetatable
 local os = os
 
 -- Music Player Daemon Lua library.
-module("obvious.lib.mpd")
 
-MPD = {
-} MPD_mt = { __index = MPD }
+local MPD = {}
+
+local MPD_mt = { __index = MPD }
 
 -- create and return a new mpd client.
 -- the settings argument is a table with theses keys:
@@ -63,7 +63,7 @@ MPD = {
 --      password: the server's password (default nil, no password)
 --      timeout:  time in sec to wait for connect() and receive() (default 1)
 --      retry:    time in sec to wait before reconnect if error (default 60)
-function new(settings)
+local function new(settings)
   local client = {}
   if settings == nil then settings = {} end
 
@@ -208,5 +208,9 @@ function MPD:toggle_play()
     return self:send("pause")
   end
 end
+
+return {
+  new = new,
+}
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

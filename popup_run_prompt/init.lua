@@ -272,7 +272,6 @@ function popup_run_prompt.set_cache(c)
   settings.cache = c or popup_run_prompt.defaults.cache
 end
 
-require('obvious.widget_registry').popup_run_prompt = popup_run_prompt
 return popup_run_prompt
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

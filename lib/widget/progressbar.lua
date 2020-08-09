@@ -7,11 +7,8 @@ local beautiful = require("beautiful")
 local awful = {
   widget = require("awful.widget")
 }
-local setmetatable = setmetatable
 
-module("obvious.lib.widget.progressbar")
-
-function progressbar(layout)
+local function progressbar(layout)
   local theme = beautiful.get()
   local width = theme.progressbar_width or theme.widget_width or 8
   local color = theme.progressbar_fg_color or theme.widget_fg_color or theme.fg_normal
@@ -29,7 +26,7 @@ function progressbar(layout)
   return widget
 end
 
-function create(data, layout)
+local function create(data, layout)
   local widget = progressbar(layout)
 
   widget.update = function(widget)
@@ -44,6 +41,7 @@ function create(data, layout)
   return widget
 end
 
-setmetatable(_M, { __call = function (_, ...) return progressbar(...) end })
+return setmetatable({
+}, { __call = function (_, ...) return progressbar(...) end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

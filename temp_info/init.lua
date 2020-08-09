@@ -149,7 +149,7 @@ end
 hooks.timer.register(5, 30, update)
 hooks.timer.stop(update)
 
-setmetatable(temperature, { __call = function ()
+return setmetatable(temperature, { __call = function ()
   find_backend(1, function()
     hooks.timer.start(update)
     update()
@@ -157,8 +157,5 @@ setmetatable(temperature, { __call = function ()
 
   return widget
 end })
-
-require('obvious.widget_registry').temp_info = temperature
-return temperature
 
 -- vim: filetype=lua:expandtab:shiftwidth=3:tabstop=3:softtabstop=3:textwidth=80

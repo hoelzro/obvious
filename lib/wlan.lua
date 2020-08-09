@@ -5,7 +5,6 @@
 
 local tonumber = tonumber
 local pcall = pcall
-local setmetatable = setmetatable
 local io = {
   open = io.open,
   popen = io.popen
@@ -13,8 +12,6 @@ local io = {
 local math = {
   floor = math.floor
 }
-
-module("obvious.lib.wlan")
 
 local os = "unknown"
 
@@ -154,7 +151,7 @@ local function find_first_wlan_linux()
   return device
 end
 
-function find_first_wlan()
+local function find_first_wlan()
   if first_wlan then
     return first_wlan
   end
@@ -185,6 +182,8 @@ local function get_info(device)
   return ""
 end
 
-setmetatable(_M, { __call = function (_, ...) return get_data(...) end })
+return setmetatable({
+  find_first_wlan = first_wlan,
+}, { __call = function (_, ...) return get_data(...) end })
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et

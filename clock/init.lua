@@ -286,7 +286,7 @@ function clock.set_scrolltimeout(timeout)
   settings.scrolltimeout = timeout
 end
 
-setmetatable(clock, { __call = function ()
+return setmetatable(clock, { __call = function ()
   update()
   if not initialized then
     lib.hooks.timer.register(settings.shorttimer, settings.longtimer, update)
@@ -305,8 +305,5 @@ setmetatable(clock, { __call = function ()
 
   return widget
 end })
-
-require('obvious.widget_registry').clock = clock
-return clock
 
 -- vim:ft=lua:ts=2:sw=2:sts=2:tw=80:et
