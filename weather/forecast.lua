@@ -8,10 +8,23 @@ local function get(api_key, latitude, longitude, units)
     latitude,
     longitude,
     units)
-  local headers, stream = assert(http_request.new_from_uri(url):go(10))
-  local body = assert(stream:get_body_as_string())
 
-  return json.decode(body)
+  local headers, stream = http_request.new_from_uri(url):go(10)
+  if not headers then
+    return nil, stream
+  end
+
+  local body, err = stream:get_body_as_string()
+  if not body then
+    return nil, err
+  end
+
+  local res, _, err = json.decode(body)
+  if not res then
+    return nil, err
+  end
+
+  return res
 end
 
 return { get = get }

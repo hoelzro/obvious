@@ -32,7 +32,7 @@ local sunrise_time
 local sunset_time
 
 local function background_update()
-  local response = forecast.get(api_key, latitude, longitude, metric and 'si' or 'us')
+  local response = assert(forecast.get(api_key, latitude, longitude, metric and 'si' or 'us'))
 
   local icon = icons[response.currently.icon] or ''
   local description = string.format('%.1f °%s', response.currently.temperature, metric and 'C' or 'F')
