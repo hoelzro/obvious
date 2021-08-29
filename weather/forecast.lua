@@ -1,4 +1,4 @@
-local json   = require 'json'
+local json   = require 'dkjson'
 local http_request = require 'http.request'
 
 local function get(api_key, latitude, longitude, units)
