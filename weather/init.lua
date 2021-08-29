@@ -74,11 +74,6 @@ local function update()
 
     if not ok then
       widget:set_text 'Unable to retrieve forecast @_@'
-      naughty.notify {
-        title = 'Forecast Error',
-        text = err,
-        preset = naughty.config.presets.critical,
-      }
     end
 
     if c:empty() then
