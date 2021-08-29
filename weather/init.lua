@@ -73,7 +73,7 @@ local function update()
     local ok, err = c:step(0)
 
     if not ok then
-      widget:set_text 'Unable to retrieve forecast @_@'
+      widget:set_text('Unable to retrieve forecast @_@' .. ' ' .. tostring(err))
     end
 
     if c:empty() then
