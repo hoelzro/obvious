@@ -32,17 +32,33 @@ local sunrise_time
 local sunset_time
 
 local function background_update()
-  local response = assert(forecast.get(api_key, latitude, longitude, metric and 'si' or 'us'))
+  local previous_error
 
-  local icon = icons[response.currently.icon] or ''
-  local description = string.format('%.1f °%s', response.currently.temperature, metric and 'C' or 'F')
-  widget:set_text(icon .. ' ' ..description)
+  for i = 1, 5 do
+    local response, err = forecast.get(api_key, latitude, longitude, metric and 'si' or 'us')
+    if not response then
+      previous_error = err
+      -- XXX log error?
+      local backoff = 5 * 2 ^ (i - 1)
+      cqueues.sleep(backoff)
+      goto retry_loop
+    end
 
-  previous_fetch_time = os.time()
-  request_in_flight = false
+    local icon = icons[response.currently.icon] or ''
+    local description = string.format('%.1f °%s', response.currently.temperature, metric and 'C' or 'F')
+    widget:set_text(icon .. ' ' ..description)
 
-  sunrise_time = response.daily.data[1].sunriseTime
-  sunset_time = response.daily.data[1].sunsetTime
+    sunrise_time = response.daily.data[1].sunriseTime
+    sunset_time = response.daily.data[1].sunsetTime
+
+    -- wrapping in tautological if to get around parser limitation with retry_loop label
+    if true then
+      return
+    end
+    ::retry_loop::
+  end
+
+  error(previous_error)
 end
 
 local function update()
@@ -63,10 +79,11 @@ local function update()
         text = err,
         preset = naughty.config.presets.critical,
       }
-      request_in_flight = false
     end
 
-    if not request_in_flight then
+    if c:empty() then
+      previous_fetch_time = os.time()
+      request_in_flight = false
       hooks.timer.unregister(check_up_on_request)
     end
   end
