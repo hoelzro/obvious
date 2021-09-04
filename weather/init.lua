@@ -38,26 +38,15 @@ local function background_update()
 
   for i = 1, 5 do
     local response, err = forecast.get(api_key, latitude, longitude, metric and 'si' or 'us')
-    if not response then
-      previous_error = err
-      -- XXX log error?
-      local backoff = 5 * 2 ^ (i - 1)
-      cqueues.sleep(backoff)
-      goto retry_loop
+
+    if response then
+      return response
     end
 
-    local icon = icons[response.currently.icon] or ''
-    local description = string.format('%.1f °%s', response.currently.temperature, metric and 'C' or 'F')
-    widget:set_text(icon .. ' ' ..description)
-
-    sunrise_time = response.daily.data[1].sunriseTime
-    sunset_time = response.daily.data[1].sunsetTime
-
-    -- wrapping in tautological if to get around parser limitation with retry_loop label
-    if true then
-      return
-    end
-    ::retry_loop::
+    previous_error = err
+    -- XXX log error?
+    local backoff = 5 * 2 ^ (i - 1)
+    cqueues.sleep(backoff)
   end
 
   error(previous_error)
@@ -70,13 +59,20 @@ local function update()
 
   request_in_flight = os.time()
 
-  cqueues_run(background_update, function(ok, err)
+  cqueues_run(background_update, function(ok, response)
     previous_fetch_time = os.time()
     request_in_flight = false
 
-    -- XXX get the good result from background_update!
-    if not ok then
-      widget:set_text('Unable to retrieve forecast @_@' .. ' ' .. tostring(err))
+    if ok then
+      local icon = icons[response.currently.icon] or ''
+      local description = string.format('%.1f °%s', response.currently.temperature, metric and 'C' or 'F')
+      widget:set_text(icon .. ' ' ..description)
+
+      sunrise_time = response.daily.data[1].sunriseTime
+      sunset_time = response.daily.data[1].sunsetTime
+
+    else
+      widget:set_text('Unable to retrieve forecast @_@' .. ' ' .. tostring(response))
     end
   end)
 end
