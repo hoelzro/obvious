@@ -5,6 +5,8 @@ local forecast = require 'obvious.weather.forecast'
 local hooks    = require 'obvious.lib.hooks'
 local cqueues  = require 'cqueues'
 
+local cqueues_run = require 'obvious.lib.cqueues'
+
 local widget = wibox.widget.textbox()
 local timer_running
 
@@ -65,24 +67,18 @@ local function update()
   if request_in_flight then
     return
   end
+
   request_in_flight = os.time()
 
-  local c = cqueues.new()
-  c:wrap(background_update)
-  local function check_up_on_request()
-    local ok, err = c:step(0)
+  cqueues_run(background_update, function(ok, err)
+    previous_fetch_time = os.time()
+    request_in_flight = false
 
+    -- XXX get the good result from background_update!
     if not ok then
       widget:set_text('Unable to retrieve forecast @_@' .. ' ' .. tostring(err))
     end
-
-    if c:empty() then
-      previous_fetch_time = os.time()
-      request_in_flight = false
-      hooks.timer.unregister(check_up_on_request)
-    end
-  end
-  hooks.timer.register(0.1, 0.1, check_up_on_request)
+  end)
 end
 
 local function is_setup()
