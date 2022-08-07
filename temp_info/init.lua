@@ -24,10 +24,18 @@ local colors = {
   hot    = '#900000',
 }
 
-local function file_backend(callback)
-   local filename = '/sys/class/thermal/thermal_zone0/temp' -- XXX FIXME
+local file_backend_target
 
-   local f, err = io.open(filename, 'r')
+function temperature.set_target_filename(filename)
+   file_backend_target = filename
+end
+
+local function file_backend(callback)
+   if not file_backend_target then
+      return callback()
+   end
+
+   local f, err = io.open(file_backend_target, 'r')
    if err then
       return callback()
    end
