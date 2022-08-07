@@ -24,6 +24,28 @@ local colors = {
   hot    = '#900000',
 }
 
+local function file_backend(callback)
+   local filename = '/sys/class/thermal/thermal_zone0/temp' -- XXX FIXME
+
+   local f, err = io.open(filename, 'r')
+   if err then
+      return callback()
+   end
+
+   local line, err = f:read '*l'
+   f:close()
+   if err then
+      return callback()
+   end
+
+   local temp = tonumber(line)
+   if not temp then
+      return callback()
+   end
+
+   callback { temp / 1000 }
+end
+
 local function acpi_backend(callback)
   local callbacks = {}
 
@@ -102,6 +124,7 @@ local function noop_backend(callback)
 end
 
 local backends = {
+  file_backend,
   acpi_backend,
   sensors_backend,
   noop_backend,
