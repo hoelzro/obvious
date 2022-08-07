@@ -159,21 +159,23 @@ local function find_backend(next_backend_idx, callback)
 end
 
 local function update()
-  current_backend(function(temp)
-    local color = colors.hot
+  find_backend(1, function(backend)
+    backend(function(temp)
+      local color = colors.hot
 
-    if not temp[1] then
-      widget:set_text 'no data'
-      return
-    end
+      if not temp[1] then
+        widget:set_text 'no data'
+        return
+      end
 
-    if temp[1] < 50 then
-      color = colors.normal
-    elseif temp[1] >= 50 and temp[1] < 60 then
-      color = colors.warm
-    end
+      if temp[1] < 50 then
+        color = colors.normal
+      elseif temp[1] >= 50 and temp[1] < 60 then
+        color = colors.warm
+      end
 
-    widget:set_markup(sformat('%.2f', temp[1]) .. ' ' .. markup.fg.color(color, 'C'))
+      widget:set_markup(sformat('%.2f', temp[1]) .. ' ' .. markup.fg.color(color, 'C'))
+    end)
   end)
 end
 
@@ -181,10 +183,8 @@ hooks.timer.register(5, 30, update)
 hooks.timer.stop(update)
 
 return setmetatable(temperature, { __call = function ()
-  find_backend(1, function()
-    hooks.timer.start(update)
-    update()
-  end)
+  hooks.timer.start(update)
+  widget:set_text 'no data'
 
   return widget
 end })
