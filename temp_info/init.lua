@@ -189,4 +189,4 @@ return setmetatable(temperature, { __call = function ()
   return widget
 end })
 
--- vim: filetype=lua:expandtab:shiftwidth=3:tabstop=3:softtabstop=3:textwidth=80
+-- vim: filetype=lua:expandtab:shiftwidth=2:tabstop=2:softtabstop=2:textwidth=80
