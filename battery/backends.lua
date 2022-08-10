@@ -5,6 +5,7 @@
 
 local assert       = assert
 local iopopen      = io.popen
+local open         = io.open
 local setmetatable = setmetatable
 local tonumber     = tonumber
 local tostring     = tostring
@@ -47,6 +48,7 @@ local acpi_backend        = backend:clone { name = 'acpi' }
 local acpitool_backend    = acpi_backend:clone { name = 'acpitool' }
 local apm_backend         = backend:clone { name = 'apm' }
 local apm_openbsd_backend = backend:clone { name = 'apm-openbsd' }
+local file_backend        = backend:clone { name = 'file' }
 local null_backend        = backend:clone { name = 'null' }
 
 local backends = {
@@ -56,6 +58,7 @@ local backends = {
   acpitool_backend,
   apm_backend,
   apm_openbsd_backend,
+  file_backend,
   null_backend,
 }
 
@@ -405,6 +408,76 @@ end
 
 function apm_openbsd_backend:details_pipe()
   return popen 'apm'
+end
+-- }}}
+
+-- {{{ file backend
+local function read_first_line(filename)
+  local f, err = open(filename, 'r')
+  if not f then
+    return nil, err
+  end
+
+  local line, err = f:read '*l'
+  f:close()
+  if not line then
+    return nil, err
+  end
+
+  return line
+end
+
+local POWER_SUPPLY_DIR = '/sys/class/power_supply'
+
+function file_backend:configure()
+  local pipe, err = popen('ls ' .. POWER_SUPPLY_DIR)
+  if not pipe then
+    return nil, err
+  end
+
+  local batteries = {}
+
+  for power_supply_name in pipe:lines() do
+    local type_filename = sformat('%s/%s/type', POWER_SUPPLY_DIR, power_supply_name)
+    local power_supply_type, err = read_first_line(type_filename)
+    if not power_supply_type then
+      pipe:close()
+      return nil, err
+    end
+
+    if power_supply_type == 'Battery' then
+      batteries[#batteries + 1] = power_supply_name
+    end
+  end
+  pipe:close()
+
+  self.batteries = batteries
+  return self
+end
+
+function file_backend:state()
+  local states = {}
+
+  for i = 1, #self.batteries do
+    local battery_name = self.batteries[i]
+    local battery_status = assert(read_first_line(sformat('%s/%s/status', POWER_SUPPLY_DIR, battery_name))):lower()
+    local battery_charge = tonumber(assert(read_first_line(sformat('%s/%s/capacity', POWER_SUPPLY_DIR, battery_name))))
+
+    local capacity_microwh = tonumber(assert(read_first_line(sformat('%s/%s/energy_now', POWER_SUPPLY_DIR, battery_name))))
+    local rate_microw = tonumber(assert(read_first_line(sformat('%s/%s/power_now', POWER_SUPPLY_DIR, battery_name))))
+    local battery_time_hours = capacity_microwh / rate_microw
+
+    states[i] = {
+      time   = floor(battery_time_hours * 60),
+      charge = battery_charge,
+      status = battery_status,
+    }
+  end
+
+  return unpack(states)
+end
+
+function file_backend:details()
 end
 -- }}}
 
