@@ -150,7 +150,7 @@ widget:buttons(awful.util.table.join(
   awful.button({ }, 1, detail)
 ))
 -- XXX FIXME
-lib.hooks.timer.register(1, 300, update)
+lib.hooks.timer.register(5, 300, update)
 
 return setmetatable(battery, { __call = function ()
   if not backend then
