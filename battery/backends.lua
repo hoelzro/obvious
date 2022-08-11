@@ -465,13 +465,16 @@ function file_backend:state()
 
     local capacity_microwh = tonumber(assert(read_first_line(sformat('%s/%s/energy_now', POWER_SUPPLY_DIR, battery_name))))
     local rate_microw = tonumber(assert(read_first_line(sformat('%s/%s/power_now', POWER_SUPPLY_DIR, battery_name))))
-    local battery_time_hours = capacity_microwh / rate_microw
 
     states[i] = {
-      time   = floor(battery_time_hours * 60),
       charge = battery_charge,
       status = battery_status,
     }
+
+    if rate_microw ~= 0 then
+      local battery_time_hours = capacity_microwh / rate_microw
+      states[i].time = floor(battery_time_hours * 60)
+    end
   end
 
   return unpack(states)
