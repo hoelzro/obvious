@@ -40,7 +40,8 @@ local status_text = {
   ["discharging"] = "▼",
   ["not connected"] = "▼",
   ["charging"] = "▲",
-  ["unknown"] = "⌁"
+  ["unknown"] = "⌁",
+  ["not charging"] = "⌁",
 }
 
 local backend
